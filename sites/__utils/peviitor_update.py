@@ -22,7 +22,7 @@ class UpdateAPI:
     '''
 
     def __init__(self):
-        self.api_key = os.environ.get('API_KEY')
+        self.api_key = os.environ.get('IURIE')
         self.clean_url = 'https://api.peviitor.ro/v4/clean/'
         self.post_url = 'https://api.peviitor.ro/v4/update/'
         self.logo_url = 'https://api.peviitor.ro/v1/logo/add/'
