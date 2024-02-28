@@ -58,7 +58,7 @@ def has_diacritics(char):
 def remove_diacritics(input_string):
     normalized_string = unicodedata.normalize('NFD', input_string)
     return ''.join(char for char in normalized_string if not has_diacritics(char))
-
+   
 
 def get_county(town):
     town = remove_diacritics(town)
