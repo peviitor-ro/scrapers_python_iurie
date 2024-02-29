@@ -73,7 +73,7 @@ def scraper():
                     county= county_get,
                     city= city_loc,
                     # for location if all then location remote else On-site
-                    remote= 'On-site',
+                    remote= get_job_type(''),
                 ).to_dict())
     
         else:
