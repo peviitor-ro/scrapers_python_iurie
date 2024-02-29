@@ -45,12 +45,16 @@ def scraper():
             for job in data_soup:
                 # Remove "Romania" from the location --- Start
                 locations = job.find('span', attrs ='jobLocation').text.strip().split(', R')[0].split(', ')
+                # Check if 'COURBEVOIE' exists in the list
+                if 'COURBEVOIE' in locations:
+                    # Replace all elements with just 'all'
+                    locations= ['all']
+                    
                 for loc in range(len(locations)):
                     if 'pi' in locations[loc].lower():
-                        locations[loc] =  'Pitesti'# locations[loc].replace('Pi','Pitesti')
-                    if 'COURBEVOIE'.lower() in locations[loc].lower():
-                        locations = 'all'
-                    
+                        locations[loc] =  'Pitesti'
+                    if 'crai' in locations[loc].lower() or 'Craiova'in locations[loc].lower():
+                        locations[loc] =  'Craiova'
 
                 print(locations)
             
