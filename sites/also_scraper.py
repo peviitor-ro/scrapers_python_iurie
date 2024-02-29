@@ -93,7 +93,7 @@ def scraper():
                 job_link=job['url'],
                 company='ALSO',
                 country=job['country'],
-                county=get_county('Bucuresti'),
+                county= 'Bucuresti' if get_county('Bucuresti')[-1] == True else get_county('Bucuresti')[0],
                 city='Bucuresti',
                 remote = get_job_type(''),
             ).to_dict())
