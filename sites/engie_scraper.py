@@ -70,10 +70,10 @@ def scraper():
                     job_link='https://jobs.engie.com'+ job.find('a')['href'],
                     company='Engie',
                     country='Romania',
-                    county= county_get if county_get == 1 else ', '.join(county_get),
-                    city= city_loc if city_loc == 1 else ', '.join(city_loc),
+                    county= county_get,
+                    city= city_loc,
                     # for location if all then location remote else On-site
-                    remote= 'remote' if 'all' in city_loc else 'On-site',
+                    remote= 'On-site',
                 ).to_dict())
     
         else:
