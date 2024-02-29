@@ -45,7 +45,7 @@ def scraper():
         
        #extrarct location from job_location and replace bucharest to Bucuresti
         if (location := job.find('span', attrs={'job-location'}).text.split()[-2].replace(',','').lower() in ['bucharest']):
-            location = 'Bucuresti'
+            location = 'București'
         else:
             location = None
         
