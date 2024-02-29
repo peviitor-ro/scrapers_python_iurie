@@ -41,24 +41,32 @@ def scraper():
     while flag:
         soup = GetStaticSoup(f"https://jobs.engie.com/search/?q=&locationsearch=Romania&startrow={page}")
 
-        if len(data_soup := soup.find_all('tr', attrs=('data-row'))) >0:
-            for job in data_soup:
+        if len(jobs := soup.find_all('tr', attrs=('data-row'))) >0:
+            for job in jobs:
+                
                 # Remove "Romania" from the location --- Start
                 locations = job.find('span', attrs ='jobLocation').text.strip().split(', R')[0].split(', ')
+                
                 # Check if 'COURBEVOIE' exists in the list
                 if 'COURBEVOIE' in locations:
                     # Replace all elements with just 'all'
                     locations= ['all']
                     
                 for loc in range(len(locations)):
+                    if 'bucharest' in locations[loc].lower():
+                        locations[loc] = 'Bucuresti'  
                     if 'pi' in locations[loc].lower():
                         locations[loc] =  'Pitesti'
-                    if 'crai' in locations[loc].lower() or 'Craiova'in locations[loc].lower():
+                    if 'crai' in locations[loc].lower() or 'Craiova' in locations[loc].lower():
                         locations[loc] =  'Craiova'
+               
+                # print(f'citys {locations}')
+                    for i in range(len(locations)):
+                        print(locations[i])
+                    
+                #  county = get_county([county for county in locations])
+                # print(f'county {county}')
 
-                print(locations)
-            
-                
                 # get jobs items from response
                 job_list.append(Item(
                     job_title=job.find('a', attrs='jobTitle-link').text,
@@ -66,8 +74,9 @@ def scraper():
                     company='Engie',
                     country='Romania',
                     county='',
-                    city='',
-                    remote='On-site',
+                    city=', '.join(locations),
+                    # for location if all then location remote else On-site
+                    remote= 'remote' if 'all' in locations else 'On-site',
                 ).to_dict())
     
         else:

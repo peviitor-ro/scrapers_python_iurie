@@ -95,7 +95,7 @@ def scraper():
             job_link='https://www.sampamind.com'+job.get('href'),
             company='Sampamind',
             country= 'România',
-            county= get_county('Bucuresti'),
+            county= "Bucuresti" if True in get_county('Bucuresti')  else get_county('Bucuresti')[0],
             city='Bucuresti',
             remote=get_job_type(''),
         ).to_dict())
@@ -115,7 +115,6 @@ def main():
 
     jobs = scraper()
 
-    print(jobs)
     # # uncomment if your scraper done
     UpdateAPI().update_jobs(company_name, jobs)
     UpdateAPI().update_logo(company_name, logo_link)

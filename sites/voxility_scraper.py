@@ -56,7 +56,7 @@ def scraper():
             job_link = base_link + job.find('a',)['href'].replace('..',''),
             company = 'Voxility',
             country = 'Romania',
-            county = get_county(location),
+            county = location if True in get_county(location)  else get_county(location)[0],
             city = location,
             remote = job_type,
         ).to_dict())
@@ -75,8 +75,7 @@ def main():
     logo_link = "https://www.voxility.com/public/themes/mobile_VoxilityLogo.png"
 
     jobs = scraper()
-    print(jobs)
-
+    
     # uncomment if your scraper done
     UpdateAPI().update_jobs(company_name, jobs)
     UpdateAPI().update_logo(company_name, logo_link)
