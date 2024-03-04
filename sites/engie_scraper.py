@@ -59,19 +59,22 @@ def scraper():
                         city_loc[loc] =  'Pitesti'
                     if 'crai' in city_loc[loc].lower() or 'Craiova' in city_loc[loc].lower():
                         city_loc[loc] =  'Craiova'
-                # check county for city if len    
-                county_get =[]
-                for county_location in range(len(city_loc)):
-                    county_get.append(get_county(city_loc[county_location])[0] if get_county(city_loc[county_location])[-1] == True else city_loc[county_location])
-
+                        
+                # check county for cities from city_loc list   
+                job_county =[get_county(city) for city in city_loc]
+                # try to find if city is a county if yes add to a list county if not then non
+                get_county_if_city_is_county = [city[0] if True in city else None for city in job_county]
+                
+                city_all = 'all' if not None in get_county_if_city_is_county and get_county_if_city_is_county[0].lower() != 'bucuresti' else city_loc 
+                
                 # get jobs items from response
                 job_list.append(Item(
                     job_title=job.find('a', attrs='jobTitle-link').text,
                     job_link='https://jobs.engie.com'+ job.find('a')['href'],
                     company='Engie',
                     country='Romania',
-                    county= county_get,
-                    city= city_loc,
+                    county= get_county_if_city_is_county if not None in get_county_if_city_is_county else None,
+                    city= city_all if len(city_loc)==1 else 'all',
                     # for location if all then location remote else On-site
                     remote= get_job_type(''),
                 ).to_dict())
