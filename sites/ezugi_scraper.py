@@ -75,7 +75,7 @@ def main():
     logo_link = "https://images.teamtailor-cdn.com/images/s3/teamtailor-production/logotype-v3/image_uploads/34b2d2c3-89da-4697-a57c-78cabbc1d793/original.png"
 
     jobs = scraper()
-    print(jobs)
+   
     # uncomment if your scraper done
     UpdateAPI().update_jobs(company_name, jobs)
     UpdateAPI().update_logo(company_name, logo_link)
