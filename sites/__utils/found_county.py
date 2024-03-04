@@ -13119,8 +13119,8 @@ counties = [
     },
     {
         "Vaslui": [
+            "Vaslui"
             "Barlad",
-            "Vaslui",
             "Husi",
             "Negresti",
             "Zorleni",
@@ -14013,5 +14013,5 @@ def get_county(location: str):
 
             if location.lower() == key.lower() or location.lower() == value[0].lower():
                 return key, True
-    
-    return location, False
+ 
+    return  location, False
