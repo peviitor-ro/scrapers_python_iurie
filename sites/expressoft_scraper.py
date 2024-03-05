@@ -88,17 +88,16 @@ def scraper():
     job_list = []
     for job in soup.find_all('div', attrs='accordion-item job'):
         
-        print(job.find('div', class_='acordion-more job__more').find('a')['href'])
-
+        finish_location = get_county(location="București")
         # get jobs items from response
         job_list.append(Item(
             job_title = job.find('div', attrs='job__title accordion-title').text,
-            job_link='',
+            job_link=job.find('a', class_='btn btn--secondary--solid')['href'],
             company='Expressoft',
             country='Romania',
-            county='',
-            city='București',
-            remote='',
+            county= finish_location[0] if True in finish_location else None,
+            city= 'all' if True  in finish_location and finish_location[0].lower() != 'bucuresti' else finish_location[0],
+            remote=get_job_type(''),
         ).to_dict())
 
     return job_list
@@ -112,13 +111,13 @@ def main():
     '''
 
     company_name = "Expressoft"
-    logo_link = "logo_link"
+    logo_link = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCSaup6KyvWosB-umVxAjMtgoub9RC_UA89DfFxqkd&s"
 
     jobs = scraper()
-
+    # print(len(jobs))
     # uncomment if your scraper done
-    #UpdateAPI().update_jobs(company_name, jobs)
-    #UpdateAPI().update_logo(company_name, logo_link)
+    UpdateAPI().update_jobs(company_name, jobs)
+    UpdateAPI().update_logo(company_name, logo_link)
 
 
 if __name__ == '__main__':
