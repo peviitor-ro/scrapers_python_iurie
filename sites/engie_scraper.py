@@ -71,10 +71,10 @@ def scraper():
                 job_list.append(Item(
                     job_title=job.find('a', attrs='jobTitle-link').text,
                     job_link='https://jobs.engie.com'+ job.find('a')['href'],
-                    company='Engie',
+                    company='ENGIE',
                     country='Romania',
                     county= get_county_if_city_is_county if not None in get_county_if_city_is_county else None,
-                    city= city_all if len(city_loc)==1 else 'all',
+                    city= city_all if len(city_loc)==1  else None if len(city_loc)>1 else 'all',
                     # for location if all then location remote else On-site
                     remote= get_job_type(''),
                 ).to_dict())
@@ -96,7 +96,7 @@ def main():
     ---> update_jobs() and update_logo()
     '''
 
-    company_name = "Engie"
+    company_name = "ENGIE"
     logo_link = "https://rmkcdn.successfactors.com/c4851ec3/1960b45a-f47f-41a6-b1c7-c.svg"
 
     jobs = scraper()
