@@ -105,7 +105,7 @@ def main():
     '''
 
     company_name = "Exiger"
-    logo_link = "logo_link"
+    logo_link = "https://www.exiger.com/wp-content/uploads/2023/04/logo_midnight@2x.png.webp"
 
     jobs = scraper()
     # print(len(jobs))
