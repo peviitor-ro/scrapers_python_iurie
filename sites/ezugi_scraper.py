@@ -57,7 +57,7 @@ def scraper():
             company='Ezugi',
             country='Romania',
             county=finish_location[0] if True in finish_location else None, 
-            city='all' if True  in finish_location and finish_location[0].lower() != 'bucuresti' else finish_location[0] ,
+            city='all' if True  in finish_location and finish_location[0].lower() != 'bucuresti' else finish_location[0],
             remote=get_job_type(job_type),
         ).to_dict())
 
