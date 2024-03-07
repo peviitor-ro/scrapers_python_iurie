@@ -31,7 +31,7 @@ def scraper():
     '''
     ... scrape data from Codezilla scraper.
     '''
-    soup = GetStaticSoup("https://codezilla.global/jobs")
+    soup = GetStaticSoup("      ")
 
     job_list = []
     #check if location is county
