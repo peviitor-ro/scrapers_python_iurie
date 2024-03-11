@@ -88,7 +88,7 @@ def scraper():
     job_list = []
     for job in soup.find_all('div', attrs='accordion-item job'):
         
-        finish_location = get_county(location="București")
+        finish_location = get_county(location =  "București")
         # get jobs items from response
         job_list.append(Item(
             job_title = job.find('div', attrs='job__title accordion-title').text,
