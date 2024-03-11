@@ -108,7 +108,7 @@ def main():
     '''
 
     company_name = "ALSO"
-    logo_link = "https://www.also.com//ec/cms5/media/img/jobs/also_job_offer_2019_version_02b_web_version_1090x500.png"
+    logo_link = "https://private-user-images.githubusercontent.com/142620951/311528647-20fc0db4-8ca0-454d-80fb-5a2ee07a9799.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTAxNTQ0NjcsIm5iZiI6MTcxMDE1NDE2NywicGF0aCI6Ii8xNDI2MjA5NTEvMzExNTI4NjQ3LTIwZmMwZGI0LThjYTAtNDU0ZC04MGZiLTVhMmVlMDdhOTc5OS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwMzExJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDMxMVQxMDQ5MjdaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1jYTkwNjRjMTg0ZDI5NmM3OGFmZDdhMTdjOWU4YWZiMzg5ZmFlNjdiMmEzZTA0NzVjMmMwNjExNzI2MzUxM2EwJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.kUyvHe9BM4MNa4T9uL2hur1lxcYxkTaXB34IO5nA8oo"
 
     jobs = scraper()
 
