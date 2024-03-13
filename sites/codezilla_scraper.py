@@ -36,7 +36,7 @@ def scraper():
     job_list = []
     #check if location is county
     location = ['București','Iași']
-    county_finis =[]
+    county_finis = []
     for county in location: 
         county_finis.append(county if True in get_county(county) else None ) #if is county then append to a list 
         
@@ -45,13 +45,13 @@ def scraper():
 
         # get jobs items from response  
         job_list.append(Item(
-            job_title=job.find('h3').text,
+            job_title= job.find('h3').text,
             job_link='https://codezilla.global'+job.find('a')['href'],
             company='Codezilla',
             country='Romania',
             county = county_finis,
-            city= 'București' if 'București' in county_finis else None,
-            remote=get_job_type(''),
+            city='București' if 'București' in county_finis else None,
+            remote = get_job_type(''),
         ).to_dict())
 
     return job_list

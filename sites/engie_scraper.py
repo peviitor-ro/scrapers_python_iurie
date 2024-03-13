@@ -50,33 +50,33 @@ def scraper():
                 # Check if 'COURBEVOIE' exists in the list
                 if 'COURBEVOIE'.title() in city_loc:
                     # Replace all elements with just 'all'
-                    city_loc= ['all']
+                    city_loc=['all']
                     
                 for loc in range(len(city_loc)):
                     if 'bucharest' in city_loc[loc].lower():
-                        city_loc[loc] = 'Bucuresti'  
+                        city_loc[loc]='Bucuresti'  
                     if 'pi' in city_loc[loc].lower():
-                        city_loc[loc] =  'Pitesti'
+                        city_loc[loc]='Pitesti'
                     if 'crai' in city_loc[loc].lower() or 'Craiova' in city_loc[loc].lower():
-                        city_loc[loc] =  'Craiova'
+                        city_loc[loc]='Craiova'
                         
                 # check county for cities from city_loc list   
-                job_county =[get_county(city) for city in city_loc]
+                job_county = [get_county(city) for city in city_loc]
                 # try to find if city is a county if yes add to a list county if not then non
                 get_county_if_city_is_county = [city[0] if True in city else None for city in job_county]
                 
-                city_all = 'all' if not None in get_county_if_city_is_county and get_county_if_city_is_county[0].lower() != 'bucuresti' else city_loc 
+                city_all='all' if not None in get_county_if_city_is_county and get_county_if_city_is_county[0].lower() != 'bucuresti' else city_loc 
                 
                 # get jobs items from response
                 job_list.append(Item(
-                    job_title=job.find('a', attrs='jobTitle-link').text,
+                    job_title = job.find('a', attrs='jobTitle-link').text,
                     job_link='https://jobs.engie.com'+ job.find('a')['href'],
                     company='ENGIE',
                     country='Romania',
-                    county= get_county_if_city_is_county if not None in get_county_if_city_is_county else None,
-                    city= city_all if len(city_loc)==1  else None if len(city_loc)>1 else 'all',
+                    county = get_county_if_city_is_county if not None in get_county_if_city_is_county else None,
+                    city = city_all if len(city_loc)==1  else None if len(city_loc)>1 else 'all',
                     # for location if all then location remote else On-site
-                    remote= get_job_type(''),
+                    remote=get_job_type(''),
                 ).to_dict())
     
         else:

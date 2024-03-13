@@ -89,10 +89,10 @@ def scraper():
         if job['country'] == 'Romania': 
         # get jobs items from response
             job_list.append(Item(
-                job_title=job['title'],
-                job_link=job['url'],
+                job_title = job['title'],
+                job_link  = job['url'],
                 company='ALSO',
-                country=job['country'],
+                country= job['country'],
                 county= 'București' if get_county('București')[-1] == True else get_county('București')[0],
                 city='București',
                 remote = get_job_type(''),

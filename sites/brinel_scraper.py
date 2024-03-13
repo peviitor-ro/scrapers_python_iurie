@@ -51,13 +51,13 @@ def scraper():
 
         # get jobs items from response
         job_list.append(Item(
-            job_title=job.find('h4').text.strip(),
+            job_title = job.find('h4').text.strip(),
             job_link='https://www.brinel.ro/cariere'+link,
             company='BRINEL',
             country='Romania',
-            county=county[0] if True in county else None,
-            city= 'all' if True in county and county[0].lower() != 'bucuresti' else city ,
-            remote= get_job_type(''),
+            county = county[0] if True in county else None,
+            city='all' if True in county and county[0].lower() != 'bucuresti' else city ,
+            remote = get_job_type(''),
         ).to_dict())
 
     return job_list

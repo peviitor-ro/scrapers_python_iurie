@@ -94,10 +94,10 @@ def scraper():
             job_title = job.find('h3', attrs = {'class':'text-secondary mt0 mb4'}).text.strip(),
             job_link='https://www.sampamind.com'+job.get('href'),
             company='Sampamind',
-            country= 'România',
-            county= "București" if get_county('București')[-1] == True  else get_county('București')[0],
+            country='România',
+            county="București" if get_county('București')[-1]==True  else get_county('București')[0],
             city='București',
-            remote=get_job_type(''),
+            remote = get_job_type(''),
         ).to_dict())
 
     return job_list
