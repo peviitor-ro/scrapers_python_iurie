@@ -37,26 +37,26 @@ def scraper():
         
         #check if job tipe contain in job title
         if 'hybrid' in job.find('a').text.lower():
-           job_type = 'hybrid'
+           job_type='hybrid'
         elif 'remote' in job.find('a').text.lower():
-            job_type = 'remote'
+            job_type='remote'
         else:
-            job_type = ''
+            job_type=''
         
        #extract location from job_location and replace bucharest to Bucuresti
         if (location := job.find('span', attrs={'job-location'}).text.split()[-2].replace(',','').lower() in ['bucharest']):
-            location = 'București'
+            location='București'
         
-        finish_location = get_county(location)
+        finish_location=get_county(location)
 
         # get jobs items from response
         job_list.append(Item(
             job_title = job.find('a').text,
             job_link = base_link + job.find('a',)['href'].replace('..',''),
-            company = 'Voxility',
-            country = 'Romania',
+            company='Voxility',
+            country='Romania',
             county = finish_location[0] if True in finish_location  else None,
-            city = 'all' if location.lower() == finish_location[0].lower() and  finish_location[0].lower() != 'bucuresti' else finish_location[0] ,
+            city='all' if location.lower()==finish_location[0].lower() and finish_location[0].lower()!='bucuresti' else finish_location[0],
             remote = get_job_type(job_type),
         ).to_dict())
 

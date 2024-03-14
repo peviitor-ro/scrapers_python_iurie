@@ -81,17 +81,17 @@ def scraper():
         #get_county  tuple with location Bucuresti
         county = get_county("Bucuresti") if location.lower() == 'bucharest' else None
         
-        if location.lower() == 'bucharest':
+        if location.lower()=='bucharest':
             
             # get jobs items from response
             job_list.append(Item(
-                job_title=job.find('a').text,
-                job_link= job.find('a')['href'],
+                job_title = job.find('a').text,
+                job_link = job.find('a')['href'],
                 company='Exiger',
                 country='România',
-                county= county[0] if True in county else None,
+                county = county[0] if True in county else None,
                 city='all' if True in county and county[0].lower() != 'bucuresti' else county[0],
-                remote=get_job_type(''),
+                remote  = get_job_type(''),
             ).to_dict())
 
     return job_list
