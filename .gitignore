@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 
 kronospan_scraper.py
+bluewiresoftware_scraper.py

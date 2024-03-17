@@ -52,6 +52,8 @@ class UpdateAPI:
         # time sleep for SOLR indexing
         time.sleep(0.2)
 
+        
+        
         post_request_to_server = requests.post(self.post_url, headers=self.post_header,
                                                data=json.dumps(data_jobs))
 

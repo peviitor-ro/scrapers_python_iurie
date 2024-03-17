@@ -34,6 +34,7 @@ def scraper():
         
         #logic to extract location
         find_location  = job.find('div', attrs =('elementor-element-cca09fe'))
+        
         if find_location:
             data_text = find_location.text
             
@@ -48,8 +49,8 @@ def scraper():
                     company='Zenitech',
                     country='Romania',
                     county = location_finish[0] if True in location_finish else None,
-                    city='all' if True in location_finish and location_finish[0].lower()!='bucuresti' else location_finish[0],
-                    remote = get_job_type('Hybrid') if 'Hybrid' in data_text else get_job_type(''),
+                    city='all' if 'remote' in data_text.lower() and location_finish[0].lower()!='bucuresti' else location_finish[0],
+                    remote = get_job_type(find_location.text),
                 ).to_dict())
 
     return job_list

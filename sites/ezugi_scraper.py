@@ -35,13 +35,11 @@ def scraper():
         
         # job title
         title = job.find('span', attrs =('text-block-base-link sm:min-w-[25%] sm:truncate company-link-style')).text
-        # Find if job title have word hybrid
-        job_type='hybrid' if "hybrid" in title.lower() else ''
-        
+       
         # find city
         location = list(job.find('div', attrs =('mt-1 text-md')).text.strip().split())
         loc = [word for word in location if word.lower() == 'bucharest'] #remove all elements exept buharest 
-        # replace buharest with Bucuresti in loc list 
+        # replace bucharest with Bucuresti in loc list 
         for word in range(len(loc)):
             if  loc[word].lower().strip() == 'bucharest':
                 loc_f='București'
@@ -51,14 +49,14 @@ def scraper():
         
         # get jobs items from response
         job_list.append(Item(
-            job_title=title,
+            job_title = title,
             
             job_link = job.find('a')['href'],
             company='Ezugi',
             country='Romania',
             county = finish_location[0] if True in finish_location else None, 
             city='all' if True  in finish_location and finish_location[0].lower() != 'bucuresti' else finish_location[0],
-            remote = get_job_type(job_type),
+            remote = get_job_type(title.lower()),
         ).to_dict())
 
     return job_list
