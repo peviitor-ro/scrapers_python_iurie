@@ -14,9 +14,9 @@ def get_job_type(sentence: str ,**kwargs) -> str:
     jobs_type = ['hybrid', 'remote', 'on-site']#job_type.lower()
     jobs_type.extend(kwargs.get('jobs_type', []))
     
-    if  len(sentence)>1:
-        types =  [jobtype for jobtype in jobs_type if jobtype in sentence.lower()]
-    else:
+    types =  [jobtype for jobtype in jobs_type if jobtype in sentence.lower()]
+    
+    if  len(types) == 0:
         types = ['on-site'] 
    
     return list(set(types))

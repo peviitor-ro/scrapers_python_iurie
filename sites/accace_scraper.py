@@ -38,7 +38,8 @@ def scraper():
         for element in range(len(data_loc_type)):
             if 'Hibrid' == data_loc_type[element]:
                 data_loc_type[element] = 'Hybrid'
-
+            print(data_loc_type)
+            print(get_job_type(job.find('div', attrs = ('job-location')).text))
         if 'Bucuresti' in data_loc_type:
             data_loc_type.remove('Bucuresti') #remove Bucuresti from list to clear list just for job_type
             finish_location = get_county(location ='Bucuresti' ) #get location finish with Bucuresti if Bucuresti is present in data_loc_type
@@ -74,8 +75,8 @@ def main():
     # print(len(jobs))
     
     # uncomment if your scraper done
-    UpdateAPI().update_jobs(company_name, jobs)
-    UpdateAPI().update_logo(company_name, logo_link)
+    # UpdateAPI().update_jobs(company_name, jobs)
+    # UpdateAPI().update_logo(company_name, logo_link)
 
 
 if __name__ == '__main__':
