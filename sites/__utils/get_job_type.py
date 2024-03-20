@@ -12,8 +12,9 @@ def get_job_type(sentence: str ,**additional_job_types) -> str:
     """
     jobs_type = ['hybrid', 'remote', 'on-site', 'hibrid']
     jobs_type.extend(additional_job_types)
+    lower_sentance = sentence.lower()
     
-    types = set([jobtype for jobtype in jobs_type if jobtype in sentence.lower()])
+    types = set([jobtype for jobtype in jobs_type if jobtype in lower_sentance])
     
     # return by default on-site if function is called with '
     if  len(types) == 0: 
