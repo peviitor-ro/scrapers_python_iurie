@@ -8,8 +8,7 @@
 def get_job_type(sentence: str ,**additional_job_types) -> str:
     """
     This func return  a list of job types mentioned in the sentence;
-    **args : Additional keywords arguments.
-    jobs_type (list):  Additional job types to consider
+    **additional_job_types : Additional keywords arguments.
     """
     jobs_type = ['hybrid', 'remote', 'on-site', 'hibrid']
     jobs_type.extend(additional_job_types)
@@ -20,7 +19,7 @@ def get_job_type(sentence: str ,**additional_job_types) -> str:
     if  len(types) == 0: 
         types = ['on-site'] 
         
-    #check if word hibrid is present and replace it with hybrid to solve typo 
+    #check if word hibrid is present and replace it with hybrid
     if 'hibrid' in types:
         types.remove('hibrid')
         types.add('hybrid')
