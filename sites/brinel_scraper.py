@@ -43,7 +43,7 @@ def scraper():
         # Extrarct locaion from jobs
         city = job.find('span', attrs=('job--loc-type')).text.strip() if job.find('span', attrs=('job--loc-type')) != None else 'Cluj-Napoca'
         county = '' if city == None else get_county(city)
-        
+    
          # Find span element with class 'btn' and get 'data-bs-target' attribute
         span = job.find('span', class_='btn')
         if span:
@@ -56,7 +56,7 @@ def scraper():
             company='BRINEL',
             country='Romania',
             county = county[0] if True in county else None,
-            city='all' if True in county and county[0].lower() != 'bucuresti' else city ,
+            city = city,
             remote = get_job_type(''),
         ).to_dict())
 
