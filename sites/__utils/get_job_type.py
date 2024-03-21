@@ -25,7 +25,7 @@ def get_job_type(sentence: str ,*kwargs) -> str:
         types.add('hybrid')
     
     types = list(types)
-    
+    # check if aditional argument was added then add it to a list 
     if len(kwargs)>0:
         add_job_type = [''.join(map(str,kwargs))]
         types.extend(add_job_type)
