@@ -57,7 +57,7 @@ def main():
     logo_link = 'https://upload.wikimedia.org/wikipedia/commons/f/fd/ALSO_Holding_AG_Logo_2020.svg'
 
     jobs = scraper()
-
+    # print(len(jobs))
     # uncomment if your scraper done
     UpdateAPI().update_jobs(company_name, jobs)
     UpdateAPI().update_logo(company_name, logo_link)
