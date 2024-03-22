@@ -90,7 +90,7 @@ def scraper():
                 company='Exiger',
                 country='România',
                 county = county[0] if True in county else None,
-                city='all' if True in county and county[0].lower() != 'bucuresti' else county[0],
+                city='all' if True in county and county[0] != 'Bucuresti' else county[0],
                 remote  = get_job_type(''),
             ).to_dict())
 

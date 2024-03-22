@@ -37,7 +37,8 @@ def scraper():
         title = job.find('span', attrs =('text-block-base-link sm:min-w-[25%] sm:truncate company-link-style')).text
        
         # find city
-        location = list(job.find('div', attrs =('mt-1 text-md')).text.strip().split())
+        data = job.find('div', attrs =('mt-1 text-md')).text.strip()
+        location = list(data.split())
         loc = [word for word in location if word.lower() == 'bucharest'] #remove all elements exept buharest 
         # replace bucharest with Bucuresti in loc list 
         for word in range(len(loc)):
@@ -46,7 +47,8 @@ def scraper():
                 
          # call func get_county to return tuple
         finish_location = get_county(location=loc_f)   
-        
+        #check job type from tytle and data 
+        job_type = get_job_type(title + data)
         # get jobs items from response
         job_list.append(Item(
             job_title = title,
@@ -55,8 +57,8 @@ def scraper():
             company='Ezugi',
             country='Romania',
             county = finish_location[0] if True in finish_location else None, 
-            city='all' if True  in finish_location and finish_location[0].lower() != 'bucuresti' else finish_location[0],
-            remote = get_job_type(title.lower()),
+            city='all' if True  in finish_location and 'remote' in job_type and finish_location[0] != 'Bucuresti' else finish_location[0],
+            remote = job_type ,
         ).to_dict())
 
     return job_list
