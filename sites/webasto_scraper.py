@@ -38,11 +38,11 @@ def scraper():
         job_list.append(Item(
             job_title = job.find('a', attrs = ('jobTitle-link')).text,
             job_link = 'https://jobs.webasto.com/'+job.find('a', attrs = ('jobTitle-link'))['href'],
-            company='Webasto',
-            country='Romania',
+            company = 'Webasto',
+            country = 'Romania',
             county = county[0] if True in county else None,
-            city= location,
-            remote=get_job_type(''),
+            city = 'all' if True in county and county  !='Bucuresti' else location ,
+            remote =  get_job_type(''),
         ).to_dict())
 
     return job_list

@@ -14011,7 +14011,7 @@ def get_county(location: str):
     for county_dict in counties:
         for key, value in county_dict.items():
 
-            if location.lower() == key.lower() or location.lower() == value[0].lower():
+            if location.lower() == key.lower():# or location.lower() == value[0].lower():
                 return key, True
  
     return  location, False

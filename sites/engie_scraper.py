@@ -47,7 +47,7 @@ def scraper():
                     city_location = ['all']
                     
                 for city in range(len(city_location)):
-                    if 'bucharest' in city_location[city]:
+                    if 'Bucharest' in city_location[city]:
                         city_location[city]='Bucuresti'  
                     if 'Pi' in city_location[city]:
                         city_location[city]='Pitesti'
@@ -56,7 +56,7 @@ def scraper():
                   
                 # check county for cities from city_loc list  add to a county list if True else not then None 
                 job_county = [get_county(city)[0] if True in get_county(city) else None for city in city_location]
-               
+                
                 # get jobs items from response
                 job_list.append(Item(
                     job_title = job.find('a', attrs='jobTitle-link').text,
@@ -64,7 +64,7 @@ def scraper():
                     company='ENGIE',
                     country='Romania',
                     county = job_county,
-                    city = city_location, #if len(city_location)>1 else 'all',
+                    city = 'all'  if not None in job_county and 'Bucuresti' not in job_county else  city_location, #if len(city_location)>1 else 'all',
                     # for location if all then location remote else On-site
                     remote =  get_job_type('remote') if "all" in city_location else get_job_type(''),
                 ).to_dict())

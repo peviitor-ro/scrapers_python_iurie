@@ -36,11 +36,11 @@ def scraper():
         # get jobs items from response
         job_list.append(Item(
             job_title = job.find('h3', attrs = {'class':'text-secondary mt0 mb4'}).text.strip(),
-            job_link='https://www.sampamind.com'+job.get('href'),
-            company='Sampamind',
-            country='România',
-            county="București" if get_county('București')[-1]==True  else get_county('București')[0],
-            city='București',
+            job_link ='https://www.sampamind.com'+job.get('href'),
+            company ='Sampamind',
+            country  ='România',
+            county = "București" if get_county('București')[-1]==True  else get_county('București')[0],
+            city = 'București',
             remote = get_job_type(''),
         ).to_dict())
 
