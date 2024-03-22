@@ -50,7 +50,7 @@ def scraper():
             company='Codezilla',
             country='Romania',
             county = county_finis,
-            city='București' if 'București' in county_finis else None,
+            city='all' if True in county_finis or county_finis[0].lower()!='bucuresti' else None,
             remote = get_job_type(''),
         ).to_dict())
 
@@ -68,7 +68,7 @@ def main():
     logo_link = "https://api.codezilla.ro/uploads/logo_black_03bc39c300.png"
 
     jobs = scraper()
-    # print(len(jobs))
+    print(len(jobs))
 
     # uncomment if your scraper done
     UpdateAPI().update_jobs(company_name, jobs)
