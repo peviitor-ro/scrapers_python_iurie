@@ -56,7 +56,7 @@ def scraper():
             company='BRINEL',
             country='Romania',
             county = county[0] if True in county else None,
-            city = city,
+            city = 'all' if True in county and county[0].lower() != 'bucuresti' else city,
             remote = get_job_type(''),
         ).to_dict())
 
@@ -74,7 +74,7 @@ def main():
     logo_link = "https://private-user-images.githubusercontent.com/153110403/311821470-497b197f-b552-4910-b69e-922893a61846.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTAxODM2MTIsIm5iZiI6MTcxMDE4MzMxMiwicGF0aCI6Ii8xNTMxMTA0MDMvMzExODIxNDcwLTQ5N2IxOTdmLWI1NTItNDkxMC1iNjllLTkyMjg5M2E2MTg0Ni5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwMzExJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDMxMVQxODU1MTJaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT02MDI0MmI5YjQxNDNhZTAwMzg5MDBjMjk4MGNlMjMzZDczZjMzZmViYWY2YjZmYjgyYzhmN2JkOWQwNWIxZTliJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.Vq0487fk_INq9cdMA3zC1EffJ5QRbePoBHfZ-5a_plw"
 
     jobs = scraper()
-    # print(len(jobs))
+    print(len(jobs))
     # uncomment if your scraper done
     UpdateAPI().update_jobs(company_name, jobs)
     UpdateAPI().update_logo(company_name, logo_link)
