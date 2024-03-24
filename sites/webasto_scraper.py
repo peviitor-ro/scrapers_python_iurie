@@ -56,7 +56,7 @@ def main():
     '''
 
     company_name = "Webasto"
-    logo_link = "https://duckduckgo.com/?q=webasto+logo&t=brave&iax=images&ia=images&iai=https%3A%2F%2Flogodix.com%2Flogo%2F1699232.png"
+    logo_link = "https://logodix.com/logo/1699232.png"
 
     jobs = scraper()
     # print(len(jobs))
