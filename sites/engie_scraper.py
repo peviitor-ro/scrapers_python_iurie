@@ -28,9 +28,8 @@ def scraper():
     ... scrape data from ENGIE scraper.
     '''
     page = 0
-    job_list = []
-    city_loc =[]
     flag = True
+    job_list = []
     
     while flag:
         soup = GetStaticSoup(f"https://jobs.engie.com/search/?q=&locationsearch=Romania&startrow={page}")
