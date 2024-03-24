@@ -18,7 +18,7 @@ import os
 
 #  ---------------------> STATIC SCRAPER <---------------------
 def create_static_scraper_config(nume_scraper, link):
-    config_content = f"""#
+    config_content = f'''#
 #
 #  Basic for scraping data from static pages
 #
@@ -42,7 +42,7 @@ from __utils import (
 )
 
 
-'''
+"""
     Daca te-ai deprins cu aceasta formula de cod,
     atunci poti sterge acest comentariu din fisierul
     __create_scraper.py, din functia -> create_static_scraper_config <-
@@ -73,7 +73,7 @@ from __utils import (
     ########################################################################
 
     3) --->get_job_type(job_type: str) -> returneaza job_type-ul: remote,
-    hybrid, on-site
+    hybrid, on-site in baza unui string sau  poate fi extinsa cu un string aditional 
 
     ########################################################################
 
@@ -96,13 +96,13 @@ from __utils import (
     UpdateAPI().update_logo(id_company: str, logo_link: str)
 
     ########################################################################
-'''
+"""
 
 
 def scraper():
-    '''
+    """
     ... scrape data from {nume_scraper} scraper.
-    '''
+    """
     soup = GetStaticSoup("{link}")
 
     job_list = []
@@ -124,11 +124,11 @@ def scraper():
 
 
 def main():
-    '''
+    """
     ... Main:
     ---> call scraper()
     ---> update_jobs() and update_logo()
-    '''
+    """
 
     company_name = "{nume_scraper}"
     logo_link = "logo_link"
@@ -142,7 +142,7 @@ def main():
 
 if __name__ == '__main__':
     main()
-"""
+'''
 
     with open(f'{nume_scraper.lower()}_scraper.py', 'w') as f:
         f.write(config_content)
