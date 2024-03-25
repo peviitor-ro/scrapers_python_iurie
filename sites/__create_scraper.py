@@ -111,13 +111,13 @@ def scraper():
 
         # get jobs items from response
         job_list.append(Item(
-            job_title='',
-            job_link='',
-            company='{nume_scraper}',
-            country='',
-            county='',
-            city='',
-            remote='',
+            job_title = '',
+            job_link = '',
+            company = '{nume_scraper}',
+            country = '',
+            county = ' ',
+            city = '',
+            remote = '',
         ).to_dict())
 
     return job_list
