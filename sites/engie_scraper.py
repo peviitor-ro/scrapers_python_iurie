@@ -57,6 +57,8 @@ def scraper():
                         city_location[city]='Craiova'
                     if 'Ploiest' in city_location[city]:
                         city_location[city] = 'Ploiesti'
+                    if 'Turnu Mag' in  city_location[city]:
+                        city_location[city] = 'Turnu Magurele'
                   
                 # check county for cities from city_loc list  add to a county list if True else not then None 
                 job_county = [get_county(city)[0] if True in get_county(city) else None for city in city_location]
