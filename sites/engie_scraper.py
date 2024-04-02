@@ -33,10 +33,13 @@ def scraper():
     
     while flag:
         soup = GetStaticSoup(f"https://jobs.engie.com/search/?q=&locationsearch=Romania&startrow={page}")
-
+        # print(soup)
         if len(jobs := soup.find_all('tr', attrs=('data-row'))) >0:
             for job in jobs:
-                
+                # link = 'https://jobs.engie.com'+ job.find('a')['href']
+                # for item in link:
+                #     s = GetStaticSoup(item)
+                #     print(s.find('div',class__ = 'job').text)
                 # Remove "Romania" from the location --- Start
                 city_location = job.find('span', attrs ='jobLocation').text.strip().title().split(', R')[0].split(', ')
                 
@@ -52,6 +55,8 @@ def scraper():
                         city_location[city]='Pitesti'
                     if 'Crai' in city_location[city]:
                         city_location[city]='Craiova'
+                    if 'Ploiest' in city_location[city]:
+                        city_location[city] = 'Ploiesti'
                   
                 # check county for cities from city_loc list  add to a county list if True else not then None 
                 job_county = [get_county(city)[0] if True in get_county(city) else None for city in city_location]
