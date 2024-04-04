@@ -13,6 +13,7 @@
 # Link ------> https://www.fntsoftware.com/en/careers/career-opportunities
 #
 #
+from bs4 import BeautifulSoup
 from __utils import (
     GetStaticSoup,
     get_county,
@@ -25,22 +26,28 @@ def scraper():
     """
     ... scrape data from FntSoftware scraper.
     """
-    soup = GetStaticSoup("https://www.fntsoftware.com/en/careers/career-opportunities")
-
     job_list = []
-
-    for job in soup.find('div', attrs=('link-liste')):
+    soup = GetStaticSoup("https://www.fntsoftware.com/en/careers/career-opportunities")
     
-        print(job.find('a')['href'])
-       
+    #find div element from page and save it in a string 
+    data = str(soup.find('div', attrs=('link-liste')))
+    #parese on emore time data string to a soup to be able to iterate and extract job data
+    soup_jobs = BeautifulSoup(data, 'lxml')
+    jobs = soup_jobs.find_all('a')
+
+    
+    for job in jobs:
+        link = f"https://www.fntsoftware.com/{job.get('href')}"
+        title = job.find('span', class_='link-liste__text').text
+        
         # get jobs items from response
         job_list.append(Item(
-            job_title = job.text.strip(),
-            job_link = '',
+            job_title = title,
+            job_link = link,
             company = 'FntSoftware',
             country = 'Romania',
-            county = '',
-            city = '',
+            county = None,
+            city = 'Timisoara',
             remote = 'on-site',
         ).to_dict())
 
@@ -60,8 +67,8 @@ def main():
     jobs = scraper()
     print(len(jobs))
     # uncomment if your scraper done
-    #UpdateAPI().update_jobs(company_name, jobs)
-    #UpdateAPI().update_logo(company_name, logo_link)
+    UpdateAPI().update_jobs(company_name, jobs)
+    UpdateAPI().update_logo(company_name, logo_link)
 
 
 if __name__ == '__main__':
