@@ -26,7 +26,6 @@ def scraper():
     json_data = GetRequestJson("https://api.eu.lever.co/v0/postings/ascentcore?group=team&mode=json")
 
     job_list = []
-    county =[]
     for jobs in json_data:
         for job in jobs['postings']:
             # find location from text and location from job['categories']['allLocations']
@@ -38,7 +37,6 @@ def scraper():
             #check if city is a county 
             county = [city for city in location if True in get_county(city)]
             
-
         # get jobs items from response
             job_list.append(Item(
                 job_title='',
