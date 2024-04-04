@@ -37,7 +37,6 @@ def scraper():
         data_loc_type = job.find('div', attrs = ('job-location')).text.split(', ')
             
         if 'Bucuresti' in data_loc_type:
-            data_loc_type.remove('Bucuresti') #remove Bucuresti from list to clear list just for job_type
             finish_location = get_county(location ='Bucuresti' ) #get location finish with Bucuresti if Bucuresti is present in data_loc_type
         else:
             #if Bucuresti not in data_loc_type list get tuple with false to for county check
