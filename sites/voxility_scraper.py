@@ -47,7 +47,7 @@ def scraper():
             job_link = base_link + job.find('a',)['href'].replace('..',''),
             company = 'Voxility',
             country = 'Romania',
-            county = finish_location[0] if True in finish_location  else None,
+            county =  None,
             city = 'all' if True in finish_location and finish_location[0] !='Bucuresti' else finish_location[0],
             remote = get_job_type(job.find('a').text),
         ).to_dict())
