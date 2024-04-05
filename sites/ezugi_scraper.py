@@ -56,7 +56,7 @@ def scraper():
             job_link = job.find('a')['href'],
             company='Ezugi',
             country='Romania',
-            county = finish_location[0] if True in finish_location else None, 
+            county = None, 
             city='all' if True  in finish_location and 'remote' in job_type and finish_location[0] != 'Bucuresti' else finish_location[0],
             remote = job_type ,
         ).to_dict())
