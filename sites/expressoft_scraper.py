@@ -38,7 +38,7 @@ def scraper():
             job_link = job.find('a', class_='btn btn--secondary--solid')['href'],
             company='Expressoft',
             country='Romania',
-            county = finish_location[0] if True in finish_location else None,
+            county = None,
             city='all' if True  in finish_location and finish_location[0] != 'Bucuresti' else finish_location[0],
             remote=get_job_type(''),
         ).to_dict())
