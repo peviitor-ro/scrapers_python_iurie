@@ -39,7 +39,7 @@ def scraper():
             job_link ='https://www.sampamind.com'+job.get('href'),
             company ='Sampamind',
             country  ='România',
-            county = "București" if get_county('București')[-1]==True  else get_county('București')[0],
+            county = None, #"București" if True in  get_county('București')  else None,
             city = 'București',
             remote = get_job_type(''),
         ).to_dict())
