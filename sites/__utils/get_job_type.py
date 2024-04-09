@@ -36,3 +36,5 @@ def get_job_type(sentence: str ,*kwargs) -> str:
         types.extend(add_job_type)
         
     return types
+
+# print(get_job_type('mama tama on-site', 'hibrid'))
