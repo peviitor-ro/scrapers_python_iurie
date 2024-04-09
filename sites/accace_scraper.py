@@ -34,6 +34,13 @@ def scraper():
     for job in soup.find_all('div',  attrs = ('col-md-4 col-sm-6 grid-item')):
         
         title = job.find('span', attrs = ('job-title')).text.strip()
+        #logic to fix site bugs for job type 
+        job_type = get_job_type(job.find('div', attrs = ('job-location')).text)
+        if  title == 'Senior Internal Accountant':
+            job_type = 'remote'
+        elif title == 'Payroll Specialist':
+            job_type = 'hybrid'
+            
         # Extract location and job type from page
         data_loc_type = job.find('div', attrs = ('job-location')).text.split(', ')
             
@@ -50,8 +57,8 @@ def scraper():
             company='Accace',
             country='Romania',
             county = None,
-            city =  'all' if True in finish_location and finish_location[0].lower() != 'bucuresti' else finish_location[0],
-            remote = get_job_type('hibrid') if title == 'Payroll Specialist' else get_job_type(job.find('div', attrs = ('job-location')).text),
+            city = 'all' if 'remote' in job_type else finish_location[0],
+            remote = job_type,
         ).to_dict()) 
 
     return job_list
