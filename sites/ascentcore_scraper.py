@@ -39,7 +39,7 @@ def scraper():
             
         # get jobs items from response
             job_list.append(Item(
-                job_title='',
+                job_title = job['text'],
                 job_link = job['hostedUrl'],
                 company = 'AscentCore',
                 country = 'Romania',
