@@ -35,9 +35,12 @@ def scraper():
             if br_tag:
                 #create a list of locations
                 locations = br_tag.next_sibling.strip().split(', ') 
+                
                 #replace incorect location from a list
                 if 'MogosoaiaSe' in locations[0]:
                     locations[0] = 'Mogosoaia'
+                    locations.append('Bucuresti')
+                
                 #check if city is a county and add it to a list 
                 check_county  = [county for county in locations if True in get_county(county)]
                 
