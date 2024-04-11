@@ -56,7 +56,7 @@ def main():
     """
 
     company_name = "Olinio"
-    logo_link = "https://images.teamtailor-cdn.com/images/s3/teamtailor-production/logotype-v3/image_uploads/4bb5fa99-79e7-48cc-ac02-faf0339cd2bf/original.png"
+    logo_link = "https://manatal-backend-public-assets.s3.amazonaws.com/media/career_portal_logo_direct_upload/fd9d1751-1e44-4977-a36a-353949d265b2_logo-light-olinio-retina.png"
 
     jobs = scraper()
     print(len(jobs))
