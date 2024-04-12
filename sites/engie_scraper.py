@@ -70,7 +70,7 @@ def scraper():
                     company='ENGIE',
                     country='Romania',
                     county = job_county,
-                    city = 'all'  if not None in job_county and 'Bucuresti' not in job_county else  city_location, #if len(city_location)>1 else 'all',
+                    city = 'all'  if not None in job_county else  city_location, #if len(city_location)>1 else 'all',
                     # for location if all then location remote else On-site
                     remote =  get_job_type('remote') if "all" in city_location else get_job_type(''),
                 ).to_dict())
