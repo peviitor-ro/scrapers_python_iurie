@@ -46,16 +46,13 @@ class UpdateAPI:
         ... update and clean data on peviitor
 
         '''
-        clean_request = requests.post(self.clean_url, headers=self.clean_header,
-                                      data={'company': company_name})
+        clean_request = requests.post(self.clean_url, headers=self.clean_header, data={'company': company_name})
 
         # time sleep for SOLR indexing
         time.sleep(0.2)
 
         
-        
-        post_request_to_server = requests.post(self.post_url, headers=self.post_header,
-                                               data=json.dumps(data_jobs))
+        post_request_to_server = requests.post(self.post_url, headers=self.post_header, data=json.dumps(data_jobs))
 
       
         #######################################################################
@@ -71,3 +68,8 @@ class UpdateAPI:
         response = requests.post(self.logo_url, headers=self.logo_header, data=data)
 
         #  print(f'Logo update ---> succesfuly {response}')
+
+
+# oken endpoint = "https://api.laurentiumarian.ro/get_token" genereaza un nou token. body {"email":"emailultau"}
+# adaugare joburi endpoint = "https://api.laurentiumarian.ro/jobs/add/"
+# ambele metoda post
