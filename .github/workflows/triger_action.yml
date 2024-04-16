@@ -10,7 +10,7 @@ on:
   #  push:
   #    branches: [ main ]
   schedule:
-    - cron: '11 00 * * *'
+    - cron: '10 00 * * *'
   workflow_dispatch:
 
 permissions:
@@ -32,7 +32,9 @@ jobs:
         python3 -m pip install --upgrade pip
         pip3 install -r requirements.txt
     - name: All scrapers runs
+    #TODO to remove line 36 and 37
       env:
         IURIE: ${{ secrets.IURIE }}
       run: |
+        source access_token.sh
         python3 sites/__main_RunnerFile.py
