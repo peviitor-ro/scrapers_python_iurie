@@ -40,15 +40,16 @@ def scraper():
                 location_span = job.find('span', string='Bucharest')
                 if location_span:
                     job_type = job.find('span', attrs='inline-flex items-center gap-x-2')
+                    title = job.find('span', attrs='text-block-base-link company-link-style').text
                     # get jobs items from response
                     job_list.append(Item(
-                        job_title = job.find('span', attrs='text-block-base-link company-link-style').text,
+                        job_title = title,
                         job_link = job.find('a')['href'],
                         company = 'Olinio',
                         country = 'Romania',
                         county = None,
                         city = 'Bucuresti',
-                        remote = get_job_type('Hybrid Remote')if job_type else'on-site' ,
+                        remote = get_job_type('Hybrid Remote')if job_type else 'remote' if title == 'Database Analyst' else 'on-site' ,
                     ).to_dict())
         else:
             flag = False
