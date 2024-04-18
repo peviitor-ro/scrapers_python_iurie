@@ -62,7 +62,6 @@ def scraper():
         else:
             flag = False
             break
-        # print('page',page)
         # increment page
         page += 10
         time.sleep(1)
