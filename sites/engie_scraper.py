@@ -98,7 +98,7 @@ def main():
     jobs = scraper()
     print(len(jobs))
     # uncomment if your scraper done
-    UpdateAPI().update_jobs(company_name, jobs)
+    UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
 
 
