@@ -12,8 +12,12 @@ import os  # I do not have API KEY
 import json
 #
 import time
-from get_token_validator import get_token
-from dotenv import load_dotenv
+
+EMAIL = 'chigaiiura@yahoo.com'
+DOMAIN = 'https://api.peviitor.ro/v5/'
+
+TOKEN_ROUTE = 'get_token/'
+ADD_JOBS_ROUTE = 'add/'
 
 class UpdateAPI:
     '''
@@ -27,7 +31,8 @@ class UpdateAPI:
         self.clean_url = 'https://api.peviitor.ro/v4/clean/'
         self.post_url = 'https://api.peviitor.ro/v4/update/'
         self.logo_url = 'https://api.peviitor.ro/v1/logo/add/'
-
+        
+        
         self.clean_header = {
             'Content-Type': 'application/x-www-form-urlencoded',
             'apikey': self.api_key
@@ -64,11 +69,22 @@ class UpdateAPI:
         response = requests.post(self.logo_url, headers=self.logo_header, data=data)
 
         #  print(f'Logo update ---> succesfuly {response}')
+        
+    def get_token(self):
+        """
+        Returnează token-ul necesar pentru a face request-uri către API.
+        :return: token-ul necesar pentru a face request-uri către API
+        """
+        endpoint = TOKEN_ROUTE
+        email = EMAIL
+        url = f"{DOMAIN}{endpoint}"
+        response = requests.post(url, json={"email": email})
+        return response.json()["access"]
 
-    def publish(version, company, data, apikey):
-        route = os.environ.get("ADD_JOBS_ROUTE")
-        url = f"{domain}{route}"
-        token = os.environ.get("TOKEN") if os.environ.get("TOKEN") else get_token()
+    def publish(self, data):
+        route = ADD_JOBS_ROUTE
+        url = f"{DOMAIN}{route}"
+        token = self.get_token()
 
         headers = {"Content-Type": "application/json",
                 "Authorization": f"Bearer {token}"}
