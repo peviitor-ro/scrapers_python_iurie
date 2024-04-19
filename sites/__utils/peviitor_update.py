@@ -12,7 +12,8 @@ import os  # I do not have API KEY
 import json
 #
 import time
-
+from get_token_validator import get_token
+from dotenv import load_dotenv
 
 class UpdateAPI:
     '''
@@ -42,10 +43,7 @@ class UpdateAPI:
         }
 
     def update_jobs(self, company_name: str, data_jobs: list):
-        '''
-        ... update and clean data on peviitor
-
-        '''
+        ''' update and clean data on peviitor'''
         clean_request = requests.post(self.clean_url, headers=self.clean_header, data={'company': company_name})
 
         # time sleep for SOLR indexing
@@ -60,16 +58,24 @@ class UpdateAPI:
         print(json.dumps(data_jobs, indent=4))
 
     def update_logo(self, id_company: str, logo_link: str):
-        '''
-        ... update logo on peviitor.ro
-        '''
+        '''update logo on peviitor.ro'''
 
         data = json.dumps([{"id": id_company, "logo": logo_link}])
         response = requests.post(self.logo_url, headers=self.logo_header, data=data)
 
         #  print(f'Logo update ---> succesfuly {response}')
 
+    def publish(version, company, data, apikey):
+        route = os.environ.get("ADD_JOBS_ROUTE")
+        url = f"{domain}{route}"
+        token = os.environ.get("TOKEN") if os.environ.get("TOKEN") else get_token()
 
-# oken endpoint = "https://api.laurentiumarian.ro/get_token" genereaza un nou token. body {"email":"emailultau"}
+        headers = {"Content-Type": "application/json",
+                "Authorization": f"Bearer {token}"}
+
+        requests.post(url, headers=headers, json=data)
+        
+        
+# token endpoint = "https://api.laurentiumarian.ro/get_token" genereaza un nou token. body {"email":"emailultau"}
 # adaugare joburi endpoint = "https://api.laurentiumarian.ro/jobs/add/"
 # ambele metoda post
