@@ -12,8 +12,9 @@ import json
 
 class UpdateAPI:
     '''
-    - Method for update data,
-    - Method for update logo.
+    - Method for update logo,
+    - Method to get token,
+    - Method for update data.
     '''
 
     def __init__(self):
