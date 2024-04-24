@@ -44,11 +44,11 @@ def scraper():
         job_list.append(Item(
             job_title = title,
             job_link = link,
-            company = 'FntSoftware',
-            country = 'Romania',
-            county = None,
-            city = 'Timisoara',
-            remote = 'on-site',
+            company='FntSoftware',
+            country='Romania',
+            county  = None,
+            city='Timisoara',
+            remote='on-site',
         ).to_dict())
 
     return job_list
