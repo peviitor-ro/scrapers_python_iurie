@@ -36,16 +36,16 @@ def scraper():
         check_county = get_county(city_locattion if city_locattion != 'Târgu Mureș' else 'Targu-Mures' )
         
         for job in soup.find_all('li', attrs=('opening-job job column wide-7of16 medium-1of2')):
-            
+            title = job.find('h4', class_='details-title job-title link--block-target').text
             # get jobs items from response
             job_list.append(Item(
-                job_title = job.find('h4', class_='details-title job-title link--block-target').text,
+                job_title = title,
                 job_link = job.find('a', class_='link--block details')['href'],
                 company = 'Bluewiresoftware',
                 country = 'Romania',
                 county = check_county[0] if True in check_county else None,
                 city = 'all' if True in check_county and check_county[0] != 'Bucuresti' else check_county[0],
-                remote = 'remote' if job.find('i') else 'on-site',
+                remote = 'remote' if job.find('i') else get_job_type("hibrid") if title == "Infrastructure Engineer" else 'on-site',
             ).to_dict())
 
     return job_list
