@@ -79,7 +79,7 @@ def main():
     logo_link = "https://www.bher.ca/sites/default/files/images/2022-03/Deloitte-Logo.png"
 
     jobs = scraper()
-    print(len(jobs))
+    print("jobs found:",len(jobs))
     # uncomment if your scraper done
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
