@@ -160,4 +160,5 @@ cython_debug/
 #.idea/
 
 kronospan_scraper.py
+apiUpdateFiles.py
 
