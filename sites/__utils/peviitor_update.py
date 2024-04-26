@@ -41,10 +41,8 @@ class UpdateAPI:
         Returnează token-ul necesar pentru a face request-uri către API.
         :return: token-ul necesar pentru a face request-uri către API
         """
-        endpoint = self.TOKEN_ROUTE
-        email = self.EMAIL
-        url = f"{self.DOMAIN}{endpoint}"
-        response = requests.post(url, json={"email": email})
+        url = f"{self.DOMAIN}{self.TOKEN_ROUTE}"
+        response = requests.post(url, json={"email": self.EMAIL})
         return response.json()["access"]
 
     def publish(self, data):
@@ -65,4 +63,4 @@ class UpdateAPI:
        
         print(json.dumps(data, indent=4))
         
-    
+   
