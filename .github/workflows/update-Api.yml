@@ -28,4 +28,4 @@ jobs:
         pip3 install python-dotenv
     - name: Update API
       run: |
-        python3 apiUpdateFiles.py
+        python3 sites/apiUpdateFiles.py
