@@ -1,7 +1,4 @@
-#
-#
-#
-#
+
 from __utils.peviitor_update import UpdateAPI
 from __utils.default_headers import DEFAULT_HEADERS
 from __utils.items_struct import Item
