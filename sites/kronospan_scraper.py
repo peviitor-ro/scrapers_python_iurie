@@ -23,9 +23,6 @@ from __utils import (
 )
 
 
-
-
-
 def scraper():
     '''
     ... scrape data from Kronospan scraper.
@@ -72,10 +69,10 @@ def main():
     company_name = "Kronospan"
     logo_link = "https://logos-download.com/wp-content/uploads/2016/06/Kronospan_logo_blue_bg.png"
 
-    jobs = scraper()
-    print("job found:",len(jobs ))
+    # jobs = scraper()
+    # print("job found:",len(jobs ))
     # uncomment if your scraper done
-    UpdateAPI().publish(jobs)
+    # UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
 
 
