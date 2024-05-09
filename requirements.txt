@@ -77,3 +77,4 @@ webencodings==0.5.1
 websockets==10.4
 wsproto==1.2.0
 zipp==3.15.0
+requests-html==0.10.0
