@@ -30,7 +30,7 @@ class GetDynamicSoup:
         response = session.get(link, headers=headers)
 
         # Render Dynamic page with JS
-        response.html.render()
-
+        response.html.render(sleep=1)
+        
         # return soup object from dynamic page
-        return BeautifulSoup(response.html.html, 'lxml')
+        return BeautifulSoup(response.html.html, 'lxml') 
