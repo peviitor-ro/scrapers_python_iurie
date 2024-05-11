@@ -43,7 +43,7 @@ def scraper():
                     country="Romania",
                     county = None,
                     city="Bucuresti",
-                    remote="on-site",
+                    remote="hybrid",
                 ).to_dict())
 
     return job_list
