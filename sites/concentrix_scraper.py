@@ -32,6 +32,7 @@ def scraper():
     job_list = []
     for job in soup.find_all("div",attrs="job"):
         title=job.find("h3").text
+        clean_title=title.split(' –')[0].split(" - ")[0]
         location=job.find("div", attrs="job-location").text.split(', R')[0]
         # change Bucharest to București
         if location=="Bucharest":
@@ -41,7 +42,7 @@ def scraper():
     
         # get jobs items from response
         job_list.append(Item(
-            job_title=title,
+            job_title=clean_title,
             job_link=job.find("a")["href"],
             company="Concentrix",
             country="Romania",
