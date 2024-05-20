@@ -42,7 +42,7 @@ def scraper():
                     company="Gameloft",
                     country="Romania",
                     county = None,
-                    city="Bucuresti",
+                    city="București",
                     remote="hybrid",
                 ).to_dict())
 

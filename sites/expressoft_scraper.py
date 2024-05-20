@@ -39,7 +39,7 @@ def scraper():
             company='Expressoft',
             country='Romania',
             county = None,
-            city='all' if True  in finish_location and finish_location[0] != 'Bucuresti' else finish_location[0],
+            city='all' if True  in finish_location and finish_location[0] != 'București' else finish_location[0],
             remote=get_job_type(''),
         ).to_dict())
 
