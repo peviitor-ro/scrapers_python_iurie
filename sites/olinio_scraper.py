@@ -48,7 +48,7 @@ def scraper():
                         company = 'Olinio',
                         country = 'Romania',
                         county = None,
-                        city = 'Bucuresti',
+                        city = 'București',
                         remote = get_job_type('Hybrid Remote')if job_type else 'remote' if title == 'Database Analyst' else 'on-site' ,
                     ).to_dict())
         else:

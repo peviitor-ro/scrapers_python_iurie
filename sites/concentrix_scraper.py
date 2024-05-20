@@ -26,6 +26,7 @@ def scraper():
     """
     ... scrape data from Concentrix scraper.
     """
+    payload = "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"action\"\r\n\r\ngd_jobs_query_pagination\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"country[]\"\r\n\r\nRomania\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"jobs_shown\"\r\n\r\n0\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"jobs_per_page\"\r\n\r\n100\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"keyword\"\r\n\r\n\r\n-----011000010111000001101001--\r\n"
     soup = GetStaticSoup("https://jobs.concentrix.com/job-search/?keyword=&country=Romania")
 
     job_list = []

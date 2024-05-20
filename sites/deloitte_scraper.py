@@ -44,7 +44,7 @@ def scraper():
                 location_data = span_elements[0].text.strip().split('- R')[0].replace(',', '')
                 #check if Bucharest and replace it with Bucuresti
                 if 'Bucharest' in location_data:
-                    location_data = location_data.replace('Bucharest','Bucuresti')
+                    location_data = location_data.replace('Bucharest','București')
                 location = location_data.split()
                 #create a list only  if location is county 
                 check_county = [county for county in location if True in get_county(county)]

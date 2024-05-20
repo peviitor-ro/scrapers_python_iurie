@@ -50,7 +50,7 @@ def scraper():
                     
                 for city in range(len(city_location)):
                     if 'Bucharest' in city_location[city]:
-                        city_location[city]='Bucuresti'  
+                        city_location[city]='București'  
                     if 'Pi' in city_location[city]:
                         city_location[city]='Pitesti'
                     if 'Crai' in city_location[city]:

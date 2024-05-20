@@ -38,7 +38,7 @@ class GetStaticSoup:
         #  update the headers
         if custom_headers:
             headers.update(custom_headers)
-
+            
         response = session.get(url, headers=headers)
 
         # return soup object from static page

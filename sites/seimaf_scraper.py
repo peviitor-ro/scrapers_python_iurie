@@ -41,7 +41,7 @@ def scraper():
                 company="Seimaf",
                 country="Romania",
                 county = None,
-                city = "Bucuresti",
+                city = "București",
                 remote = "on-site",
             ).to_dict()) 
        
