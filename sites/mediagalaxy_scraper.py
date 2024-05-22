@@ -33,7 +33,7 @@ def scraper():
         title=job.find('h2', attrs="flex-shrink-0 mb-3 md:mb-0 md:w-64 md:pr-6 font-medium capitalize").text
         link=title.split()
         location=job.find('div', attrs="w-full mb-2 md:mb-0").text.split(':')[1].split(',')
-        print()
+        
 
         # get jobs items from response
         job_list.append(Item(

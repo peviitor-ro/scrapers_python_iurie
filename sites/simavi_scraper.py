@@ -53,7 +53,7 @@ def main():
     """
 
     company_name = "Simavi"
-    logo_link = "https://www.simavi.ro/sites/default/files/2018-07/logo-construction_0.png"
+    logo_link = "https://simavi.ro/sites/default/files/logo-construction_0.png"
     start_time=time.time()
     jobs = scraper()
     end_time=time.time()

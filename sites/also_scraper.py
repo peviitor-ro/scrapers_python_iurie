@@ -66,6 +66,5 @@ def main():
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
     
-
 if __name__ == '__main__':
     main()
