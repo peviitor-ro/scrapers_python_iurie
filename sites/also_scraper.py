@@ -45,7 +45,7 @@ def scraper():
                 country= job['country'],
                 county= 'București' if get_county('București')[-1] == True else get_county('București')[0],
                 city='București',
-                remote = get_job_type(''),
+                remote ="on-site" if "Internship" in job['title'] else "remote",
             ).to_dict())
 
     return job_list
@@ -61,7 +61,7 @@ def main():
     logo_link = 'https://upload.wikimedia.org/wikipedia/commons/f/fd/ALSO_Holding_AG_Logo_2020.svg'
 
     jobs = scraper()
-    # print(len(jobs))
+    # print("jobs found",len(jobs))
     # uncomment if your scraper done
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
