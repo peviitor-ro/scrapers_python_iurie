@@ -40,9 +40,9 @@ def scraper():
                 job_link=job.find("a")["href"],
                 company="Seimaf",
                 country="Romania",
-                county = None,
-                city = "Bucureștio",
-                remote = "on-site",
+                county="Bucuresti",
+                city="Bucuresti",
+                remote="on-site",
             ).to_dict()) 
        
     for job in soup.find_all("article",attrs="card-job"):
@@ -53,8 +53,8 @@ def scraper():
             job_link=job.find("a")["href"],
             company="Seimaf",
             country="Romania",
-            county = "Bucuresti",
-            city = "Bucuresti",
+            county="Bucuresti",
+            city="Bucuresti",
             remote = "on-site",
         ).to_dict())
 
