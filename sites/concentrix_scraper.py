@@ -14,21 +14,34 @@
 #
 #
 from __utils import (
-    GetStaticSoup,
+   
     get_county,
     get_job_type,
     Item,
     UpdateAPI,
 )
+import  requests
+from bs4 import BeautifulSoup
 
 
 def scraper():
     """
     ... scrape data from Concentrix scraper.
     """
-    payload = "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"action\"\r\n\r\ngd_jobs_query_pagination\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"country[]\"\r\n\r\nRomania\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"jobs_shown\"\r\n\r\n0\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"jobs_per_page\"\r\n\r\n100\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"keyword\"\r\n\r\n\r\n-----011000010111000001101001--\r\n"
-    soup = GetStaticSoup("https://jobs.concentrix.com/job-search/?keyword=&country=Romania")
-
+    payload = {"action":"gd_jobs_query_pagination",
+               "country":"Romania",
+               "jobs_shown":0,
+               "jobs_per_page":50
+               }
+   
+    headers={
+        "x-requested-with":"XMLHttpRequest"
+    }
+    url="https://jobs.concentrix.com/wp-admin/admin-ajax.php"
+    responce=requests.post(url=url,data=payload, headers=headers)
+    html=responce.json().get("data").get("output")
+    soup=BeautifulSoup(html,'lxml')
+    # print(html)
     job_list = []
     for job in soup.find_all("div",attrs="job"):
         title=job.find("h3").text
