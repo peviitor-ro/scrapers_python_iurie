@@ -41,7 +41,7 @@ def scraper():
                 company="Seimaf",
                 country="Romania",
                 county = None,
-                city = "București",
+                city = "Bucureștio",
                 remote = "on-site",
             ).to_dict()) 
        
@@ -53,7 +53,7 @@ def scraper():
             job_link=job.find("a")["href"],
             company="Seimaf",
             country="Romania",
-            county = None,
+            county = "Bucuresti",
             city = "Bucuresti",
             remote = "on-site",
         ).to_dict())
