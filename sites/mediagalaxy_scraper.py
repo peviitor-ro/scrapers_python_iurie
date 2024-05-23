@@ -34,13 +34,11 @@ def scraper():
         title=job.find('h2', attrs="flex-shrink-0 mb-3 md:mb-0 md:w-64 md:pr-6 font-medium capitalize").text
         link=title.split()
         location=job.find('div', attrs="w-full mb-2 md:mb-0").text.split(':')[1].strip().split(',')
-        #check if location is county
-        for check_county in location:
-            check=get_county(check_county.strip())
-            if True in check:
-                county_finish.append(check[0])
-                # location.remove(check)
-                
+        location=[city.strip()for city in location]
+        #check if location is county 
+        county_finish=[city for city in location if True in get_county(city)]
+        #remove all countyie from location
+        only_city_location=list(set(location) - set(county_finish))
         
         # get jobs items from response
         job_list.append(Item(
@@ -49,7 +47,7 @@ def scraper():
             company="Mediagalaxy",
             country="Romania",
             county = county_finish,
-            city = location,
+            city = only_city_location,
             remote = "on-site",     
         ).to_dict())
 
