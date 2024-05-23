@@ -28,10 +28,12 @@ def scraper():
     ... scrape data from Kronospan scraper.
     '''
     job_list = []
-    page = 1
-    flag = True
+
     romanians_cities=["Brasov","Sebes"]
-    while flag:
+    soup = GetStaticSoup(f"https://kronospan-candidate.talent-soft.com/job/list-of-jobs.aspx?page=1&LCID=1048")
+    pages=soup.find_all("a",{"class":"ts-ol-pagination-list-item__link"})[-2].text
+   
+    for page in range(1,int(pages)+1):
         soup = GetStaticSoup(f"https://kronospan-candidate.talent-soft.com/job/list-of-jobs.aspx?page={page}&LCID=1048")         
         if len(jobs := soup.find_all('li',  attrs="ts-offer-list-item offerlist-item"))>1:
             for job in jobs:
@@ -49,12 +51,7 @@ def scraper():
                             city=location.text,
                             remote='on-site',
                         ).to_dict())
-        else:
-            flag=False
-            break
-        # increment page
-        page += 1
-        # time.sleep(1)
+        
 
     return job_list
 
@@ -69,8 +66,8 @@ def main():
     company_name = "Kronospan"
     logo_link = "https://logos-download.com/wp-content/uploads/2016/06/Kronospan_logo_blue_bg.png"
 
-    # jobs = scraper()
-    # print("job found:",len(jobs ))
+    jobs = scraper()
+    print("job found:",len(jobs ))
     # uncomment if your scraper done
     # UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)

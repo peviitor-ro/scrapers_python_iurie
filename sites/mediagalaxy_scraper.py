@@ -29,19 +29,26 @@ def scraper():
     soup = GetStaticSoup("https://mediagalaxy.ro/cariere/")
 
     job_list = []
+    county_finish=[]
     for job in soup.find_all("div",attrs="border rounded px-8"):
         title=job.find('h2', attrs="flex-shrink-0 mb-3 md:mb-0 md:w-64 md:pr-6 font-medium capitalize").text
         link=title.split()
-        location=job.find('div', attrs="w-full mb-2 md:mb-0").text.split(':')[1].split(',')
-        print()
-
+        location=job.find('div', attrs="w-full mb-2 md:mb-0").text.split(':')[1].strip().split(',')
+        #check if location is county
+        for check_county in location:
+            check=get_county(check_county.strip())
+            if True in check:
+                county_finish.append(check[0])
+                # location.remove(check)
+                
+        
         # get jobs items from response
         job_list.append(Item(
             job_title=title.capitalize(),
             job_link="https://mediagalaxy.ro/cariere/#" + "-".join(link),
             company="Mediagalaxy",
             country="Romania",
-            county = None,
+            county = county_finish,
             city = location,
             remote = "on-site",     
         ).to_dict())

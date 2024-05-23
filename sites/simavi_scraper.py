@@ -30,6 +30,7 @@ def scraper():
     soup = GetStaticSoup("https://simavi.ro/cariere")
 
     job_list = []
+    print(len(soup.find_all("div",attrs="views-row col-md-4")))
     for job in soup.find_all("div",attrs="views-row col-md-4"):
 
         # get jobs items from response
@@ -38,7 +39,7 @@ def scraper():
             job_link=job.find("a")["href"],
             company="Simavi",
             country="Romania",
-            county = None,
+            county = "București",
             city="București",
             remote="on-site",
         ).to_dict())
@@ -53,13 +54,9 @@ def main():
     """
 
     company_name = "Simavi"
-    logo_link = "https://www.simavi.ro/sites/default/files/2018-07/logo-construction_0.png"
-    start_time=time.time()
+    logo_link = "https://simavi.ro/sites/default/files/logo-construction_0.png" 
     jobs = scraper()
-    end_time=time.time()
-    
     print("jobs found:",len(jobs))
-    print("execution time", round(end_time-start_time),"sec")
     # uncomment if your scraper done
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)

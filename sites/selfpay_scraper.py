@@ -31,15 +31,15 @@ def scraper():
     job_list = []
     for job in soup.find_all("div",attrs="js-openings-load"):
         location=job.find("h3",attrs="opening-title title display--inline-block text--default").text.split(', R')[0]
-        
+        county=get_county(location)
         # get jobs items from response
         job_list.append(Item(
             job_title=job.find("h4",attrs="details-title job-title link--block-target").text,
             job_link=job.find("a")["href"],
             company="SelfPay",
             country="Romania",
-            county = None,
-            city = location,
+            county = county[0] if True in county else None,
+            city = 'all' if True in county and county[0] != 'Bucuresti' else county[0],
             remote='remote' if job.find('i') else 'on-site',
         ).to_dict())
 

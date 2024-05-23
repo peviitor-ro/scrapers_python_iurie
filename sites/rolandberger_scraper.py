@@ -34,15 +34,13 @@ def scraper():
     job_list = []
     for job in json_data['results']:
         if job["location"]==["Bucharest"]:
-            # print(job["positionProfile___webAddress"][0])
-
-        # get jobs items from response
+            # get jobs items from response
             job_list.append(Item(
                 job_title=job["title"][0],
                 job_link=job["positionProfile___webAddress"][0],
                 company="RolandBerger",
                 country="Romania",
-                county=None,
+                county="București",
                 city="București",
                 remote="on-site",
             ).to_dict())
@@ -63,7 +61,7 @@ def main():
     jobs = scraper()
     print("jobs found:",len(jobs))
     # uncomment if your scraper done
-    UpdateAPI().publish(jobs)
+    # UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
 
 
