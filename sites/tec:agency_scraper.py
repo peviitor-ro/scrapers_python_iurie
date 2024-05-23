@@ -33,14 +33,14 @@ def scraper():
     for job in json_data['result']:
         location  =  job['location']['city']
         check_county=get_county(location)[0]if True in get_county(location) else  None
-
+      
         # get jobs items from response
         job_list.append(Item(
             job_title=job['jobOpeningName'],
             job_link="https://tecss.bamboohr.com/careers/"+job['id'],
             company="tec:agency",
             country="Romania",
-            county=check_county,
+            county=check_county if check_county else "Cluj",
             city=location,
             remote="hybrid" if job['locationType'] == '2' else "on-site",
         ).to_dict())
