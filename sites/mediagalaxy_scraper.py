@@ -39,7 +39,7 @@ def scraper():
             check=get_county(check_county.strip())
             if True in check:
                 county_finish.append(check[0])
-                location.remove(check)
+                # location.remove(check)
                 
         
         # get jobs items from response
