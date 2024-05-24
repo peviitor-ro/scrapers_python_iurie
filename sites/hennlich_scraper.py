@@ -41,24 +41,20 @@ def scraper():
             location.append("Turda")
         else:
             location="Arad"
-            
-        #check if location is county
-        # if "Brașov" in location:
-        #     for county_location in  location:
-        #         if True in get_county(county_location):
-        #             countis.append(get_county(county_location)[0])
-        #             location.remove("Brașov")
-        # else:
-        #     countis=get_county("Arad")[0] if True in get_county("Arad") else None
+        # check if location is county
+        county_finish=[city for city in location if True in get_county(city)]
+        if county_finish:
+            location="Turda"
        
+    
         # get jobs items from response
         job_list.append(Item(
             job_title=title,
             job_link=link,
             company="Hennlich",
             country="Romania",
-            county=None,
-            city=location,
+            county=county_finish if county_finish else get_county(location)[0] if True in get_county(location) else None,
+            city="all" if "Arad" in location else location,
             remote = get_job_type(""),
         ).to_dict())
 
