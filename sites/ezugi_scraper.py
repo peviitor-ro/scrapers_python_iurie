@@ -37,27 +37,23 @@ def scraper():
         title = job.find('span', attrs =('text-block-base-link sm:min-w-[25%] sm:truncate company-link-style')).text
        
         # find city
-        data = job.find('div', attrs =('mt-1 text-md')).text.strip()
-        location = list(data.split())
-        loc = [word for word in location if word.lower() == 'bucharest'] #remove all elements exept buharest 
+        data = job.find('div', attrs =('mt-1 text-md')).text.strip().lower()
+        
         # replace bucharest with Bucuresti in loc list 
-        for word in range(len(loc)):
-            if  loc[word].lower().strip() == 'bucharest':
-                loc_f='București'
-                
-         # call func get_county to return tuple
-        finish_location = get_county(location=loc_f)   
-        #check job type from tytle and data 
+        if 'bucharest' in data:
+            location="București"       
+        # call func get_county to return tuple
+        finish_location = get_county(location)  
+        #check job type from title and data 
         job_type = get_job_type(title + data)
         # get jobs items from response
         job_list.append(Item(
             job_title = title,
-            
             job_link = job.find('a')['href'],
             company='Ezugi',
             country='Romania',
-            county = None, 
-            city='all' if True  in finish_location and 'remote' in job_type and finish_location[0] != 'Bucuresti' else finish_location[0],
+            county=finish_location[0] if True in finish_location else  None, 
+            city='all' if True in finish_location and finish_location[0] != 'Bucuresti' else location,
             remote = job_type ,
         ).to_dict())
 
@@ -75,7 +71,7 @@ def main():
     logo_link = "https://images.teamtailor-cdn.com/images/s3/teamtailor-production/logotype-v3/image_uploads/34b2d2c3-89da-4697-a57c-78cabbc1d793/original.png"
 
     jobs = scraper()
-   
+    print("found jobs", len(jobs))
     # uncomment if your scraper done
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
