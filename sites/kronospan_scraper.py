@@ -30,27 +30,32 @@ def scraper():
     job_list = []
 
     romanians_cities=["Brasov","Sebes"]
+    #check how many pages with jobs are on the page 
     soup = GetStaticSoup(f"https://kronospan-candidate.talent-soft.com/job/list-of-jobs.aspx?page=1&LCID=1048")
     pages=soup.find_all("a",{"class":"ts-ol-pagination-list-item__link"})[-2].text
-   
+    
+    # start scraping
     for page in range(1,int(pages)+1):
         soup = GetStaticSoup(f"https://kronospan-candidate.talent-soft.com/job/list-of-jobs.aspx?page={page}&LCID=1048")         
-        if len(jobs := soup.find_all('li',  attrs="ts-offer-list-item offerlist-item"))>1:
-            for job in jobs:
-                # location filter
-                location_text = job.find('ul', class_='ts-offer-list-item__description')
-                for location in location_text:
-                    if location.text in romanians_cities:
-                        # get jobs items from response
-                        job_list.append(Item(
-                            job_title=job.find("h3", attrs="ts-offer-list-item__title styleh3").text.strip(),
-                            job_link="https://kronospan-candidate.talent-soft.com"+job.find("a")["href"],
-                            company='Kronospan',
-                            country="Romania", 
-                            county=None,
-                            city=location.text,
-                            remote='on-site',
-                        ).to_dict())
+        # if len(jobs := soup.find_all('li',  attrs="ts-offer-list-item offerlist-item"))>1:
+        for job in soup.find_all('li',  attrs="ts-offer-list-item offerlist-item"):
+            # location filter
+            location_text = job.find('ul', class_='ts-offer-list-item__description')
+            city = location_text.find_all('li')[-1].text
+        
+            if city in romanians_cities:
+                county_finis=get_county(city)
+                
+                # get jobs items from response
+                job_list.append(Item(
+                    job_title=job.find("h3", attrs="ts-offer-list-item__title styleh3").text.strip(),
+                    job_link="https://kronospan-candidate.talent-soft.com"+job.find("a")["href"],
+                    company='Kronospan',
+                    country="Romania", 
+                    county=county_finis[0] if True in county_finis else None,
+                    city='all' if True in county_finis else city,
+                    remote='on-site',
+                ).to_dict())
         
 
     return job_list
@@ -69,7 +74,7 @@ def main():
     jobs = scraper()
     print("job found:",len(jobs ))
     # uncomment if your scraper done
-    # UpdateAPI().publish(jobs)
+    UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
 
 
