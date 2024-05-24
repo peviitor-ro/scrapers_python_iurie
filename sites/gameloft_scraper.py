@@ -41,7 +41,7 @@ def scraper():
                     job_link=link,
                     company="Gameloft",
                     country="Romania",
-                    county = None,
+                    county="București",
                     city="București",
                     remote="hybrid",
                 ).to_dict())
