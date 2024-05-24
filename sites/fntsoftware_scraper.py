@@ -46,7 +46,7 @@ def scraper():
             job_link = link,
             company='FntSoftware',
             country='Romania',
-            county  = None,
+            county="Timis",
             city='Timisoara',
             remote='on-site',
         ).to_dict())
