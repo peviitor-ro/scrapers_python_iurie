@@ -45,7 +45,7 @@ def scraper():
             job_title=title.capitalize(),
             job_link="https://mediagalaxy.ro/cariere/#" + "-".join(link),
             company="Mediagalaxy",
-            country="Romania",
+            country="România",
             county = county_finish,
             city = only_city_location,
             remote = "on-site",     

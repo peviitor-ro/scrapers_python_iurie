@@ -36,7 +36,7 @@ def scraper():
             job_title=job.find('a').text,
             job_link = job.find('a')["href"],
             company="Interra Travel",
-            country="Romania",
+            country="România",
             county="București",
             city = "București",
             remote = "on-site",

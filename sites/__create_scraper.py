@@ -49,18 +49,18 @@ def scraper():
     soup = GetStaticSoup("{link}")
 
     job_list = []
-    for job in soup.find_all("",""):
-        pass
+    for job in soup.find_all("",attrs=""):
+        print(job)
 
         # get jobs items from response
         job_list.append(Item(
-            job_title = "",
-            job_link = "",
+            job_title="",
+            job_link="",
             company="{nume_scraper}",
-            country="Romania",
-            county = None,
-            city = "",
-            remote = "",
+            country="România",
+            county="",
+            city="",
+            remote="",
         ).to_dict())
 
     return job_list
@@ -155,7 +155,8 @@ from __utils import (
     exemplu: job_list.append(Item(job_title="titlu_str",
                                     job_link="link",
                                     company="nume_companie",
-                                    country="Romania",
+                                    country="România
+                    ",
                                     county="Judetul",
                                     city="Orasul",
                                     remote="remote, onsite sau hibryd"))
@@ -180,15 +181,15 @@ def scraper():
 
     job_list = []
     for job in json_data['key']:
-        pass
+        print(job)
 
         # get jobs items from response
         job_list.append(Item(
             job_title="",
             job_link="",
             company="{nume_scraper}",
-            country="Romania",
-            county=None,
+            country="România",
+            county="",
             city="",
             remote="",
         ).to_dict())
@@ -287,7 +288,8 @@ from __utils import (
     exemplu: list_jobs.append(Item(job_title="titlu_str",
                                     job_link="link",
                                     company="nume_companie",
-                                    country="Romania",
+                                    country="România
+                    ",
                                     county="Judetul",
                                     city="Orasul",
                                     remote="remote, onsite sau hibryd"))
@@ -312,17 +314,17 @@ def scraper():
 
     job_list = []
     for job in post_data:
-        pass
+        print(job)
 
         # get jobs items from response
         job_list.append(Item(
-            job_title='',
-            job_link='',
+            job_title="",
+            job_link="",
             company='{nume_scraper}',
-            country='',
-            county='',
-            city='',
-            remote='',
+            country="România",
+            county="",
+            city="",
+            remote="",
         ).to_dict())
 
     return job_list
@@ -421,7 +423,8 @@ from __utils import (
     exemplu: list_jobs.append(Item(job_title="titlu_str",
                                     job_link="link",
                                     company="nume_companie",
-                                    country="Romania",
+                                    country="România
+                    ",
                                     county="Judetul",
                                     city="Orasul",
                                     remote="remote, onsite sau hibryd"))
@@ -446,17 +449,17 @@ def scraper():
 
     job_list = []
     for job in soup.find_all(...):
-        pass
+        print(job)
 
         # get jobs items from response
         job_list.append(Item(
-            job_title='',
-            job_link='',
+            job_title="",
+            job_link="",
             company='{nume_scraper}',
-            country='',
-            county='',
-            city='',
-            remote='',
+            country="România",
+            county="",
+            city="",
+            remote="",
         ).to_dict())
 
     return job_list
@@ -518,13 +521,13 @@ def scraper():
 
     job_list = []
     for job in []:
-
+        print(job)
         # get jobs items from response
         job_list.append(Item(
             job_title='',
             job_link='',
             company='{nume_scraper}',
-            country='',
+            country="România",
             county='',
             city='',
             remote='',

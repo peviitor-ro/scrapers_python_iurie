@@ -40,7 +40,7 @@ def scraper():
                     job_title=title, 
                     job_link=link,
                     company="Gameloft",
-                    country="Romania",
+                    country="România",
                     county="București",
                     city="București",
                     remote="hybrid",

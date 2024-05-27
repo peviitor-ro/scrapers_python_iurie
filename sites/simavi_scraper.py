@@ -38,7 +38,7 @@ def scraper():
             job_title=job.find("span", attrs="field field--name-title field--type-string field--label-hidden").text,
             job_link=job.find("a")["href"],
             company="Simavi",
-            country="Romania",
+            country="România",
             county = "București",
             city="București",
             remote="on-site",
