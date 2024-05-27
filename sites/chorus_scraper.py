@@ -43,15 +43,17 @@ def scraper():
                 
                 #check if city is a county and add it to a list 
                 check_county  = [county for county in locations if True in get_county(county)]
+                #remove countyies from locations
+                only_city_location=list(set(locations) - set(check_county))
                 
                 # get jobs items from response
                 job_list.append(Item(
                     job_title = data.find('a').text.strip(),
                     job_link = data.find('a')['href'],
                     company = 'Chorus',
-                    country = 'Romania',
-                    county = check_county if len(check_county) == len(locations) else None,
-                    city = 'all' if len(check_county) == len(locations) else locations,
+                    country = 'România',
+                    county = check_county,
+                    city = only_city_location,
                     remote = 'on-site',
                 ).to_dict())
 
