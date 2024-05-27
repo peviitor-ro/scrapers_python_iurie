@@ -54,9 +54,9 @@ def scraper():
                     job_title = job.find('a').text.strip(),
                     job_link = job.find('a')['href'],
                     company = 'Deloitte',
-                    country = 'Romania',
+                    country = 'România',
                     county = check_county,
-                    city = 'all' if len(check_county) == len(location) and check_county[0] != 'Bucuresti' else location,
+                    city = 'all' if len(check_county) == len(location) and check_county[0]!='București' else location,
                     remote = get_job_type(job_type_data),
                 ).to_dict())
         else:

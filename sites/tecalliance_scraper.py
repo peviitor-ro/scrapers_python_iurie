@@ -39,7 +39,7 @@ def scraper():
             job_title = job.find("span", attrs="text-block-base-link").text.strip(),
             job_link = job.get("href"),
             company = 'TecAlliance',
-            country = 'Romania',
+            country = 'România',
             county = None,      
             city = 'Dragoeni',
             remote = get_job_type(data),

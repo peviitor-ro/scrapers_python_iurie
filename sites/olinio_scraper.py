@@ -46,7 +46,7 @@ def scraper():
                         job_title = title,
                         job_link = job.find('a')['href'],
                         company = 'Olinio',
-                        country = 'Romania',
+                        country = 'România',
                         county = "București",
                         city = 'București',
                         remote = get_job_type('Hybrid Remote')if job_type else 'remote' if title == 'Database Analyst' else 'on-site' ,

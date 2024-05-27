@@ -52,7 +52,7 @@ def scraper():
             job_title=title,
             job_link=link,
             company="Hennlich",
-            country="Romania",
+            country="România",
             county=county_finish if county_finish else get_county(location)[0] if True in get_county(location) else None,
             city="all" if "Arad" in location else location,
             remote = get_job_type(""),

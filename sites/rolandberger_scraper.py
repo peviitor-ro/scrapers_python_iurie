@@ -39,7 +39,7 @@ def scraper():
                 job_title=job["title"][0],
                 job_link=job["positionProfile___webAddress"][0],
                 company="RolandBerger",
-                country="Romania",
+                country="România",
                 county="București",
                 city="București",
                 remote="on-site",

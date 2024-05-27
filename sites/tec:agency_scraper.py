@@ -39,7 +39,7 @@ def scraper():
             job_title=job['jobOpeningName'],
             job_link="https://tecss.bamboohr.com/careers/"+job['id'],
             company="tec:agency",
-            country="Romania",
+            country="România",
             county=check_county if check_county else "Cluj",
             city=location,
             remote="hybrid" if job['locationType'] == '2' else "on-site",

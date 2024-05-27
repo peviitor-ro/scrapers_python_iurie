@@ -37,7 +37,7 @@ def scraper():
             job_title=job.find("h4",attrs="details-title job-title link--block-target").text,
             job_link=job.find("a")["href"],
             company="SelfPay",
-            country="Romania",
+            country="România",
             county = county[0] if True in county else None,
             city = 'all' if True in county and county[0] != 'Bucuresti' else county[0],
             remote='remote' if job.find('i') else 'on-site',

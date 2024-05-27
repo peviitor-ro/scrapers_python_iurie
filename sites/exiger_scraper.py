@@ -30,7 +30,7 @@ def scraper():
     job_list = []
     for job in soup.find_all('div', attrs='opening'):
         
-        location = job.find('span', attrs= 'location').text
+        location = job.find('span', attrs='location').text
         #get_county  tuple with location Bucuresti
         county = get_county("Bucuresti") if location.lower() == 'bucharest' else None
         
@@ -42,7 +42,7 @@ def scraper():
                 job_link = job.find('a')['href'],
                 company='Exiger',
                 country='România',
-                county = None,
+                county = county[0] if True in county else  None,
                 city='all' if True in county and county[0] != 'Bucuresti' else county[0],
                 remote  = get_job_type(''),
             ).to_dict())
@@ -61,7 +61,7 @@ def main():
     logo_link = "https://www.exiger.com/wp-content/uploads/2023/04/logo_midnight@2x.png.webp"
 
     jobs = scraper()
-    # print(len(jobs))
+    print(len(jobs))
     # uncomment if your scraper done
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)

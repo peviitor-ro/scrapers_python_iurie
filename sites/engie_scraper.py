@@ -68,9 +68,9 @@ def scraper():
                     job_title = job.find('a', attrs='jobTitle-link').text,
                     job_link='https://jobs.engie.com'+ job.find('a')['href'],
                     company='ENGIE',
-                    country='Romania',
+                    country='România',
                     county = job_county,
-                    city = 'all'  if not None in job_county else  city_location, #if len(city_location)>1 else 'all',
+                    city = 'all'  if not None in job_county and  job_county[0]!='Bucuresti' else  city_location,
                     # for location if all then location remote else On-site
                     remote =  get_job_type('remote') if "all" in city_location else get_job_type(''),
                 ).to_dict())

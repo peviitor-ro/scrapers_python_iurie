@@ -51,7 +51,7 @@ def scraper():
                     job_title=job.find("h3", attrs="ts-offer-list-item__title styleh3").text.strip(),
                     job_link="https://kronospan-candidate.talent-soft.com"+job.find("a")["href"],
                     company='Kronospan',
-                    country="Romania", 
+                    country="România", 
                     county=county_finis[0] if True in county_finis else None,
                     city='all' if True in county_finis else city,
                     remote='on-site',

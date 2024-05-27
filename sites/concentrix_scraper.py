@@ -28,7 +28,7 @@ def scraper():
     """
     ... scrape data from Concentrix scraper.
     """
-    payload = {"action":"gd_jobs_query_pagination",
+    payload={"action":"gd_jobs_query_pagination",
                "country":"Romania",
                "jobs_shown":0,
                "jobs_per_page":50
@@ -38,10 +38,10 @@ def scraper():
         "x-requested-with":"XMLHttpRequest"
     }
     url="https://jobs.concentrix.com/wp-admin/admin-ajax.php"
-    responce=requests.post(url=url,data=payload, headers=headers)
+    responce=requests.post(url=url, data=payload, headers=headers)
     html=responce.json().get("data").get("output")
     soup=BeautifulSoup(html,'lxml')
-    # print(html)
+    # print(responce)
     job_list = []
     for job in soup.find_all("div",attrs="job"):
         title=job.find("h3").text
@@ -51,16 +51,16 @@ def scraper():
         if location=="Bucharest":
             location="București"
         #check if location is county 
-        check_county=get_county(location)[0] if True in get_county(location)  else None
-    
+        check_county=get_county(location)
+        
         # get jobs items from response
         job_list.append(Item(
             job_title=clean_title,
             job_link=job.find("a")["href"],
             company="Concentrix",
-            country="Romania",
-            county = check_county,
-            city = location if check_county==None else "all" ,
+            country="România",
+            county = check_county[0] if True in check_county else None,
+            city = 'all' if True in check_county and check_county[0]!='Bucuresti' else location ,
             remote = get_job_type(title),
         ).to_dict())
 
