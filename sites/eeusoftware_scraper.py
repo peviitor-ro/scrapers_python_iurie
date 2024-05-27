@@ -40,8 +40,8 @@ def scraper():
                     job_title = job.find('h4', attrs="details-title job-title link--block-target").text,
                     job_link = job.find('a')['href'],
                     company='EEUSoftware',
-                    country='Romania',
-                    county=None,
+                    country='România',
+                    county='București',
                     city='București',
                     remote = get_job_type(''),
                 ).to_dict())
