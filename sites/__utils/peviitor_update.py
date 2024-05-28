@@ -59,8 +59,11 @@ class UpdateAPI:
         headers = {"Content-Type": "application/json",
                 "Authorization": f"Bearer {token}"}
 
-        requests.post(url, headers=headers, json=data)
-       
+        responce=requests.post(url, headers=headers, json=data)
+        
         print(json.dumps(data, indent=4))
+        
+        if responce.status_code==400:
+            print(responce.json())
         
    
