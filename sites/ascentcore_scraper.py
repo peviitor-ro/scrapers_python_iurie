@@ -16,6 +16,7 @@
 from __utils import (
     GetRequestJson,
     get_county,
+    get_county_json,
     get_job_type,
     Item,
     UpdateAPI,
@@ -31,20 +32,20 @@ def scraper():
             # find location from text and location from job['categories']['allLocations']
             find_Timisoara = 'Timisoara' if 'Timisoara' in job['descriptionPlain'] else None
             # location list
-            location  =  job['categories']['allLocations']
+            location=job['categories']['allLocations']
             # add timisoara to list if is on the text but not in the list
             location.append(find_Timisoara) if 'Timisoara' not in location else None
-            #check if city is a county 
-            county = [city for city in location if True in get_county(city)]
+            #exttract county for city
+            county = [get_county_json(city)[-1] if "Iasi" in get_county_json(city) else get_county_json(city)[0] for city in location ]
             
         # get jobs items from response
             job_list.append(Item(
                 job_title = job['text'],
                 job_link = job['hostedUrl'],
                 company = 'AscentCore',
-                country = 'Romania',
+                country = 'România',
                 county = county,
-                city = location if len(location) > len(county) else 'all',
+                city = location,
                 remote = job['workplaceType'],
             ).to_dict())
 

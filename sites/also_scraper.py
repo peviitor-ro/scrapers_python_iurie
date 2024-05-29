@@ -42,8 +42,8 @@ def scraper():
                 job_title = job['title'],
                 job_link  = job['url'],
                 company='ALSO',
-                country= job['country'],
-                county= 'București' if get_county('București')[-1] == True else get_county('București')[0],
+                country='România',
+                county='București',
                 city='București',
                 remote ="on-site" if "Internship" in job['title'] else "remote",
             ).to_dict())

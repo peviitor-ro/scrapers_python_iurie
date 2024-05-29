@@ -17,6 +17,7 @@ from __utils import (
     GetStaticSoup,
     get_county,
     get_job_type,
+    get_county_json,
     Item,
     UpdateAPI,
 )
@@ -41,9 +42,9 @@ def scraper():
     for job in soup.find_all('div', attrs=('row align-items-center')):
         
         # Extrarct locaion from jobs
-        city = job.find('span', attrs=('job--loc-type')).text.strip() if job.find('span', attrs=('job--loc-type')) != None else 'Cluj-Napoca'
-        county = '' if city == None else get_county(city)
-    
+        city=job.find('span', attrs=('job--loc-type')).text.strip() if job.find('span', attrs=('job--loc-type')) != None else 'Cluj-Napoca'
+        county=None if city == None else get_county_json(city)
+        
          # Find span element with class 'btn' and get 'data-bs-target' attribute
         span = job.find('span', class_='btn')
         if span:
@@ -54,9 +55,9 @@ def scraper():
             job_title = job.find('h4').text.strip(),
             job_link='https://www.brinel.ro/cariere'+link,
             company='BRINEL',
-            country='Romania',
-            county = county[0] if True in county else None,
-            city = 'all' if True in county and county[0].lower() != 'bucuresti' else city,
+            country='România',
+            county=county,
+            city=city,
             remote = get_job_type(''),
         ).to_dict())
 

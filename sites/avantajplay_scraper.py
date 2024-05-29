@@ -37,7 +37,7 @@ def scraper():
             job_title = job.find('h2' , attrs = ('b-vacancies__title')).text,
             job_link = job.find('a' , attrs = ('b-vacancies__link'))['href'],
             company = 'AvantajPlay',
-            country = 'Romania',
+            country = 'România',
             county = county[0] if True in county else None,
             city = 'all' if True in county and county[0] != 'Bucuresti' else county[0],
             remote = 'on-site',
