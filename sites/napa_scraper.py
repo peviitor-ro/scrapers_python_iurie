@@ -38,7 +38,7 @@ def scraper():
             company="Napa",
             country="România",
             county = "Galati",
-            city = "all",
+            city = "Galati",
             remote = "on-site",
         ).to_dict())
 

@@ -42,7 +42,7 @@ def scraper():
             country="România",
             county=check_county if check_county else "Cluj",
             city=location,
-            remote="hybrid" if job['locationType'] == '2' else "on-site",
+            remote="hybrid" if job['locationType']=='2' else "on-site",
         ).to_dict())
 
     return job_list

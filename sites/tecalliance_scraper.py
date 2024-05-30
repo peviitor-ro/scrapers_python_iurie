@@ -40,7 +40,7 @@ def scraper():
             job_link = job.get("href"),
             company = 'TecAlliance',
             country = 'România',
-            county = None,      
+            county = "Gorj",      
             city = 'Dragoeni',
             remote = get_job_type(data),
         ).to_dict())

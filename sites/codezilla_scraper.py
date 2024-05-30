@@ -46,7 +46,7 @@ def scraper():
             company='Codezilla',
             country='România',
             county = location,
-            city='all',#if True in county_finis or county_finis[0].lower()!='bucuresti' else None,
+            city=location,
             remote = get_job_type(''),
         ).to_dict())
 

@@ -36,6 +36,7 @@ def create_static_scraper_config(nume_scraper, link):
 from __utils import (
     GetStaticSoup,
     get_county,
+    get_county_json,
     get_job_type,
     Item,
     UpdateAPI,
@@ -112,6 +113,7 @@ def create_dynamic_json_get_scraper_config(nume_scraper, link):
 from __utils import (
     GetRequestJson,
     get_county,
+    get_county_json,
     get_job_type,
     Item,
     UpdateAPI,
@@ -243,6 +245,7 @@ def create_dynamic_json_post_scraper_config(nume_scraper, link):
 from __utils import (
     PostRequestJson,
     get_county,
+    get_county_json,
     get_job_type,
     Item,
     UpdateAPI,
@@ -375,6 +378,7 @@ def create_dynamic_render_scraper_config(nume_scraper, link):
 from __utils import (
     GetDynamicSoup,
     get_county,
+    get_county_json,
     get_job_type,
     Item,
     UpdateAPI,
