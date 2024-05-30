@@ -6,6 +6,7 @@
 #
 #
 import unicodedata
+import requests
 
 counties = [
     {
@@ -14015,3 +14016,17 @@ def get_county(location: str):
                 return key, True
  
     return  location, False
+
+
+def get_county_json(loc):
+    
+    city = remove_diacritics(loc)
+    url=f"https://api.laurentiumarian.ro/orase/?search={city}"
+    responce=requests.get(url=url).json()
+    citis=responce.get("results")
+    counties=[]
+    for location in citis:
+        if location.get("name").lower()==city.lower():
+            counties.append(location.get("county"))
+    return list(set(counties))
+    
