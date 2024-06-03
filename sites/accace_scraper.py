@@ -16,6 +16,7 @@
 from __utils import (
     GetStaticSoup,
     get_county,
+    get_county_json,
     get_job_type,
     Item,
     UpdateAPI,
@@ -26,40 +27,34 @@ def scraper():
     '''
     ... scrape data from Accace scraper.
     '''
-    soup = GetStaticSoup("https://accace.ro/cariere/#oportunitati")
-
     job_list = []
     data_loc_type = []
     
-    for job in soup.find_all('div',  attrs = ('col-md-4 col-sm-6 grid-item')):
+    jobs_type=["Remote","Hibrid","On-site"]
+    for type in jobs_type:
+        soup = GetStaticSoup(f"https://accace.ro/jobs/?_sfm_job_features_acc-jobs_work-mode={type}")
+        data=soup.find("div",class_="oxy-dynamic-list acc-jobs-archive-repeater").find_all('a', class_="ct-link")
         
-        title = job.find('span', attrs = ('job-title')).text.strip()
-        #logic to fix site bugs for job type 
-        job_type = get_job_type(job.find('div', attrs = ('job-location')).text)
-        if  title == 'Senior Internal Accountant':
-            job_type = 'remote'
-        elif title == 'Payroll Specialist':
-            job_type = 'hybrid'
-            
-        # Extract location and job type from page
-        data_loc_type = job.find('div', attrs = ('job-location')).text.split(', ')
-            
-        if 'Bucuresti' in data_loc_type:
-            finish_location = get_county(location ='Bucuresti' ) #get location finish with Bucuresti if Bucuresti is present in data_loc_type
-        else:
-            #if Bucuresti not in data_loc_type list get tuple with false to for county check
-            finish_location = get_county('')    
-           
-            # get jobs items from response
-        job_list.append(Item(
-            job_title = title,
-            job_link = job.find('a')['href'],
-            company='Accace',
-            country='Romania',
-            county = None,
-            city = 'all' if 'remote' in job_type else finish_location[0],
-            remote = job_type,
-        ).to_dict()) 
+        for job in data:
+            if len(job.contents)>0:
+                title = job.find("span", attrs="ct-span").text.strip()
+                link=job.get('href')
+                location=job.find("div", class_="ct-code-block").text.split(', ')
+                # Extract location and job type from page
+                
+                if len(location)>1:
+                    location.remove("România")
+                                
+                # get jobs items from response
+                job_list.append(Item(
+                    job_title = title,
+                    job_link = link,
+                    company='Accace',
+                    country='România',
+                    county = get_county_json(location[0]),
+                    city = 'all' if type.lower()=='remote' or location[0]=="România" else location,
+                    remote=get_job_type(type) ,
+                ).to_dict()) 
 
     return job_list
 
