@@ -16,6 +16,7 @@
 from __utils import (
     GetStaticSoup,
     get_county,
+    get_county_json,
     get_job_type,
     Item,
     UpdateAPI,
@@ -30,7 +31,7 @@ def scraper():
     job_list = []
     for job in soup.find_all('ul', attrs=('descr')):
         for data in job.find_all('li'):
-            #extract location from pagge logic
+            #extract location from page 
             br_tag = data.find('br') #find <br> and assigne it to variable
             if br_tag:
                 #create a list of locations
@@ -41,19 +42,19 @@ def scraper():
                     locations[0] = 'Mogosoaia'
                     locations.append('Bucuresti')
                 
-                #check if city is a county and add it to a list 
-                check_county  = [county for county in locations if True in get_county(county)]
-                #remove countyies from locations
-                only_city_location=list(set(locations) - set(check_county))
-                
+                #extract county for locations 
+                check_county=[get_county_json(county) for county in locations ]
+                clean_county=[item for sublist in check_county for item in sublist]
+                unic_county=list(set(clean_county))
+            
                 # get jobs items from response
                 job_list.append(Item(
                     job_title = data.find('a').text.strip(),
                     job_link = data.find('a')['href'],
                     company = 'Chorus',
                     country = 'România',
-                    county = check_county,
-                    city = only_city_location,
+                    county = unic_county,
+                    city = locations,
                     remote = 'on-site',
                 ).to_dict())
 

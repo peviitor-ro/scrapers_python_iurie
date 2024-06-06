@@ -39,9 +39,9 @@ def scraper():
             if len(job.contents)>0:
                 title = job.find("span", attrs="ct-span").text.strip()
                 link=job.get('href')
-                location=job.find("div", class_="ct-code-block").text.split(', ')
-                # Extract location and job type from page
                 
+                # Extract location and job type from page
+                location=job.find("div", class_="ct-code-block").text.split(', ')
                 if len(location)>1:
                     location.remove("România")
                                 
