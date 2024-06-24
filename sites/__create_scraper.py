@@ -88,9 +88,9 @@ if __name__ == '__main__':
     main()
 '''
 
-    with open(f'{nume_scraper.lower()}_scraper.py', 'w') as f:
+    with open(f'{nume_scraper.lower()}.py', 'w') as f:
         f.write(config_content)
-    print(f'Static scraper {nume_scraper.lower()}_scraper.py was succesfully created!')
+    print(f'Static scraper {nume_scraper.lower()}.py was succesfully created!')
 
 
 #  ---------------------> DYNAMIC JSON GET <---------------------
@@ -220,9 +220,9 @@ if __name__ == '__main__':
     main()
 """
 
-    with open(f'{nume_scraper.lower()}_scraper.py', 'w') as f:
+    with open(f'{nume_scraper.lower()}.py', 'w') as f:
         f.write(config_content)
-    print(f'Scraper type: dynamic_json_get {nume_scraper.lower()}_scraper.py was successfully created!')
+    print(f'Scraper type: dynamic_json_get {nume_scraper.lower()}.py was successfully created!')
 
 
 #  ---------------------> DYNAMIC JSON POST <---------------------
@@ -353,9 +353,9 @@ if __name__ == '__main__':
     main()
 """
 
-    with open(f'{nume_scraper.lower()}_scraper.py', 'w') as f:
+    with open(f'{nume_scraper.lower()}.py', 'w') as f:
         f.write(config_content)
-    print(f'Scraper type: dynamic_json_post {nume_scraper.lower()}_scraper.py was successfully created!')
+    print(f'Scraper type: dynamic_json_post {nume_scraper.lower()}.py was successfully created!')
 
 
 #  ---------------------> DYNAMIC RENDER <---------------------
@@ -490,9 +490,9 @@ if __name__ == '__main__':
     main()
 """
 
-    with open(f'{nume_scraper.lower()}_scraper.py', 'w') as f:
+    with open(f'{nume_scraper.lower()}.py', 'w') as f:
         f.write(config_content)
-    print(f'Scraper type: dynamic_render {nume_scraper.lower()}_scraper.py was successfully created!')
+    print(f'Scraper type: dynamic_render {nume_scraper.lower()}.py was successfully created!')
 
 
 #  ---------------------> CUSTOM SCRAPER <---------------------
@@ -559,9 +559,9 @@ if __name__ == '__main__':
     main()
 """
 
-    with open(f'{nume_scraper.lower()}_scraper.py', 'w') as f:
+    with open(f'{nume_scraper.lower()}.py', 'w') as f:
         f.write(config_content)
-    print(f'Custom scraper {nume_scraper.lower()}_scraper.py was successfully created!')
+    print(f'Custom scraper {nume_scraper.lower()}.py was successfully created!')
 
 
 if __name__ == "__main__":
@@ -573,8 +573,8 @@ if __name__ == "__main__":
         scraper_type = sys.argv[3]
 
         # Verificați dacă fișierul scraper există deja sau nu
-        if os.path.exists(f'{nume_scraper.lower()}_scraper.py'):
-            print(f"File {nume_scraper.lower()}_scraper.py already exists!")
+        if os.path.exists(f'{nume_scraper.lower()}.py'):
+            print(f"File {nume_scraper.lower()}.py already exists!")
         else:
             if scraper_type == 'static':
                 create_static_scraper_config(nume_scraper, link)
