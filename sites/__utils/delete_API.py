@@ -10,8 +10,8 @@ import requests
 
 class CleanData:
 
-    def __init__(self, api_key):
-        self.api_key = api_key
+    def __init__(self):
+        self.api_key = "0086a751-7db7-427c-bc81-b7140658571e"
         self.clean_url = "https://api.peviitor.ro/v4/clean/"
 
     def clean_data(self, company_name: str) -> None:
@@ -39,11 +39,12 @@ def main():
     input_company = input("Scrie numele companiei: ")
 
     # create a ConcreteCleanData object
-    clean_data = ConcreteCleanData(api_key=os.environ.get("API_KEY"))
+    # clean_data = ConcreteCleanData(api_key=os.environ.get("API_KEY"))
 
     # clean data
-    clean_data.clean_data(input_company)
+    # clean_data.clean_data(input_company)
 
 
 if __name__ == "__main__":
-    main()
+    CleanData().clean_data('von_consulting')
+    # main()

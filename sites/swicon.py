@@ -35,7 +35,7 @@ def scraper():
 
         # get jobs items from response
         job_list.append(Item(
-            job_title="",
+            job_title="not finissed",
             job_link="",
             company="Swicon",
             country="România",

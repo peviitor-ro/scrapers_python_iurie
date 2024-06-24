@@ -6,7 +6,6 @@
 #
 #
 import requests
-#
 import json
 
 
@@ -65,5 +64,7 @@ class UpdateAPI:
         
         if responce.status_code==400:
             print(responce.json())
+            
+
         
    
