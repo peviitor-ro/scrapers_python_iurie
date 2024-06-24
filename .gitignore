@@ -135,7 +135,6 @@ venv.bak/
 .ropeproject
 
 # mkdocs documentation
-sites/tets.py
 
 # mypy
 .mypy_cache/
@@ -160,4 +159,6 @@ cython_debug/
 
 sites/tradeville.py
 sites/swicon.py
+sites/__utils/
+sites/__utils.*
 

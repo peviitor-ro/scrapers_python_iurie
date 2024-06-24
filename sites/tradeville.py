@@ -39,7 +39,7 @@ def scraper():
         # get jobs items from response
         job_list.append(Item(
             job_title=job.find("h2", class_="accordion-header").text.strip().split(", ")[0],
-            job_link="",
+            job_link="no job linkk",
             company="TradeVille",
             country="România", 
             county=get_county_json(location),
