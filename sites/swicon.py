@@ -31,17 +31,20 @@ def scraper():
 
     job_list = []
     for job in soup.find_all("div",class_="col-12 col-sm-6 col-md-4 col-lg-3"):
-        print(job)
-
+        link=job.find("a")["href"]
+        #make again request to check job type for all jobs
+        job_detail=GetStaticSoup(link)
+        detail=job_detail.find("div",class_="row1")
+        
         # get jobs items from response
         job_list.append(Item(
-            job_title="not finissed",
-            job_link="",
+            job_title=job.find("h3").text,
+            job_link=job.find("a")["href"],
             company="Swicon",
             country="România",
-            county="",
-            city="",
-            remote="",
+            county="București",
+            city="București",
+            remote=get_job_type(detail.text),
         ).to_dict())
 
     return job_list
@@ -55,13 +58,13 @@ def main():
     """
 
     company_name = "Swicon"
-    logo_link = "logo_link"
+    logo_link = "https://www.ejobs.ro/img/userCoverPhoto/f/5/f5e56fe04b0618594c10407feb11ecd4.jpg"
 
     jobs = scraper()
     print("jobs found:",len(jobs))
     # uncomment if your scraper done
-    #UpdateAPI().publish(jobs)
-    #UpdateAPI().update_logo(company_name, logo_link)
+    UpdateAPI().publish(jobs)
+    UpdateAPI().update_logo(company_name, logo_link)
 
 
 if __name__ == '__main__':
