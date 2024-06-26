@@ -1,17 +1,19 @@
 #
-#
-# New version of Scrapers_Start_with_Digi
 # ... new file for Clean_data from API
 #
-#
+
 import os
 import requests
-
+import subprocess
 
 class CleanData:
 
     def __init__(self):
-        self.api_key = "0086a751-7db7-427c-bc81-b7140658571e"
+        # Run source enviroment.sh
+        path="/Users/Scraping/scrapers_python_iurie/enviroment.sh"
+        comand=f"source {path}"
+        subprocess.run(["bash","-c", comand],capture_output=True,)
+        self.api_key = os.environ.get("API_KEY_PEVIITOR")
         self.clean_url = "https://api.peviitor.ro/v4/clean/"
 
     def clean_data(self, company_name: str) -> None:
@@ -19,8 +21,6 @@ class CleanData:
             "Content-Type": "application/x-www-form-urlencoded",
             "apikey": self.api_key
         }
-
-        print(f"APY_KEY: {self.api_key}")
 
         clean_request = requests.post(url=self.clean_url, headers=clean_header,
                                       data={"company": company_name})
@@ -46,5 +46,5 @@ def main():
 
 
 if __name__ == "__main__":
-    CleanData().clean_data('von_consulting')
+    CleanData().clean_data('Computacenter')
     # main()
