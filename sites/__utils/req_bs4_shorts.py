@@ -24,6 +24,17 @@ import xml.etree.ElementTree as ET
 # ... and all classes can use it in one script
 session = requests.Session()
 
+class RequestsCustum:
+    """scrape data with requests
+
+    Returns:
+        _type_: responce.text
+    """
+    def __new__(cls, url,headers, payload):
+        
+        response = requests.request("GET", url, headers=headers, data=payload)
+        return response.text
+
 
 class GetStaticSoup:
     '''

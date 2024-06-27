@@ -41,8 +41,12 @@ class UpdateAPI:
         :return: token-ul necesar pentru a face request-uri către API
         """
         url = f"{self.DOMAIN}{self.TOKEN_ROUTE}"
+       
         response = requests.post(url, json={"email": self.EMAIL})
-        return response.json()["access"]
+        if response.status_code !=200:
+            raise Exception("Get token conection code",response.status_code)
+        else:
+            return response.json()["access"]
 
     def publish(self, data):
         """This method publish scraped data using API to Validator with post method
@@ -67,4 +71,4 @@ class UpdateAPI:
             
 
         
-   
+# print(UpdateAPI().get_token())
