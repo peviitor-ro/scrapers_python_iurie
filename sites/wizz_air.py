@@ -55,7 +55,7 @@ def main():
     """
 
     company_name = "Wizz Air"
-    logo_link = "https://cdn.freebiesupply.com/logos/large/2x/wizz-air-logo-png-transparent.png"
+    logo_link = "https://cdn0.scrvt.com/airportdtm/public/airportdtm/49dfd2e90d79c55b/12e3c120959a/v/f297642e71ca/wizzair-logo-web.jpg"
 
     jobs = scraper()
     print("jobs found:",len(jobs))
