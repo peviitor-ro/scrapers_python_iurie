@@ -29,7 +29,7 @@ def scraper():
     '''
     job_list = []
     links=["https://www.ad01.com/api/vacancy/?sort=created&sortDir=DESC",
-           "https://www.ad01.com/api/vacancy/?sort=created&sortDir=DESC&pageNumber=2"]
+           "https://www.ad01.com/api/vacancy/?pageNumber=2&sort=created&sortDir=DESC"]
     for link in links:
         json_data = GetRequestJson(link)
     

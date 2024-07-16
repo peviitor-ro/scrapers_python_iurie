@@ -30,13 +30,15 @@ def scraper():
     for jobs in json_data:
         for job in jobs['postings']:
             # find location from text and location from job['categories']['allLocations']
-            find_Timisoara = 'Timisoara' if 'Timisoara' in job['descriptionPlain'] else None
+            if 'Timisoara' in job['descriptionPlain']:
+                find_Timisoara = 'Timisoara' 
             # location list
             location=job['categories']['allLocations']
             # add timisoara to list if is on the text but not in the list
-            location.append(find_Timisoara) if 'Timisoara' not in location else None
-            #exttract county for city
-            county = [get_county_json(city)[-1] if "Iasi" in get_county_json(city) else get_county_json(city)[0] for city in location ]
+            if 'Timisoara' not in location:
+                location.append(find_Timisoara)
+            #extract county for city
+            county = ["Iasi" if city=="Iasi" else get_county_json(city)[0] for city in location]
             
         # get jobs items from response
             job_list.append(Item(

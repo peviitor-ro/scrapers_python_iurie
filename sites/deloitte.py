@@ -16,6 +16,7 @@
 from __utils import (
     GetStaticSoup,
     get_county,
+    get_county_json,
     get_job_type,
     Item,
     UpdateAPI,
@@ -47,8 +48,8 @@ def scraper():
                     location_data = location_data.replace('Bucharest','București')
                 location = location_data.split()
                 #create a list only  if location is county 
-                check_county = [county for county in location if True in get_county(county)]
-               
+                check_county =["Iasi" if city == "Iasi" else get_county_json(city)[0] for city in location]
+                
                 # get jobs items from respons
                 job_list.append(Item(
                     job_title = job.find('a').text.strip(),
@@ -56,7 +57,7 @@ def scraper():
                     company = 'Deloitte',
                     country = 'România',
                     county = check_county,
-                    city = 'all' if len(check_county) == len(location) and check_county[0]!='București' else location,
+                    city = location,
                     remote = get_job_type(job_type_data),
                 ).to_dict())
         else:
