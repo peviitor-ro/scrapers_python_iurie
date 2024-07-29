@@ -35,7 +35,7 @@ def scraper():
         job_list.append(Item(
             job_title=job.find('a').text,
             job_link = job.find('a')["href"],
-            company="Interra Travel",
+            company="Interratravel",
             country="România",
             county="București",
             city = "București",
@@ -52,7 +52,7 @@ def main():
     ---> update_jobs() and update_logo()
     """
 
-    company_name = "InterraTravel"
+    company_name = "Interratravel"
     logo_link = "https://www.interra.ro/img/main-logo.svg"
 
     jobs = scraper()
