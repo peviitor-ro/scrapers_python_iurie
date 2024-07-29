@@ -17,8 +17,10 @@ class UpdateAPI:
     '''
 
     def __init__(self):
-        self.logo_url = 'https://api.peviitor.ro/v1/logo/add/'   
-        self.logo_header = { 'Content-Type': 'application/json'}
+        self.logo_url = 'https://api.peviitor.ro/v3/logo/add/'   
+        self.logo_header = { 'Content-Type': 'application/json',
+                            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
+                            }
         
         self.EMAIL = 'chigaiiura@yahoo.com'
         self.DOMAIN = 'https://api.peviitor.ro/v5/'
@@ -34,7 +36,7 @@ class UpdateAPI:
         data = json.dumps([{"id": id_company, "logo": logo_link}])
         response = requests.post(self.logo_url, headers=self.logo_header, data=data)
 
-        #  print(f'Logo update ---> succesfuly {response}')
+        print(f'Logo update {response}')
         
     def get_token(self):
         """
@@ -69,8 +71,8 @@ class UpdateAPI:
         
         print(json.dumps(data, indent=4))
         
-        if responce.status_code==400:
-            print(responce.json())
+        if responce.status_code !=200:
+            print(f"something wrong {responce.status_code}")
             
 
         
