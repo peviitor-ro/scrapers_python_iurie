@@ -38,7 +38,7 @@ def scraper():
         job_list.append(Item(
             job_title = job.find("span", attrs="text-block-base-link").text.strip(),
             job_link = job.get("href"),
-            company = 'TecAlliance',
+            company = 'Tecalliance',
             country = 'România',
             county = "Gorj",      
             city = 'Dragoeni',
@@ -55,7 +55,7 @@ def main():
     ---> update_jobs() and update_logo()
     """
 
-    company_name = "TecAlliance"
+    company_name = "Tecalliance"
     logo_link = "https://www.brightlands.com/sites/default/files/styles/max_2600x2600/public/2022-02/BSSC%20TecAlliance%20Logo_rgb.jpg?itok=W3ir7dN8"
 
     jobs = scraper()
