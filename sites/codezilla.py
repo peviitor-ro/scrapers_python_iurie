@@ -34,14 +34,18 @@ def scraper():
     soup = GetStaticSoup("https://codezilla.global/jobs")
 
     job_list = []
-    #check if location is county
-    location = ['București','Iași']
+    
+    
         
     for job in soup.find_all('div', attrs='JobListing_certified_inner__naKv8 certified'):
-
+        title=job.find('h3').text
+        if title == "Business Development Manager":
+            location="București"
+        else:
+            location = ['București','Iași']   
         # get jobs items from response  
         job_list.append(Item(
-            job_title= job.find('h3').text,
+            job_title= title,
             job_link='https://codezilla.global'+job.find('a')['href'],
             company='Codezilla',
             country='România',
