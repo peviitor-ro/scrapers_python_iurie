@@ -41,7 +41,7 @@ def scraper():
             job_list.append(Item(
                 job_title=job["title"],
                 job_link=link,
-                company="AD/01",
+                company="Ad01",
                 country="România",
                 county=get_county_json(location),
                 city=location,
@@ -58,7 +58,7 @@ def main():
     ---> update_jobs() and update_logo()
     '''
 
-    company_name = "AD/01"
+    company_name = "Ad01"
     logo_link = "https://www.ad01.com/uploads/logo%20(1).svg"
 
     jobs = scraper()
