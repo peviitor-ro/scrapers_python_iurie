@@ -41,7 +41,7 @@ def scraper():
             job_list.append(Item(
                 job_title = job['title'],
                 job_link  = job['url'],
-                company='ALSO',
+                company='Also',
                 country='România',
                 county='București',
                 city='București',
@@ -57,7 +57,7 @@ def main():
     ---> update_jobs() and update_logo()
     '''
 
-    company_name = "ALSO"
+    company_name = "Also"
     logo_link = 'https://upload.wikimedia.org/wikipedia/commons/f/fd/ALSO_Holding_AG_Logo_2020.svg'
 
     jobs = scraper()
