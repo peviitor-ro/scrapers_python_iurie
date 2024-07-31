@@ -39,11 +39,11 @@ def scraper():
                 job_list.append(Item(
                     job_title = job.find('h4', attrs="details-title job-title link--block-target").text,
                     job_link = job.find('a')['href'],
-                    company='EEUSoftware',
+                    company='Eeusoftware',
                     country='România',
                     county='București',
                     city='București',
-                    remote = get_job_type(''),
+                    remote = "on-site",
                 ).to_dict())
         else:
             flag = False
@@ -62,7 +62,7 @@ def main():
     ---> update_jobs() and update_logo()
     """
 
-    company_name = "EEUSoftware"
+    company_name = "Eeusoftware"
     logo_link = "https://www.eeusoft.ro/ro/wp-content/themes/eeutheme/images/logoEEU.svg"
 
     jobs = scraper()
