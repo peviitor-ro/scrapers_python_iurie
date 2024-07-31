@@ -26,7 +26,7 @@ def scraper():
     """
     ... scrape data from Napa scraper.
     """
-    soup = GetStaticSoup("https://jobs.napa.fi/jobs")
+    soup = GetStaticSoup("https://jobs.napa.fi/jobs?location=NAPA+Romania&split_view=true&query=")
 
     job_list = []
     for job in soup.find_all("li",attrs="w-full"):
