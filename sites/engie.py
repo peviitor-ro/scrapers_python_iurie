@@ -17,6 +17,7 @@ import time
 from __utils import (
     GetStaticSoup,
     get_county,
+    get_county_json,
     get_job_type,
     Item,
     UpdateAPI,
@@ -36,32 +37,26 @@ def scraper():
         # print(soup)
         if len(jobs := soup.find_all('tr', attrs=('data-row'))) >0:
             for job in jobs:
-                # link = 'https://jobs.engie.com'+ job.find('a')['href']
-                # for item in link:
-                #     s = GetStaticSoup(item)
-                #     print(s.find('div',class__ = 'job').text)
+            
                 # Remove "Romania" from the location --- Start
                 city_location = job.find('span', attrs ='jobLocation').text.strip().title().split(', R')[0].split(', ')
-                
-                # Check if 'COURBEVOIE' exists in the list
-                if 'COURBEVOIE'.title() in city_location:
-                    # Replace all elements with just 'all'
-                    city_location = ['all']
-                    
+    
+                # corect location typo    
                 for city in range(len(city_location)):
+                    
+                    if 'Com.Blejoi' in city_location[city]:
+                        city_location[city]='Blejoi'
                     if 'Bucharest' in city_location[city]:
-                        city_location[city]='București'  
-                    if 'Pi' in city_location[city]:
-                        city_location[city]='Pitesti'
-                    if 'Crai' in city_location[city]:
-                        city_location[city]='Craiova'
+                        city_location[city]='Bucuresti'
                     if 'Ploiest' in city_location[city]:
                         city_location[city] = 'Ploiesti'
                     if 'Turnu Mag' in  city_location[city]:
                         city_location[city] = 'Turnu Magurele'
-                  
+                    if "Targu Mures" in city_location[city]:
+                        city_location[city]="Targu-Mures"
+              
                 # check county for cities from city_loc list  add to a county list if True else not then None 
-                job_county = [get_county(city)[0] if True in get_county(city) else None for city in city_location]
+                job_county = [get_county_json(city)[0] for city in city_location]
                 
                 # get jobs items from response
                 job_list.append(Item(
@@ -70,9 +65,9 @@ def scraper():
                     company='ENGIE',
                     country='România',
                     county = job_county,
-                    city = 'all'  if not None in job_county and  job_county[0]!='Bucuresti' else  city_location,
+                    city = city_location,
                     # for location if all then location remote else On-site
-                    remote =  get_job_type('remote') if "all" in city_location else get_job_type(''),
+                    remote = "on-site",
                 ).to_dict())
     
         else:
