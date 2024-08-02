@@ -44,7 +44,7 @@ def scraper():
         job_list.append(Item(
             job_title = title,
             job_link = link,
-            company='FntSoftware',
+            company='Fntsoftware',
             country='România',
             county="Timis",
             city='Timisoara',
@@ -61,7 +61,7 @@ def main():
     ---> update_jobs() and update_logo()
     """
 
-    company_name = "FntSoftware"
+    company_name = "Fntsoftware"
     logo_link = "https://fntsoftware.com/blog/wp-content/uploads/2023/09/FNT-Logo_simplify-complexity_RGB.png"
 
     jobs = scraper()
