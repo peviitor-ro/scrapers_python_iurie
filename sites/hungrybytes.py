@@ -29,7 +29,7 @@ def scraper():
     scrape data from HungryBytes scraper.
     """
     # Step 1: Fetch the content from the URL
-    url = "https://jobs.hungrybytes.co/_next/static/chunks/pages/index-3d23841ba24dc5b4.js"
+    url = "https://jobs.hungrybytes.co/_next/static/chunks/pages/index-7ecb9fbdde12123c.js"
     response = requests.get(url)
     content = response.text
     # Define regex patterns to extract titles and link and location
