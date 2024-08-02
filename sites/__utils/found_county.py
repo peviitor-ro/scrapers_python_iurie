@@ -14019,8 +14019,8 @@ def get_county(location: str):
 
 
 def get_county_json(loc):
-    
-    city = remove_diacritics(loc).lower()
+    loc = loc.lower()
+    city = remove_diacritics(loc)
     url=f"https://api.laurentiumarian.ro/orase/?search={city}"
     responce=requests.get(url=url).json()
     citis=responce.get("results")

@@ -36,7 +36,7 @@ def scraper():
         job_list.append(Item(
             job_title = job.find('h2' , attrs = ('b-vacancies__title')).text,
             job_link = job.find('a' , attrs = ('b-vacancies__link'))['href'],
-            company = 'AvantajPlay',
+            company = 'Avantajplay',
             country = 'România',
             county = county[0] if True in county else None,
             city = 'all' if True in county and county[0] != 'Bucuresti' else county[0],
@@ -53,7 +53,7 @@ def main():
     ---> update_jobs() and update_logo()
     """
 
-    company_name = "AvantajPlay"
+    company_name = "Avantajplay"
     logo_link = "https://www.avantajplay.ro/wp-content/uploads/2015/07/logo.png"
 
     jobs = scraper()
