@@ -50,7 +50,7 @@ def scraper():
         job_list.append(Item(
             job_title=title,
             job_link="https://jobs.hungrybytes.co/careers/"+link+"/",
-            company="HungryBytes",
+            company="Hungrybytes",
             country="România",
             county="Iasi",
             city=city,
@@ -67,7 +67,7 @@ def main():
     ---> update_jobs() and update_logo()
     """
 
-    company_name = "HungryBytes"
+    company_name = "Hungrybytes"
     logo_link = "https://assets.static-upwork.com/org-logo/1724096907641098240"
 
     jobs = scraper()
