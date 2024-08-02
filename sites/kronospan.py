@@ -18,6 +18,7 @@ from __utils import (
     GetStaticSoup,
     get_county,
     get_job_type,
+    get_county_json,
     Item,
     UpdateAPI,
 )
@@ -42,18 +43,17 @@ def scraper():
             # location filter
             location_text = job.find('ul', class_='ts-offer-list-item__description')
             city = location_text.find_all('li')[-1].text
-        
+            
             if city in romanians_cities:
-                county_finis=get_county(city)
-                
+                county_finis="Alba" if city== "Sebes" else get_county_json(city)
                 # get jobs items from response
                 job_list.append(Item(
                     job_title=job.find("h3", attrs="ts-offer-list-item__title styleh3").text.strip(),
                     job_link="https://kronospan-candidate.talent-soft.com"+job.find("a")["href"],
                     company='Kronospan',
                     country="România", 
-                    county=county_finis[0] if True in county_finis else None,
-                    city='all' if True in county_finis else city,
+                    county=county_finis,
+                    city=city,
                     remote='on-site',
                 ).to_dict())
         
@@ -62,12 +62,10 @@ def scraper():
 
 
 def main():
-    '''
-    ... Main:
+    """Main:
     ---> call scraper()
     ---> update_jobs() and update_logo()
-    '''
-
+    """
     company_name = "Kronospan"
     logo_link = "https://logos-download.com/wp-content/uploads/2016/06/Kronospan_logo_blue_bg.png"
 
