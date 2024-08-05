@@ -13,9 +13,11 @@
 # Link ------> https://mediagalaxy.ro/cariere/
 #
 #
+from bs4 import BeautifulSoup
 from __utils import (
-    GetStaticSoup,
+    RequestsCustum,
     get_county,
+    get_county_json,
     get_job_type,
     Item,
     UpdateAPI,
@@ -23,31 +25,35 @@ from __utils import (
 
 
 def scraper():
-    """
-    ... scrape data from Mediagalaxy scraper.
-    """
-    soup = GetStaticSoup("https://mediagalaxy.ro/cariere/")
+    """ scrape data from Mediagalaxy scraper """
+    
+    url = "https://mediagalaxy.ro/cariere/"
+
+    payload = {}
+    headers = {
+            'sec-ch-ua': '"Not)A;Brand";v="99", "Brave";v="127", "Chromium";v="127"',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36'
+            }
+    data = RequestsCustum(url, headers, payload)
+    # transfom text responce in soup object
+    soup =  BeautifulSoup(data, 'lxml')
 
     job_list = []
-    county_finish=[]
-    for job in soup.find_all("div",attrs="border rounded px-8"):
-        title=job.find('h2', attrs="flex-shrink-0 mb-3 md:mb-0 md:w-64 md:pr-6 font-medium capitalize").text
-        link=title.split()
-        location=job.find('div', attrs="w-full mb-2 md:mb-0").text.split(':')[1].strip().split(',')
-        location=[city.strip()for city in location]
-        #check if location is county 
-        county_finish=[city for city in location if True in get_county(city)]
-        #remove all countyie from location
-        only_city_location=list(set(location) - set(county_finish))
-        
+    for job in soup.find_all("div",class_="border rounded px-8"):
+
+        title=job.find('h2', class_="flex-shrink-0 mb-3 md:mb-0 md:w-64 md:pr-6 font-medium capitalize").text
+        link=title.replace(" ","-")
+        location=job.find('div', class_="w-full mb-2 md:mb-0").text.split(':')[1].strip().split(', ')
+        county_finish=["Cluj"if city =="Cluj" else get_county_json(city)[0] for city in location]
+       
         # get jobs items from response
         job_list.append(Item(
             job_title=title.capitalize(),
-            job_link="https://mediagalaxy.ro/cariere/#" + "-".join(link),
+            job_link="https://mediagalaxy.ro/cariere/#" + link,
             company="Mediagalaxy",
             country="România",
             county = county_finish,
-            city = only_city_location,
+            city = location,
             remote = "on-site",     
         ).to_dict())
 
