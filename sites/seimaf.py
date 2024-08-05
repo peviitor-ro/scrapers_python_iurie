@@ -30,26 +30,12 @@ def scraper():
     soup = GetStaticSoup("https://www.seimaf.com/ro/ofertele-de-locuri-de-munca/?fwp_job_location=bucuresti-romania")
 
     job_list = []
-    job_urgent=soup.find_all("article", attrs="card-jobcard-job--urgent highlighted-block")
-    if job_urgent:
-        for job in job_urgent:
-            
-            # get jobs items from response
-            job_list.append(Item(
-                job_title=job.find("h1", attrs="card-job__title").text.strip(),
-                job_link=job.find("a")["href"],
-                company="Seimaf",
-                country="România",
-                county="Bucuresti",
-                city="Bucuresti",
-                remote="on-site",
-            ).to_dict()) 
-       
-    for job in soup.find_all("article",attrs="card-job"):
+    
+    for job in soup.find_all("article",class_="card-job"):
         
         # get jobs items from response
         job_list.append(Item(
-            job_title=job.find("h1", attrs="card-job__title").text.strip(),
+            job_title=job.find("h1", class_="card-job__title").text.strip(),
             job_link=job.find("a")["href"],
             company="Seimaf",
             country="România",
