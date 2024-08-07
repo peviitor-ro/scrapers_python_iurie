@@ -38,7 +38,7 @@ def scraper():
             job_list.append(Item(
                 job_title=job["title"][0],
                 job_link=job["positionProfile___webAddress"][0],
-                company="RolandBerger",
+                company="Rolandberger",
                 country="România",
                 county="București",
                 city="București",
@@ -55,13 +55,13 @@ def main():
     ---> update_jobs() and update_logo()
     '''
 
-    company_name = "RolandBerger"
+    company_name = "Rolandberger"
     logo_link = "https://pr-journal.de/images/stories/logos/Roland_Berger_Logo.jpg"
 
     jobs = scraper()
     print("jobs found:",len(jobs))
     # uncomment if your scraper done
-    # UpdateAPI().publish(jobs)
+    UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
 
 
