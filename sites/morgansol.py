@@ -31,9 +31,9 @@ def scraper():
     #check how many pages with jobs are on the page 
     # soup = GetStaticSoup("https://www.morgansol.ro/?post_type=job_listing")
     # pages=int(soup.find_all("a", class_="page-numbers")[-2].text.split()[-1])
-    for page in range(1,2):
+    for page in range(1,5):
         soup=GetStaticSoup(f"https://www.morgansol.ro/page/{page}/?post_type=job_listing")
-        for job in soup.find_all("div",attrs="blog-entry-inner entry-inner wpex-last-mb-0 wpex-clr"):
+        for job in soup.find_all("div",class_="blog-entry-inner entry-inner wpex-last-mb-0 wpex-clr"):
             link=job.find("h2", class_="blog-entry-title entry-title wpex-text-3xl").find("a")["href"]
             job_detail=GetStaticSoup(link)
             job_detail.find("div", class_="single_job_listing")
