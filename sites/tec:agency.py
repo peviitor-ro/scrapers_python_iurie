@@ -38,7 +38,7 @@ def scraper():
         job_list.append(Item(
             job_title=job['jobOpeningName'],
             job_link="https://tecss.bamboohr.com/careers/"+job['id'],
-            company="tec:agency",
+            company="Tecagency",
             country="România",
             county=check_county if check_county else "Cluj",
             city=location,
@@ -55,7 +55,7 @@ def main():
     ---> update_jobs() and update_logo()
     '''
 
-    company_name = "tec:agency"
+    company_name = "Tecagency"
     logo_link = "https://images.crunchbase.com/image/upload/c_pad,h_256,w_256,f_auto,q_auto:eco,dpr_1/vnutwbrcrrafaausnjxd"
 
     jobs = scraper()
