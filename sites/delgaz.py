@@ -36,6 +36,7 @@ def scraper():
                  "Accounts Payable Associate (German Speaker)"]
     job_list = []
     soup = GetStaticSoup("https://careers.eon.com/romania/search/?q=&sortColumn=referencedate&sortDirection=desc&startrow=1")
+    # find li element that contain 2
     pages=soup.find('li', text=lambda x: x and '2' in x).string  #soup.find("ul",{"class":"pagination"})[-1]
 
     for page in range(1,int(pages)+1):
