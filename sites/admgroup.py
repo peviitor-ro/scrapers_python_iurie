@@ -54,7 +54,7 @@ def main():
     '''
 
     company_name = "admgroup"
-    logo_link = "https://pinpoint-production.s3.eu-west-2.amazonaws.com/variants/0d4y4bslls5mj2e5s4nkazka32ky/3985fcd1f77d36d9f3e2d01f056248d4eb5d94046fae76707810629ddb0379fd?response-content-disposition=inline%3B%20filename%3D%22adm_logo.png%22%3B%20filename%2A%3DUTF-8%27%27adm_logo.png&response-content-type=image%2Fpng&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJ5PLDFLGL6OULNZQ%2F20240813%2Feu-west-2%2Fs3%2Faws4_request&X-Amz-Date=20240813T125322Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=eb224f24f232bc28e7e39d258ce23b95b6ba79bed6b992e06d8ca0d3ebe41e7a"
+    logo_link = "https://www.admgroup.com/media/4n3jiiev/adm_logo.png"
 
     jobs = scraper()
     print("jobs found:",len(jobs))
