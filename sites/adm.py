@@ -135,7 +135,7 @@ def main():
     '''
 
     company_name = "Adm"
-    logo_link = "https://extranet.e-adm.com/KenexaCandidateExport/Documents/Banner_Images/ADM_alternate_Logo.png"
+    logo_link = "https://upload.wikimedia.org/wikipedia/commons/3/36/Archer_Daniels_Midland_logo.svg"
 
     jobs = scraper()
     print("jobs found:",len(jobs))
