@@ -46,7 +46,7 @@ def scraper():
         else:
             location=["București"]
             
-        county=[get_county_json(city)[0] for city in location]
+        county=["Iasi" if city=="Iasi"  else get_county_json(city)[0] for city in location]
         
         # get jobs items from response
         job_list.append(Item(
