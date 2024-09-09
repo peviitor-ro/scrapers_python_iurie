@@ -21,7 +21,8 @@ from __utils import (
     Item,
     UpdateAPI,
 )
-import time
+import math
+
 
 def scraper():
     """
@@ -30,42 +31,48 @@ def scraper():
     job_list = []
     location = []
     page = 0
-    flag = True
+
+    soup = GetStaticSoup(
+            f"https://apply.deloittece.com/en_US/careers/SearchJobs/?523=%5B5509%5D&523_format=1482&listFilterMode=1&jobRecordsPerPage=10&jobOffset={page}")
+        
+    # extract from page "Displaying 1-10 of 102 results"
+    total_jobs = soup.find('div', class_='list-controls__text__legend').text
+    total_results = int(total_jobs.split('of')[-1].split()[0])
+    # Calculate the number of pages
+    pages = math.ceil(total_results / 10)
     
-    while flag:
-        soup = GetStaticSoup(f"https://apply.deloittece.com/en_US/careers/SearchJobs/?523=%5B5509%5D&523_format=1482&listFilterMode=1&jobRecordsPerPage=10&jobOffset={page}")
-        if len(jobs := soup.find_all('div', attrs=('article__header__text'))) > 1:
-            
-            for job in jobs:
-                # print(job.find('div', attrs = ('article__header__text__subtitle')).text.strip())
-                # data = ' '.join(span.text.strip() for span in job.find_all('span'))
-                span_elements = job.find_all('span')
-                #extract data from span elements location and job type 
-                job_type_data = span_elements[-1].text.strip()
-                location_data = span_elements[0].text.strip().split('- R')[0].replace(',', '')
-                #check if Bucharest and replace it with Bucuresti
-                if 'Bucharest' in location_data:
-                    location_data = location_data.replace('Bucharest','București')
-                location = location_data.split()
-                #create a list only  if location is county 
-                check_county =["Iasi" if city == "Iasi" else get_county_json(city)[0] for city in location]
+    for page in range(1, pages+1):
+        
+        for job in soup.find_all("div", class_="article__header__text"):
                 
-                # get jobs items from respons
-                job_list.append(Item(
-                    job_title = job.find('a').text.strip(),
-                    job_link = job.find('a')['href'],
-                    company = 'Deloitte',
-                    country = 'România',
-                    county = check_county,
-                    city = location,
-                    remote = get_job_type(job_type_data),
-                ).to_dict())
-        else:
-            flag = False
-            break
-        # increment page
-        page += 10
-        time.sleep(1)
+            span_elements = job.find_all('span')
+            # extract data from span elements location and job type
+            job_type_data = span_elements[-1].text.strip()
+            location_data = span_elements[0].text.strip().split('- R')[0].replace(',', '')
+            # check if Bucharest and replace it with Bucuresti
+            if 'Bucharest' in location_data:
+                location_data = location_data.replace('Bucharest', 'București')
+            location = location_data.split()
+            # create a list of county base on city
+            check_county = ["Iasi" if city == "Iasi" else get_county_json(city)[0] for city in location]
+
+            # get jobs items from respons
+            job_list.append(Item(
+                job_title=job.find('a').text.strip(),
+                job_link=job.find('a')['href'],
+                company='Deloitte',
+                country='România',
+                county=check_county,
+                city=location,
+                remote=get_job_type(job_type_data),
+            ).to_dict())
+            
+        # multiply with with 10 to increment page ofset number of jobs
+        page *= 10
+        soup = GetStaticSoup(
+            f"https://apply.deloittece.com/en_US/careers/SearchJobs/?523=%5B5509%5D&523_format=1482&listFilterMode=1&jobRecordsPerPage=10&jobOffset={page}")
+        
+       
     return job_list
 
 
@@ -80,7 +87,7 @@ def main():
     logo_link = "https://www.bher.ca/sites/default/files/images/2022-03/Deloitte-Logo.png"
 
     jobs = scraper()
-    print("jobs found:",len(jobs))
+    print("jobs found:", len(jobs))
     # uncomment if your scraper done
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
