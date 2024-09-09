@@ -91,15 +91,16 @@ def scraper():
     }
     
     post_data = PostRequestJson( "https://careers.honeywell.com/widgets", custom_headers=headers, data_json=payload)
+    #find total jobs
     totalJobs=post_data["eagerLoadRefineSearch"]["totalHits"]
+    # Calculate the number of pages
     pages=ceil(totalJobs/50)
     
     job_list = []
     for page in range(1, pages+1):
         
         for job in post_data["eagerLoadRefineSearch"]["data"]["jobs"]:
-            # trebuie de facut restul job are 91
-            # print(job["title"])
+        
             # get jobs items from response
             job_list.append(Item(
                 job_title=job["title"],
