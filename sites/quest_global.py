@@ -29,6 +29,7 @@ import json
 def scraper():
     '''
     ... scrape data from Quest global scraper.
+    https://careers.quest-global.com/global/en/search-results?qcountry=Romania
     '''
     # post_data = PostRequestJson("https://careers.quest-global.com/widgets", custom_headers=headers, data_raw=data_raw)
 
@@ -83,7 +84,7 @@ def scraper():
 
     response = requests.request("POST", url, headers=headers, data=payload)
     data=response.json()["eagerLoadRefineSearch"]["data"]["jobs"]
-    # print(data)
+    
     for job in data:
         title=job["title"].replace(" ","-")
         
@@ -93,9 +94,9 @@ def scraper():
             job_link="https://careers.quest-global.com/global/en/job/"+job["jobId"]+"/"+title,
             company='Quest global',
             country="România",
-            county=get_county_json(job["city"]),
-            city=job["city"],
-            remote="remote",
+            county="all" if not job["city"] else get_county_json(job["city"]),
+            city="all" if not job["city"] else job["city"],
+            remote="remote" if not job["city"] else "on-site",
         ).to_dict())
 
     return job_list
