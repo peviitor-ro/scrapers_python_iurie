@@ -27,34 +27,37 @@ import math
 def scraper():
     """
     ... scrape data from Deloitte scraper.
+    https://apply.deloittece.com/en_US/careers/SearchJobs/?523=%5B5509%5D&523_format=1482&listFilterMode=1&jobRecordsPerPage=10&jobOffset=0
     """
     job_list = []
     location = []
     page = 0
 
     soup = GetStaticSoup(
-            f"https://apply.deloittece.com/en_US/careers/SearchJobs/?523=%5B5509%5D&523_format=1482&listFilterMode=1&jobRecordsPerPage=10&jobOffset={page}")
-        
+        f"https://apply.deloittece.com/en_US/careers/SearchJobs/?523=%5B5509%5D&523_format=1482&listFilterMode=1&jobRecordsPerPage=10&jobOffset={page}")
+
     # extract from page "Displaying 1-10 of 102 results"
     total_jobs = soup.find('div', class_='list-controls__text__legend').text
     total_results = int(total_jobs.split('of')[-1].split()[0])
     # Calculate the number of pages
     pages = math.ceil(total_results / 10)
-    
+
     for page in range(1, pages+1):
-        
+
         for job in soup.find_all("div", class_="article__header__text"):
-                
+
             span_elements = job.find_all('span')
             # extract data from span elements location and job type
             job_type_data = span_elements[-1].text.strip()
-            location_data = span_elements[0].text.strip().split('- R')[0].replace(',', '')
+            location_data = span_elements[0].text.strip().split(
+                '- R')[0].replace(',', '')
             # check if Bucharest and replace it with Bucuresti
             if 'Bucharest' in location_data:
                 location_data = location_data.replace('Bucharest', 'București')
             location = location_data.split()
             # create a list of county base on city
-            check_county = ["Iasi" if city == "Iasi" else get_county_json(city)[0] for city in location]
+            check_county = ["Iasi" if city == "Iasi" else get_county_json(city)[
+                0] for city in location]
 
             # get jobs items from respons
             job_list.append(Item(
@@ -66,13 +69,12 @@ def scraper():
                 city=location,
                 remote=get_job_type(job_type_data),
             ).to_dict())
-            
+
         # multiply with with 10 to increment page ofset number of jobs
         page *= 10
         soup = GetStaticSoup(
             f"https://apply.deloittece.com/en_US/careers/SearchJobs/?523=%5B5509%5D&523_format=1482&listFilterMode=1&jobRecordsPerPage=10&jobOffset={page}")
-        
-       
+
     return job_list
 
 
