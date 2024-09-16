@@ -26,25 +26,39 @@ from __utils import (
 def scraper():
     """
     ... scrape data from Infotree Global Solutions scraper.
+    https://careereu.infotreeglobal.com/jobs?country=Romania&split_view=true&query=
     """
     soup = GetStaticSoup("https://careereu.infotreeglobal.com/jobs?country=Romania&split_view=true&query=")
-    job_block=soup.find("ul", class_="block-grid")
+    
     job_list = []
     for job in soup.find_all('a', class_="block h-full w-full hover:bg-company-primary-text hover:bg-opacity-3 overflow-hidden group"):
+        
+        data = job.find("div", class_="mt-1 text-md").text.strip()
+        #extract job type from data
+        job_type=get_job_type(data)
+        
+        location=job.find("div", class_="mt-1 text-md").text.strip()
         #find location and replace Bucharest with București
-        location=job.find("div", class_="mt-1 text-md").find('span').text
-        location="București" if "Bucharest" in location else location
-        #find job type if presnet or job_type on-site
-        job_type=job.find("span", class_="inline-flex items-center gap-x-2")
-        job_type=job_type.text.strip().lower().split() if job_type else "on-site"
-    
+        location = "București" if "Bucharest" in location else location.split("·")[-1].strip().split(",")
+        location = "all" if "Fully Remote" in location else location
+        county = []
+        
+        if isinstance(location, list):
+            for city in location:
+                cities=get_county_json(city.strip())
+                county+=cities
+                county=list(set(county))
+                
+        else:
+           county="all" if "all" in location else  get_county_json(location)
+        
         # get jobs items from response
         job_list.append(Item(
             job_title=job.find("span", class_="text-block-base-link company-link-style").text,
             job_link=job.get("href"),
             company="Infotreeglobalsolutions",
             country="România",
-            county=get_county_json(location),
+            county=county,
             city=location,
             remote=job_type,
         ).to_dict())
