@@ -26,6 +26,7 @@ from __utils import (
 def scraper():
     '''
     ... scrape data from Be Shaping the future scraper.
+    https://www.careers-page.com/be-shaping-the-future?page=1#openings
     '''
     headers = {
                 'accept': 'application/json, text/plain, */*',
@@ -36,7 +37,7 @@ def scraper():
     job_list = []
     for job in json_data['results']:
         if job["country"]=="Romania":
-
+            
         # get jobs items from response
             job_list.append(Item(
                 job_title=job["position_name"],
