@@ -31,7 +31,7 @@ def scraper():
 
     job_list = []
     for job in soup.find_all("div",class_="card-body"):
-        link="https://careers.cognizant.com"+job.find("a",class_="stretched-link js-view-job")["href"]
+        link = "https://careers.cognizant.com"+job.find("a",class_="stretched-link js-view-job")["href"]
         #open job position and extarct job type from job page
         data_job = GetStaticSoup(link)
         job_type = data_job.find("div",class_="key-info").findAll("dd")[-1].text.strip()
