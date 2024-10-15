@@ -28,29 +28,33 @@ def scraper():
     ... scrape data from MORGANSOL scraper.
     """
     job_list = []
-    #check how many pages with jobs are on the page 
+    # check how many pages with jobs are on the page
     # soup = GetStaticSoup("https://www.morgansol.ro/?post_type=job_listing")
     # pages=int(soup.find_all("a", class_="page-numbers")[-2].text.split()[-1])
-    for page in range(1,5):
-        soup=GetStaticSoup(f"https://www.morgansol.ro/page/{page}/?post_type=job_listing")
-        for job in soup.find_all("div",class_="blog-entry-inner entry-inner wpex-last-mb-0 wpex-clr"):
-            link=job.find("h2", class_="blog-entry-title entry-title wpex-text-3xl").find("a")["href"]
-            job_detail=GetStaticSoup(link)
+    for page in range(1, 5):
+        soup = GetStaticSoup(
+            f"https://www.morgansol.ro/page/{page}/?post_type=job_listing")
+        for job in soup.find_all("div", class_="blog-entry-inner entry-inner wpex-last-mb-0 wpex-clr"):
+            link = job.find(
+                "h2", class_="blog-entry-title entry-title wpex-text-3xl").find("a")["href"]
+            job_detail = GetStaticSoup(link)
             job_detail.find("div", class_="single_job_listing")
-            if len(job_detail.contents)>1:
-                location=job_detail.find("li", class_="location")
+            if len(job_detail.contents) > 1:
+                location = job_detail.find("li", class_="location")
                 if location:
-                    city=location.text.split(",")[0].capitalize()
-                    
+                    city = location.text.split(",")[0].capitalize()
+
                     # get jobs items from response
                     job_list.append(Item(
-                        job_title=job.find("h2", class_="blog-entry-title entry-title wpex-text-3xl").text,
+                        job_title=job.find(
+                            "h2", class_="blog-entry-title entry-title wpex-text-3xl").text,
                         job_link=link,
                         company="MORGANSOL",
                         country="România",
                         county=get_county_json(city),
                         city=city,
-                        remote=get_job_type(job_detail.find("div", class_="job_description").text),
+                        remote=get_job_type(job_detail.find(
+                            "div", class_="job_description").text),
                     ).to_dict())
 
     return job_list
@@ -67,7 +71,7 @@ def main():
     logo_link = "https://www.morgansol.ro/wp-content/uploads/2023/05/LOGO-MORGANSOL.png"
 
     jobs = scraper()
-    print("jobs found:",len(jobs))
+    print("jobs found:", len(jobs))
     # uncomment if your scraper done
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
