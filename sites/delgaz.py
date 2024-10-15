@@ -14,7 +14,7 @@
 #
 #
 from __utils import (
-    GetStaticSoup,
+    PostRequestJson,
     get_county,
     get_county_json,
     get_job_type,
@@ -26,43 +26,42 @@ from __utils import (
 def scraper():
     """
     ... scrape data from Delgaz scraper.
+    https://jobs.eon.com/en?locale=en_GB&filter=company%3ADelgaz+Grid%2Clocations.country%3ARomania
     """
-    remote_jobs=["German Speakers Interested in Accounting",
-                 "Accounts Payable Associate (German Speaker)",
-                 "Accounts Payable Associate (Hungarian Speaker, Fixed Term)",
-                 "Accounts Payable Associate (Hungarian Speaker)",
-                 "Fixed Assets Associate (Hungarian Speaker)",
-                 "Technology Business Management Office Specialist",
-                 "Accounts Payable Associate (German Speaker)"]
-    job_list = []
-    soup = GetStaticSoup("https://careers.eon.com/romania/search/?q=&sortColumn=referencedate&sortDirection=desc&startrow=1")
-    # find li element that contain 2
-    pages=soup.find('li', text=lambda x: x and '2' in x).string  #soup.find("ul",{"class":"pagination"})[-1]
 
-    for page in range(1,int(pages)+1):
-        if page <=1:
-            soup = GetStaticSoup(f"https://careers.eon.com/romania/search/?q=&sortColumn=referencedate&sortDirection=desc&startrow={page}")
-        else:
-            page=25
-            soup = GetStaticSoup(f"https://careers.eon.com/romania/search/?q=&sortColumn=referencedate&sortDirection=desc&startrow={page}")
+    job_list = []
+    url = "https://v09fm4cjghdr23p7p.a1.typesense.net/multi_search?x-typesense-api-key=AGw1v6TzYYkkQyvvf6uFvHXuO3DML7AD"
+
+    payload = "{\"searches\":[{\"collection\":\"eon_en\",\"q\":\"*\",\"query_by\":\"data.title,data.idClient,data.jobNumber,data.company,data.recruiter,data.locations.city,content.task,content.profile,content.offer,content.contact\",\"infix\":\"always,always,always,always,off,off,off,off,off,off\",\"drop_tokens_threshold\":0,\"num_typos\":\"1,0,0,1,0,0,0,0,0,0\",\"filter_by\":\"((data.company:=[`Delgaz Grid`] && data.locations.country:=[`Romania`]) && data.company:!=Westconnect GmbH)\",\"sort_by\":\"_text_match:desc,data.postingDate_timestamp:desc\",\"page\":1,\"per_page\":40,\"facet_by\":\"data.businessUnit,data.category,data.company,data.contract,data.employmentType,data.classification,data.entryLevel,data.jobField,data.language,data.remote,data.locations.city,data.locations.cityState,data.locations.state,data.locations.country\",\"max_facet_values\":500,\"include_fields\":\"data,_geoloc\",\"split_join_tokens\":\"always\",\"typo_tokens_threshold\":2},{\"collection\":\"eon_en\",\"q\":\"*\",\"query_by\":\"data.title,data.idClient,data.jobNumber,data.company,data.recruiter,data.locations.city,content.task,content.profile,content.offer,content.contact\",\"infix\":\"always,always,always,always,off,off,off,off,off,off\",\"drop_tokens_threshold\":0,\"num_typos\":\"1,0,0,1,0,0,0,0,0,0\",\"filter_by\":\"data.locations.country:=[`Romania`]\",\"sort_by\":\"_text_match:desc,data.postingDate_timestamp:desc\",\"page\":1,\"per_page\":0,\"facet_by\":\"data.company\",\"max_facet_values\":500,\"include_fields\":\"\",\"split_join_tokens\":\"always\",\"typo_tokens_threshold\":2},{\"collection\":\"eon_en\",\"q\":\"*\",\"query_by\":\"data.title,data.idClient,data.jobNumber,data.company,data.recruiter,data.locations.city,content.task,content.profile,content.offer,content.contact\",\"infix\":\"always,always,always,always,off,off,off,off,off,off\",\"drop_tokens_threshold\":0,\"num_typos\":\"1,0,0,1,0,0,0,0,0,0\",\"filter_by\":\"data.company:=[`Delgaz Grid`]\",\"sort_by\":\"_text_match:desc,data.postingDate_timestamp:desc\",\"page\":1,\"per_page\":0,\"facet_by\":\"data.locations.cityState,data.locations.state,data.locations.country\",\"max_facet_values\":500,\"include_fields\":\"\",\"split_join_tokens\":\"always\",\"typo_tokens_threshold\":2}]}"
+    headers = {
+        'origin': 'https://jobs.eon.com',
         
-        for job in soup.find_all("tr",class_="data-row"):
-            title=job.find("a",class_="jobTitle-link").text.strip()
-            #extract location
-            location = job.find("span",class_="jobLocation").text.strip().split(", RO")[0]
-            #clean location typo
-            location="Târgu-Mureș" if "Târgu Mureș"== location else "Piatra-Neamt" if location == "Piatra Neamț"  else location
-           
-            # get jobs items from response
-            job_list.append(Item(
-                job_title=title,
-                job_link="https://careers.eon.com"+job.find("a",class_="jobTitle-link")["href"],
-                company="Delgaz",
-                country="România",
-                county="Iași" if location=="Iași" else get_county_json(location),
-                city=location,
-                remote="hybrid" if title in remote_jobs  else "on-site",
-            ).to_dict())
+    }
+
+    post_data = PostRequestJson(
+        url=url, custom_headers=headers, data_raw=payload)
+
+    for job in post_data["results"][0]["hits"]:
+        if len(job["document"]["data"]["locations"]) > 1:
+
+            cities = [location['city']
+                      for location in job["document"]["data"]["locations"]]
+            counties = [county["state"]
+                        for county in job["document"]["data"]["locations"]]
+        else:
+            cities = job["document"]["data"]["locations"][0]["city"]
+            counties = job["document"]["data"]["locations"][0]["state"]
+
+        # get jobs items from response
+        job_list.append(Item(
+            job_title=job["document"]["data"]["title"],
+            job_link=job["document"]["data"]["jobBoard_link"],
+            company="Delgaz",
+            country="România",
+            county=counties,
+            city=cities,
+            remote=job["document"]["data"]["remote"].lower(),
+        ).to_dict())
 
     return job_list
 
@@ -78,7 +77,7 @@ def main():
     logo_link = "https://industrial-park.ro/wp-content/uploads/2019/05/delgaz-logo.png"
 
     jobs = scraper()
-    print("jobs found:",len(jobs))
+    print("jobs found:", len(jobs))
     # uncomment if your scraper done
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
