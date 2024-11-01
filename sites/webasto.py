@@ -26,25 +26,28 @@ def scraper():
     """
     ... scrape data from Webasto scraper.
     """
-    soup = GetStaticSoup("https://jobs.webasto.com/search/?q=&q2=&alertId=&title=&location=RO&shifttype=&date=&department=")
+    soup = GetStaticSoup(
+        "https://jobs.webasto.com/search/?q=&q2=&alertId=&title=&location=RO&shifttype=&date=&department=")
 
     job_list = []
-    existing_job_links=[]
+    existing_job_links = []
     for job in soup.find_all('tr', class_='data-row'):
-       
-        location = job.find('span', class_ = 'jobLocation').text.strip().split(', R')[0]
-        link = 'https://jobs.webasto.com/'+job.find('a', class_='jobTitle-link')['href']
-        # solve duplicate issue job 
-       
+
+        location = job.find(
+            'span', class_='jobLocation').text.strip().split(', R')[0]
+        link = 'https://jobs.webasto.com/' + \
+            job.find('a', class_='jobTitle-link')['href']
+        # solve duplicate issue job
+
         # get jobs items from response
         job_list.append(Item(
-            job_title = job.find('a', class_='jobTitle-link').text,
-            job_link = link,
-            company = 'Webasto',
-            country = 'România',
-            county = location,
-            city =  location ,
-            remote =  "on-site",
+            job_title=job.find('a', class_='jobTitle-link').text,
+            job_link=link,
+            company='Webasto',
+            country='România',
+            county=location,
+            city=location,
+            remote="on-site",
         ).to_dict())
 
     return job_list
@@ -61,9 +64,9 @@ def main():
     logo_link = "https://logodix.com/logo/1699232.png"
 
     jobs = scraper()
-    print(len(jobs))
+    print("Jobs found", len(jobs))
     # uncomment if your scraper done
-    # UpdateAPI().publish(jobs)
+    UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
 
 
