@@ -14012,21 +14012,26 @@ def get_county(location: str):
     for county_dict in counties:
         for key, value in county_dict.items():
 
-            if location.lower() == key.lower():# or location.lower() == value[0].lower():
+            # or location.lower() == value[0].lower():
+            if location.lower() == key.lower():
                 return key, True
- 
-    return  location, False
+
+    return location, False
 
 
 def get_county_json(loc):
     loc = loc.lower()
     city = remove_diacritics(loc)
-    url=f"https://api.laurentiumarian.ro/orase/?search={city}"
-    responce=requests.get(url=url).json()
-    citis=responce.get("results")
-    counties=[]
+    url = f"https://api.laurentiumarian.ro/orase/?search={city}"
+    responce = requests.get(url=url).json()
+    citis = responce.get("results")
+    counties = []
     for location in citis:
-        if location.get("name").lower()==city:
+        if location.get("name").lower() == city:
             counties.append(location.get("county"))
+        elif location.get("county").lower() == city:
+            counties.append(city.capitalize())
     return list(set(counties))
-    
+
+
+# print(get_county_json("Prahova"))
