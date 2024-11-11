@@ -28,8 +28,8 @@ def scraper():
     '''
     ... scrape data from Kenvue scraper.
     '''
-    url="https://kenvue.taleo.net/careersection/rest/jobboard/searchjobs?lang=en&portal=101430233"
-    headers={
+    url = "https://kenvue.taleo.net/careersection/rest/jobboard/searchjobs?lang=en&portal=101430233"
+    headers = {
         'Accept': 'application/json, text/javascript, */*; q=0.01',
         'Accept-Language': 'en-US,en;q=0.9,ro-RO;q=0.8,ro;q=0.7',
         'Connection': 'keep-alive',
@@ -48,22 +48,22 @@ def scraper():
         'tz': 'GMT+02:00',
         'tzname': 'Europe/Warsaw'
     }
-    payload=json.dumps({
-            "multilineEnabled": True,
-            "sortingSelection": {
-                "sortBySelectionParam": "3",
-                "ascendingSortingOrder": "false"
-            },
-            "fieldData": {
-                "fields": {
+    payload = json.dumps({
+        "multilineEnabled": True,
+        "sortingSelection": {
+            "sortBySelectionParam": "3",
+            "ascendingSortingOrder": "false"
+        },
+        "fieldData": {
+            "fields": {
                 "KEYWORD": "",
                 "LOCATION": "1493840260991",
                 "CATEGORY": ""
-                },
-                "valid": True
             },
-            "filterSelectionParam": {
-                "searchFilterSelections": [
+            "valid": True
+        },
+        "filterSelectionParam": {
+            "searchFilterSelections": [
                 {
                     "id": "POSTING_DATE",
                     "selectedValues": []
@@ -76,56 +76,57 @@ def scraper():
                     "id": "JOB_FIELD",
                     "selectedValues": []
                 }
-                ]
-            },
+            ]
+        },
         "advancedSearchFiltersSelectionParam": {
             "searchFilterSelections": [
-            {
-                "id": "ORGANIZATION",
-                "selectedValues": []
-            },
-            {
-                "id": "LOCATION",
-                "selectedValues": []
-            },
-            {
-                "id": "JOB_FIELD",
-                "selectedValues": []
-            },
-            {
-                "id": "JOB_NUMBER",
-                "selectedValues": []
-            },
-            {
-                "id": "URGENT_JOB",
-                "selectedValues": []
-            },
-            {
-                "id": "STUDY_LEVEL",
-                "selectedValues": []
-            },
-            {
-                "id": "WILL_TRAVEL",
-                "selectedValues": []
-            }
+                {
+                    "id": "ORGANIZATION",
+                    "selectedValues": []
+                },
+                {
+                    "id": "LOCATION",
+                    "selectedValues": []
+                },
+                {
+                    "id": "JOB_FIELD",
+                    "selectedValues": []
+                },
+                {
+                    "id": "JOB_NUMBER",
+                    "selectedValues": []
+                },
+                {
+                    "id": "URGENT_JOB",
+                    "selectedValues": []
+                },
+                {
+                    "id": "STUDY_LEVEL",
+                    "selectedValues": []
+                },
+                {
+                    "id": "WILL_TRAVEL",
+                    "selectedValues": []
+                }
             ]
         },
         "pageNo": 1
-        })
-    
-    post_data = PostRequestJson(url=url, custom_headers=headers, data_raw=payload)
+    })
+
+    post_data = PostRequestJson(
+        url=url, custom_headers=headers, data_raw=payload)
     # print(post_data)
     job_list = []
-    base_url="https://kenvue.taleo.net/careersection/2/jobdetail.ftl?job="
-    end_url="&tz=GMT%2B02%3A00&tzname=Europe%2FWarsaw"
+    base_url = "https://kenvue.taleo.net/careersection/2/jobdetail.ftl?job="
+    end_url = "&tz=GMT%2B02%3A00&tzname=Europe%2FWarsaw"
     for job in post_data["requisitionList"]:
-        location=job["column"][1].split('-')[2]
-
+        location = job["column"][1].split('-')[3].replace('"]', '')
+        
         # get jobs items from response
         job_list.append(Item(
             job_title=job["column"][0],
             job_link=base_url+job["contestNo"]+end_url,
-            company='Kenvue',
+            company="Kenvue",
             country="România",
             county=get_county_json(location),
             city=location,
@@ -146,10 +147,11 @@ def main():
     logo_link = "https://kenvue.taleo.net/careersection/theme/18211901/1715719507000/en/theme/images/Kenvue_logo_black.png"
 
     jobs = scraper()
-    print("jobs found:",len(jobs))
+    print("jobs found:", len(jobs))
     # uncomment if your scraper done
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
+
 
 if __name__ == '__main__':
     main()
