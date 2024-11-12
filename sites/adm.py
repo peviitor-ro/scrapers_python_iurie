@@ -111,14 +111,14 @@ def scraper():
 
     job_list = []
     for job in json_data['Jobs']["Job"]:
-        location= "Bucuresti" if"Bucharest" in job["Questions"][-2]["Value"] else job["Questions"][-2]["Value"]
+        location = "Bucuresti" if"Bucharest" in job["Questions"][-2]["Value"] else job["Questions"][-2]["Value"]
         
         # get jobs items from response
         job_list.append(Item(
             job_title=job["Questions"][-5]["Value"],
             job_link=job["Link"],
             company="Adm",
-            country="România",
+            country="Romania",
             county=get_county_json(location),
             city=location,
             remote="on-site",

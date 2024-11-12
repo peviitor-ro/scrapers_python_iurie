@@ -26,7 +26,8 @@ import json
 
 def scraper():
     '''
-    ... scrape data from Kenvue scraper.
+    scrape data from Kenvue scraper.
+    https://kenvue.taleo.net/careersection/2/jobsearch.ftl?lang=en&keyword=#
     '''
     url = "https://kenvue.taleo.net/careersection/rest/jobboard/searchjobs?lang=en&portal=101430233"
     headers = {
@@ -115,7 +116,7 @@ def scraper():
 
     post_data = PostRequestJson(
         url=url, custom_headers=headers, data_raw=payload)
-    # print(post_data)
+   
     job_list = []
     base_url = "https://kenvue.taleo.net/careersection/2/jobdetail.ftl?job="
     end_url = "&tz=GMT%2B02%3A00&tzname=Europe%2FWarsaw"
