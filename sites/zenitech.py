@@ -27,33 +27,28 @@ def scraper():
     '''
     ... scrape data from Zenitech scraper.
     '''
-    soup = GetStaticSoup("https://zenitech.co.uk/careers/")
+    soup = GetStaticSoup("https://zenitech.co.uk/careers/romania/")
 
     job_list = []
-    location = "Cluj-Napoca"
-    location_finish = get_county('Cluj-Napoca')
     
-    for job in soup.find_all('div', attrs=('elementor-element elementor-element-2b13778 e-con-full e-flex e-con e-child')):
+    for job in soup.find_all('div', class_=('elementor-element elementor-element-2b13778 e-con-full e-flex e-con e-child')):
         
-        #logic to extract location
-        find_location  = job.find('div', attrs =('elementor-element-cca09fe'))
-        data = find_location.text.strip()
+        #job data
+        data = job.find('div', class_ =('elementor-element-cca09fe')).text.strip()
         
-        if location in data:
-            data_list = data.split(' | ') #create a list from string 
-            for text in data_list:
-                if location in text: #check list elements if location is present 
-                    job_type = get_job_type(text)
-                #get jobs items from response
-                    job_list.append(Item(
-                        job_title = job.find('h2').text,
-                        job_link = job.find('a')['href'],
-                        company='Zenitech',
-                        country='România',
-                        county = "Cluj",#location_finish[0] if True in location_finish else None,
-                        city='all' if True in location_finish and location_finish[0].lower()!='bucuresti' else location_finish[0],
-                        remote = job_type,
-                    ).to_dict())
+        if "Romania" in data:
+            job_type = get_job_type(data)
+                
+            #get jobs items from response
+            job_list.append(Item(
+                job_title = job.find('h2').text,
+                job_link = job.find('a')['href'],
+                company='Zenitech',
+                country='România',
+                county = "Cluj",
+                city='Cluj-Napoca',
+                remote = job_type,
+            ).to_dict())
 
     return job_list
 
@@ -69,7 +64,7 @@ def main():
     logo_link = "https://zenitech.co.uk/wp-content/uploads/2020/11/Zenitech-logo-red.svg"
 
     jobs = scraper()
-    # print(len(jobs))
+    print("Found jobs",len(jobs))
     # print(jobs)
     # uncomment if your scraper done
     UpdateAPI().publish(jobs)
