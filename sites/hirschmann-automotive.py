@@ -51,7 +51,7 @@ def scraper():
             job_title=job.find("h3").text,
             job_link="https://career.hirschmann-automotive.com" +
             job.find("a").get("href"),
-            company="hirschmann-automotive",
+            company="hirschmann automotive",
             country="România",
             county=get_county_json(city),
             city=city,
@@ -68,7 +68,7 @@ def main():
     ---> update_jobs() and update_logo()
     """
 
-    company_name = "hirschmann-automotive"
+    company_name = "hirschmann automotive"
     logo_link = "https://www.aki-gmbh.com/wp-content/uploads/logo-hirschmann-automotive.jpg"
 
     jobs = scraper()
