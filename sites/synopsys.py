@@ -14,8 +14,9 @@
 #
 #
 from bs4 import BeautifulSoup
+import requests
 from __utils import (
-    RequestsCustum,
+    GetCustumRequest,
     get_county,
     get_county_json,
     get_job_type,
@@ -24,30 +25,34 @@ from __utils import (
 )
 
 
+
 def scraper():
     """
     ... scrape data from synopsys scraper.
     """
     job_list = []
-    citis=["București","Cluj-Napoca","Iasi","Timișoara"]
+    citis = ["București", "Cluj-Napoca", "Iasi", "Timișoara"]
     payload = {}
     headers = {
-    'referer': 'https://careers.synopsys.com/search-jobs?k=&l=Romania&orgIds=44408'
+        'referer': 'https://careers.synopsys.com/search-jobs?k=&l=Romania&orgIds=44408'
     }
     url = "https://careers.synopsys.com/search-jobs/results?RecordsPerPage=15&Location=Romania&FacetFilters%5B0%5D.ID=798549&FacetFilters%5B0%5D.FacetType=2&FacetFilters%5B0%5D.Count=4&FacetFilters%5B0%5D.Display=Romania&FacetFilters%5B0%5D.IsApplied=true&FacetFilters%5B0%5D.FieldName=&SearchResultsModuleName=Search+Results&SearchFiltersModuleName=Search+Filters;"
+
+    response = requests.request("GET", url=url, headers=headers, data=payload)
     
-    response = RequestsCustum(url=url, headers = headers, payload= payload)
-    soup = BeautifulSoup(response.replace(r'\"', '"').replace(r'\r\n', '\n'), 'html.parser') 
-  
-    for job in soup.find_all("li",class_="search-results-list__list-item"):
-        location=job.find("span",class_="job-location").text
-        if "Multiple Locations"  in location:
-            location=citis
-        else:
-            location=["București"]
-            
-        county=["Iasi" if city=="Iasi"  else get_county_json(city)[0] for city in location]
+    soup = BeautifulSoup(response.text.replace(r'\"', '"').replace(r'\r\n', '\n'), 'html.parser')
+
+    for job in soup.find_all("li", class_="search-results-list__list-item"):
+        location = job.find("span", class_="job-location").text.split(",")[0]
         
+        if "Multiple Locations" in location:
+            location = citis
+        else:
+            location = ["București"] if "Bucharest"  in location else [location]
+
+        county = ["Iasi" if city == "Iasi" else get_county_json(city)[
+            0] for city in location]
+
         # get jobs items from response
         job_list.append(Item(
             job_title=job.find("h2").text,
@@ -73,7 +78,7 @@ def main():
     logo_link = "https://www.synopsys.com/content/experience-fragments/synopsys/en-us/global/eda/topnav/master/_jcr_content/root/topnav_copy.coreimg.svg/1706807034006/synopsys-logo-color.svg"
 
     jobs = scraper()
-    print("jobs found:",len(jobs))
+    print("jobs found:", len(jobs))
     # uncomment if your scraper done
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)

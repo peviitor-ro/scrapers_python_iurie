@@ -86,7 +86,7 @@ def main():
     """
 
     company_name = "Deloitte"
-    logo_link = "https://www.bher.ca/sites/default/files/images/2022-03/Deloitte-Logo.png"
+    logo_link = "https://logodownload.org/wp-content/uploads/2019/10/deloitte-logo.png"
 
     jobs = scraper()
     print("jobs found:", len(jobs))
