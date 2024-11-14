@@ -27,17 +27,15 @@ def scraper():
     ... scrape data from Webasto scraper.
     """
     soup = GetStaticSoup(
-        "https://jobs.webasto.com/search/?q=&q2=&alertId=&title=&location=RO&shifttype=&date=&department=")
+        "https://jobs.webasto.com/search/?createNewAlert=false&q=&optionsFacetsDD_country=RO&optionsFacetsDD_location=&optionsFacetsDD_dept=&optionsFacetsDD_shifttype=")
 
     job_list = []
-    existing_job_links = []
+
     for job in soup.find_all('tr', class_='data-row'):
 
         location = job.find(
             'span', class_='jobLocation').text.strip().split(', R')[0]
-        link = 'https://jobs.webasto.com/' + \
-            job.find('a', class_='jobTitle-link')['href']
-        # solve duplicate issue job
+        link = 'https://jobs.webasto.com/'+job.find('a').get('href')
 
         # get jobs items from response
         job_list.append(Item(
@@ -66,9 +64,10 @@ def main():
     jobs = scraper()
     print("Jobs found", len(jobs))
     # uncomment if your scraper done
-    # UpdateAPI().publish(jobs)
-    # UpdateAPI().update_logo(company_name, logo_link)
+    UpdateAPI().publish(jobs)
+    UpdateAPI().update_logo(company_name, logo_link)
 
 
 if __name__ == '__main__':
     main()
+
