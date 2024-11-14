@@ -14,7 +14,6 @@
 #
 #
 from __utils import (
-    GetStaticSoup,
     GetCustumRequest,
     get_county,
     get_county_json,
@@ -22,8 +21,6 @@ from __utils import (
     Item,
     UpdateAPI,
 )
-from bs4 import BeautifulSoup
-
 
 def scraper():
     """
