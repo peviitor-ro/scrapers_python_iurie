@@ -5,6 +5,7 @@ from __utils.items_struct import Item
 from __utils.found_county import get_county, get_county_json, counties
 from __utils.req_bs4_shorts import (
     GetCustumRequest,
+    PostCustumRequest,
     GetStaticSoup,
     GetRequestJson,
     PostRequestJson,

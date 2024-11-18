@@ -36,11 +36,9 @@ def scraper():
     payload = {}
     url = "https://careers-expleo-jobs.icims.com/jobs/search?ss=1&searchLocation=13526&mobile=false&width=1070&height=500&bga=true&needsRedirect=false&jan1offset=60&jun1offset=120&in_iframe=1"
 
-    response = requests.request("GET", url, headers=headers, data=payload)
-    # response = RequestsCustum(url, headers=headers, payload=payload)
+    response = GetCustumRequest( url, headers=headers, payload=payload)
 
-    soup = BeautifulSoup(response.text, 'html.parser')
-    for job in soup.find_all('div', class_='row'):
+    for job in response.find_all('div', class_='row'):
         info_text = job.find('a')
         if info_text:
             link = job.find('a')['href']
