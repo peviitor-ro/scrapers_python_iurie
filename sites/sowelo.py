@@ -38,14 +38,15 @@ def scraper():
             if "Romania" in td_elements[1].get_text():
                 # Print the text of the <a> tag in the first <td>
                 title=job.find('a', attrs="job_title_link").text
-            
+                link = "https://soweloconsulting.applytojob.com"+job.find("a", attrs="job_title_link").get("href")
+                
                 # get jobs items from response
                 job_list.append(Item(
                     job_title=title,
-                    job_link="https://soweloconsulting.applytojob.com/"+job.find("a", attrs="job_title_link")["href"],
+                    job_link=link,
                     company="Sowelo",
                     country="România",
-                    county="București",
+                    county="București", 
                     city="București",
                     remote=get_job_type(title),
                 ).to_dict())
