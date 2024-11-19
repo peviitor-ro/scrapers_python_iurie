@@ -29,18 +29,17 @@ def scraper():
     soup = GetStaticSoup("https://www.avantajplay.ro/vacancies/")
 
     job_list = []
-    for job in soup.find_all('div', attrs = ('b-vacancies__item')):
-        
-        county = get_county('București')
+    for job in soup.find_all('div', class_=('n-vacancies-cards')):
+        title = job.find('div', class_="n-vacancies-cc-title").find("h3").text
         # get jobs items from response
         job_list.append(Item(
-            job_title = job.find('h2' , attrs = ('b-vacancies__title')).text,
-            job_link = job.find('a' , attrs = ('b-vacancies__link'))['href'],
-            company = 'Avantajplay',
-            country = 'România',
-            county = county[0] if True in county else None,
-            city = 'all' if True in county and county[0] != 'Bucuresti' else county[0],
-            remote = 'on-site',
+            job_title=title,
+            job_link=job.find('a', class_="n-vacancies-card")['href'],
+            company='Avantajplay',
+            country='România',
+            county="Brașov",
+            city="Brașov",
+            remote='on-site',
         ).to_dict())
 
     return job_list
@@ -54,10 +53,10 @@ def main():
     """
 
     company_name = "Avantajplay"
-    logo_link = "https://www.avantajplay.ro/wp-content/uploads/2015/07/logo.png"
+    logo_link = "https://www.avantajplay.ro/wp-content/uploads/2024/07/logo2.svg"
 
     jobs = scraper()
-    print(len(jobs))
+    print("Jobs found", len(jobs))
     # uncomment if your scraper done
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
