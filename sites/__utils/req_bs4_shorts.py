@@ -18,8 +18,10 @@ import cfscrape
 from .default_headers import DEFAULT_HEADERS
 #
 import xml.etree.ElementTree as ET
-
+#
 import subprocess
+#
+
 
 
 # Global Session -> avoid multiple requests
@@ -38,6 +40,27 @@ class GetCustumRequest:
             response = session.request(
                 "GET", url, headers=headers, data=payload)
             return BeautifulSoup(response.text, 'lxml')
+        except ValueError:
+            raise Exception("Request error", session)
+        finally:
+            response.close()
+
+
+class GetCustumRequestJson:
+    """_summary_
+
+    Raises:
+        Exception: _description_
+        Exception: _description_
+        Exception: _description_
+
+    Returns:
+        _type_: JSON
+    """
+    def __new__(cls, url, headers, payload):
+        try:
+            response = session.request("GET", url, headers=headers, data=payload)
+            return response.json()
         except ValueError:
             raise Exception("Request error", session)
         finally:
