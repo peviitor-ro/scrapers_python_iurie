@@ -28,36 +28,102 @@ def scraper():
     ... scrape data from Gopro scraper.
         https://jobs.gopro.com/jobs/country/romania#/
     '''
+    url = "https://ongig-ebdb.ent.us-west-2.aws.found.io/api/as/v1/engines/jobs-production/search.json"
     payload = {
-        "group": "gopro",
-        "group_id": "1613",
-        "filters": "{}",
-        "query": "romania",
-        "from": 0,
-        "mobile": 0,
-        "session": "",
-        "old_search": 0
+        "query": "",
+        "facets": {
+            "category": {
+                "type": "value",
+                "size": 30
+            },
+            "location": {
+                "type": "value",
+                "size": 30
+            },
+            "job_type": {
+                "type": "value",
+                "size": 30
+            }
+        },
+        "filters": {
+            "all": [
+                {
+                    "any": [
+                        {
+                            "location": "Remote Romania"
+                        }
+                    ]
+                },
+                {
+                    "any": [
+                        {
+                            "group_id": 2082
+                        }
+                    ]
+                },
+                {
+                    "any": [
+                        {
+                            "live": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        "search_fields": {
+            "title": {},
+            "location": {},
+            "category": {},
+            "city_filter": {},
+            "country_filter": {}
+        },
+        "result_fields": {
+            "title": {
+                "raw": {}
+            },
+            "location": {
+                "raw": {}
+            },
+            "job_type": {
+                "raw": {}
+            },
+            "content": {
+                "snippet": {
+                    "fallback": True
+                }
+            },
+
+            "url": {
+                "raw": {}
+            }
+        },
+        "page": {
+            "size": 5,
+            "current": 1
+        }
     }
     headers = {
-        'Content-Type': 'application/json',
-        'Cookie': 'AWSALB=m5XxeCbKRY1b4KD/PkmrEgEd2oPkqQJ38hHCR8uPvM7b0HcFZJoEz3+UZsy3SeugUixwNtVoYAX/orDD0biR5+rO9ZjgdP2YvKpg+hnEhZDPRAk8ENEKuXe3HhVI; AWSALBCORS=m5XxeCbKRY1b4KD/PkmrEgEd2oPkqQJ38hHCR8uPvM7b0HcFZJoEz3+UZsy3SeugUixwNtVoYAX/orDD0biR5+rO9ZjgdP2YvKpg+hnEhZDPRAk8ENEKuXe3HhVI; XSRF-TOKEN=eyJpdiI6InlmdEVKdG5uK3l1NU9UMU5wQ1BSc1E9PSIsInZhbHVlIjoiR1Q4c0YzeitraHBFNGh3cFhwVHluNVp5SnI4WlFJdERTYUZQMFJObHhkQjBEWXpzZTFQanZoNnErY25EcjM1aENMbWZ5VHJYZjdRZll2bVREUEUvamMwWUNPMFZ4NytQT3dJZ1ZISWpsOFRYeXUvN085Q1hQYmRLNWxjSEJKcVkiLCJtYWMiOiI2ZDhmNTVmMGU4NjYzNzVlNzU4YThmZGVhZDM4MTc1NzA1ZmRmOGRiZjZhMTAwMDI0YWRmM2VjM2QzOTRiYTNmIiwidGFnIjoiIn0%3D; laravel_session=eyJpdiI6ImgzRWFLeDBMVVY4Y3FVNUZrTXZvYUE9PSIsInZhbHVlIjoieHlsdkxCT1F2UjBzZWtQakJmaHRoY1VBVE82cnhlcnJCVnNpckFGVThQT0cyVGVZUWVEdUFmcFkzdVJSQXc3aEdWdklnWjc0cWZxSVVxT08rRW5rL1pJVnVZclBPVVcrT2NQQmM1cGxOUlljd3lDelBLemRuN2ZzamRIeHBoaXoiLCJtYWMiOiIyYzRiZWE3NGQwNDg5ZTcyNTQ3M2M2MTg2MzE4MGRhZTAyYjkzYTg0NmQ2YjgzMzJhY2JmZDBmNTFiNzU1ODA2IiwidGFnIjoiIn0%3D'
+        'authorization': 'Bearer search-8d5tkzjx1w7fi6sqkbqu4274',
+        'Content-Type': 'application/json'
     }
+
     post_data = PostRequestJson(
-        "https://jobs.gopro.com/api/v1/jobs/external", custom_headers=headers, data_json=payload)
+        url=url, custom_headers=headers, data_json=payload)
 
     job_list = []
-    for job in post_data["response"]["matchingJobs"]:
-        location = get_job_type(job["jobSummary"])
+
+    for job in post_data["results"]:
+        location = get_job_type(job["location"]["raw"])
 
         # get jobs items from response
         job_list.append(Item(
-            job_title=job["jobTitleSnippet"],
-            job_link=job["job"]["customAttributes"]["url"]["stringValues"][0],
+            job_title=job["title"]["raw"],
+            job_link="https://jobs.gopro.com/en/us/jobs/"+job["url"]["raw"],
             company='Gopro',
             country="România",
             county="all" if "remote" in location else location,
             city="all" if "remote" in location else location,
-            remote=get_job_type(job["jobSummary"]),
+            remote=job["job_type"]["raw"],
         ).to_dict())
 
     return job_list
