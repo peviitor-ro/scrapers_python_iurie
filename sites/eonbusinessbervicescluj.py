@@ -37,7 +37,8 @@ def scraper():
         'Content-Type': 'text/plain'
     }
 
-    post_data = PostRequestJson(url=url, custom_headers=headers, data_raw=payload)
+    post_data = PostRequestJson(
+        url=url, custom_headers=headers, data_raw=payload)
 
     for job in post_data["results"][0]["hits"]:
         if len(job["document"]["data"]["locations"]) > 1:
@@ -54,7 +55,7 @@ def scraper():
         job_list.append(Item(
             job_title=job["document"]["data"]["title"],
             job_link=job["document"]["data"]["jobBoard_link"],
-            company="EON Business Services Cluj",
+            company="EONBusinessServicesCluj",
             country="România",
             county=counties,
             city=cities,
@@ -71,7 +72,7 @@ def main():
     ---> update_jobs() and update_logo()
     """
 
-    company_name = "EON Business Services Cluj"
+    company_name = "EONBusinessServicesCluj"
     logo_link = "https://assets.4suxess-staging.de/clients/eon/images/logo/logo_color.svg"
 
     jobs = scraper()

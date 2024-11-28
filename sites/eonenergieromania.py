@@ -55,7 +55,7 @@ def scraper():
         job_list.append(Item(
             job_title=job["document"]["data"]["title"],
             job_link=job["document"]["data"]["jobBoard_link"],
-            company="EON Energie România",
+            company="EONEnergieRomânia",
             country="România",
             county=counties,
             city=cities,
@@ -72,7 +72,7 @@ def main():
     ---> update_jobs() and update_logo()
     """
 
-    company_name = "EON Energie România"
+    company_name = "EONEnergieRomânia"
     logo_link = "https://www.atomaviation.com/wp-content/uploads/2018/10/EON-Logo.jpg"
 
     jobs = scraper()
