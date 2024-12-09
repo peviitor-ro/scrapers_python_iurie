@@ -27,10 +27,10 @@ import json
 def scraper():
     '''
          scrape data from premierresearce scraper.
-         https://premier-research.com/our-company/careers/?locations=Romania
+         https://premierresearch.wd12.myworkdayjobs.com/PremierResearch?locations=9e662c32237d10020998e40b53a80000
     '''
     job_list = []
-    base_link="https://premierresearch.wd12.myworkdayjobs.com/en-US/PremierResearch"
+    base_link = "https://premierresearch.wd12.myworkdayjobs.com/en-US/PremierResearch"
 
     url = "https://premierresearch.wd12.myworkdayjobs.com/wday/cxs/premierresearch/PremierResearch/jobs"
 
@@ -45,13 +45,13 @@ def scraper():
 
     post_data = PostRequestJson(url=url,  data_json=payload)
 
-
     for job in post_data["jobPostings"]:
-        
+
         # get jobs items from response
         job_list.append(Item(
             job_title=job["title"],
-            job_link=base_link+job["externalPath"]+"?locations=9e662c32237d10020998e40b53a80000",
+            job_link=base_link+job["externalPath"] +
+            "?locations=9e662c32237d10020998e40b53a80000",
             company="Premierresearch",
             country="România",
             county="Bucuresti",
