@@ -73,7 +73,7 @@ def main():
     """
 
     company_name = "EONEnergieRomânia"
-    logo_link = "https://www.atomaviation.com/wp-content/uploads/2018/10/EON-Logo.jpg"
+    logo_link = "https://www.eon-romania.ro/content/dam/eon/eon-romania-ro/logo/header_M.png"
 
     jobs = scraper()
     print("jobs found:", len(jobs))
