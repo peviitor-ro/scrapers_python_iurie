@@ -14,6 +14,7 @@ from __utils.req_bs4_shorts import (
     GetHeadersDict,
     HackCloudFlare,
     GetXMLObject,
+    GetDataCurl,
 )
 from __utils.dynamic_requests_html_shorts import GetDynamicSoup
 from __utils.get_job_type import get_job_type
