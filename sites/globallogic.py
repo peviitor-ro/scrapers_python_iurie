@@ -71,8 +71,7 @@ def scraper():
                 remote=get_job_type(job_type),
             ).to_dict())
         # incriment pages and make next request
-        url = f"https://www.globallogic.com/career-search-page/page/{
-            page}/?keywords&experience&locations=romania&c"
+        url = f"https://www.globallogic.com/career-search-page/page/{page}/?keywords&experience&locations=romania&c"
         response = GetCustumRequest(url=url, payload=payload, headers=headers)
         
     return job_list
