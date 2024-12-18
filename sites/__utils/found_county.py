@@ -14030,8 +14030,24 @@ def get_county_json(loc):
         if location.get("name").lower() == city:
             counties.append(location.get("county"))
         elif location.get("county").lower() == city:
-            counties=[]
+            counties.append(location.get("county"))
     return list(set(counties))
 
 
-# print(get_county_json("Prahova"))
+def update_location_if_is_county(counties, locations):
+    if len(counties) >= 1:
+        i = 0
+        for location in locations:
+            for county in counties:
+                if county in remove_diacritics(location):
+                    locations[i] = (f"all {county}")
+            i += 1
+        # return locations
+    else:
+        locations = "all"
+    return locations
+
+
+# count = get_county_json("Prahova")
+# loca = ["Prahova"]
+# update_location_if_is_county(count, loca)
