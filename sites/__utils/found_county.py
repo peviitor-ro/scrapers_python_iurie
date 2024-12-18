@@ -14030,7 +14030,7 @@ def get_county_json(loc):
         if location.get("name").lower() == city:
             counties.append(location.get("county"))
         elif location.get("county").lower() == city:
-            counties.append(city.capitalize())
+            counties=[]
     return list(set(counties))
 
 
