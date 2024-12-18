@@ -15,7 +15,7 @@
 #
 from __utils import (
     GetStaticSoup,
-    get_county,
+    update_location_if_is_county,
     get_county_json,
     get_job_type,
     Item,
@@ -28,33 +28,37 @@ def scraper():
     ... scrape data from Accace scraper.
     '''
     job_list = []
-    data_loc_type = []
-    
-    jobs_type=["Remote","Hibrid","On-site"]
+
+    jobs_type = ["Remote", "Hibrid", "On-site"]
     for type in jobs_type:
-        soup = GetStaticSoup(f"https://accace.ro/jobs/?_sfm_job_features_acc-jobs_work-mode={type}")
-        data=soup.find("div",class_="oxy-dynamic-list acc-jobs-archive-repeater").find_all('a', class_="ct-link")
-        
+        soup = GetStaticSoup(
+            f"https://accace.ro/jobs/?_sfm_job_features_acc-jobs_work-mode={type}")
+        data = soup.find(
+            "div", class_="oxy-dynamic-list acc-jobs-archive-repeater").find_all('a', class_="ct-link")
+
         for job in data:
-            if len(job.contents)>0:
-                title = job.find("span", attrs="ct-span").text.strip()
-                link=job.get('href')
-                
+            if len(job.contents) > 0:
+                title = job.find("span", class_="ct-span").text.strip()
+                link = job.get('href')
+
                 # Extract location and job type from page
-                location=job.find("div", class_="ct-code-block").text.split(', ')
-                if len(location)>1:
+                location = job.find(
+                    "div", class_="ct-code-block").text.split(', ')
+                if "România" in location:
                     location.remove("România")
-                                
+                counties = [] if len(
+                    location) == 0 else get_county_json(location[0])
+
                 # get jobs items from response
                 job_list.append(Item(
-                    job_title = title,
-                    job_link = link,
+                    job_title=title,
+                    job_link=link,
                     company='Accace',
                     country='România',
-                    county = get_county_json(location[0]),
-                    city = 'all' if type.lower()=='remote' or location[0]=="România" else location,
-                    remote=get_job_type(type) ,
-                ).to_dict()) 
+                    county=counties,
+                    city=update_location_if_is_county(counties, location),
+                    remote=get_job_type(type),
+                ).to_dict())
 
     return job_list
 
@@ -70,8 +74,8 @@ def main():
     logo_link = "https://www.movexstehovani.cz/wp-content/uploads/2018/09/LOGO_ACCACE_blue.png"
 
     jobs = scraper()
-    print(len(jobs))
-    
+    print(f"Found Accace {len(jobs)} jobs")
+
     # uncomment if your scraper done
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
