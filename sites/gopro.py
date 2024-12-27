@@ -28,48 +28,10 @@ def scraper():
     ... scrape data from Gopro scraper.
         https://jobs.gopro.com/jobs/country/romania#/
     '''
-    url = "https://ongig-ebdb.ent.us-west-2.aws.found.io/api/as/v1/engines/jobs-production/search.json"
+    url = "https://jobs.gopro.com/api/appSearch"
+    
     payload = {
         "query": "",
-        "facets": {
-            "category": {
-                "type": "value",
-                "size": 30
-            },
-            "location": {
-                "type": "value",
-                "size": 30
-            },
-            "job_type": {
-                "type": "value",
-                "size": 30
-            }
-        },
-        "filters": {
-            "all": [
-                {
-                    "any": [
-                        {
-                            "location": "Remote Romania"
-                        }
-                    ]
-                },
-                {
-                    "any": [
-                        {
-                            "group_id": 2082
-                        }
-                    ]
-                },
-                {
-                    "any": [
-                        {
-                            "live": 1
-                        }
-                    ]
-                }
-            ]
-        },
         "search_fields": {
             "title": {},
             "location": {},
@@ -79,41 +41,86 @@ def scraper():
         },
         "result_fields": {
             "title": {
-                "raw": {}
+            "raw": {}
             },
             "location": {
-                "raw": {}
+            "raw": {}
             },
             "job_type": {
-                "raw": {}
+            "raw": {}
             },
             "content": {
-                "snippet": {
-                    "fallback": True
-                }
+            "snippet": {
+                "fallback": True
+            }
             },
-
+            "category": {
+            "raw": {}
+            },
+            "country_filter": {
+            "raw": {}
+            },
+            "city_filter": {
+            "raw": {}
+            },
             "url": {
-                "raw": {}
+            "raw": {}
             }
         },
         "page": {
-            "size": 5,
+            "size": 40,
             "current": 1
+        },
+        "facets": {
+            "category": {
+            "type": "value",
+            "size": 40
+            },
+            "location": {
+            "type": "value",
+            "size": 40
+            },
+            "job_type": {
+            "type": "value",
+            "size": 30
+            }
+        },
+        "filters": {
+            "all": [
+            {
+                "any": [
+                {
+                    "group_id": 2082
+                }
+                ]
+            },
+            {
+                "any": [
+                {
+                    "live": 1
+                }
+                ]
+            },
+            {
+                "country_filter": "romania"
+            }
+            ]
         }
-    }
+        }
     headers = {
-        'authorization': 'Bearer search-8d5tkzjx1w7fi6sqkbqu4274',
-        'Content-Type': 'application/json'
+    'x-xsrf-token': 'eyJpdiI6Inp2VWVERTQ4SkxlV2VOY0dZL0Z5R2c9PSIsInZhbHVlIjoiTHNIN1lyK1QxUXhIQUEzV0xMYnA4SFVwU2tMYkdpYXU3U3VnTndUaER3ZTh3T0JQV1FxeTUrb1h4WTFJN09EcjRJWUNDMWV6Ui9SK3d3bSswRlJsZ1RKM2F6THNFT0lESmlDVUdKYVRwbUlYeWUyRW1rN1VlRnZMV3RvNk9hQjYiLCJtYWMiOiI5NDE2ODRjMDU5MTU3YzUzM2UzYTNlNTM4YWZjNzlmNWIwYWY4MGZmOWY1MDIyZTBhYjBlZDMxMjI5YmFmYWJkIiwidGFnIjoiIn0=',
+    'Content-Type': 'application/json',
+    'Cookie': 'XSRF-TOKEN=eyJpdiI6IlUyRmwxRG91OGhYdkxRelo5L2duZkE9PSIsInZhbHVlIjoiMDRWMjM4SXJaWGZiUnZidU1GY3VaQ0hZTmx1Y3VoamJwNGNhRTNZYldaQnZHaVZick1oeXBDQUsvQXlVVjRXL1ZuTDBlRFIrRGo4U0NEdmlwUlB3NThENzU2YmVjeTUxb2tVSk91NzVFMnlGTjE4NTdsd0FLQmZNMUdhYmJqR0kiLCJtYWMiOiIzNjczZWY5ZTg4Y2VlYzI5ZTNmOTRlNTE2YWFkM2RiODBiY2YxYTNiNWFlYjBlMmJiMjYyZTRmM2U5YmRlZDZmIiwidGFnIjoiIn0%3D; laravel_session=eyJpdiI6IlltWTkvMko5N2lVaFRpRWJwSFdHVmc9PSIsInZhbHVlIjoiTURkYVN3WXhMRS9JcVZoTllUeC95dWV0SG5vSXBZMkVOOFNranYvUjhlbTFnNUhhcnNQeUkra3VNbG9FOWhUdUF5SXNWL3Zlbm01UmQxZEh4S2pwTUs4MEU5WHlhZ0pIc2hYMjZPK3lDYkY2eGowV1g3RUYrTUNVeTR2TGV6dmQiLCJtYWMiOiI4NDhkNDg1ZmNlYjdkMTdiNjgwMThkYzg1OTg1ZDE2ODMxYTJhNjBiMjI2OGY1MjVlMTM1MDFlMmEyOTE3NjY0IiwidGFnIjoiIn0%3D'
     }
 
-    post_data = PostRequestJson(
-        url=url, custom_headers=headers, data_json=payload)
+    post_data = PostRequestJson(url=url, custom_headers=headers, data_json=payload)
 
     job_list = []
 
     for job in post_data["results"]:
-        location = get_job_type(job["location"]["raw"])
+        city ="Bucuresti" if "bucharest" in job["city_filter"]["raw"] else job["city_filter"]["raw"]
+        job_type = job["job_type"]["raw"].lower()
+    
 
         # get jobs items from response
         job_list.append(Item(
@@ -121,9 +128,9 @@ def scraper():
             job_link="https://jobs.gopro.com/en/us/jobs/"+job["url"]["raw"],
             company='Gopro',
             country="România",
-            county="all" if "remote" in location else location,
-            city="all" if "remote" in location else location,
-            remote=job["job_type"]["raw"],
+            county="all" if "remote" in job_type else get_county_json(city),
+            city="all" if "remote" in job_type else city,
+            remote=job_type,
         ).to_dict())
 
     return job_list
