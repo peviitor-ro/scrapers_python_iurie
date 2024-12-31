@@ -14,7 +14,7 @@
 #
 #
 from __utils import (
-    GetRequestJson,
+    GetStaticSoup,
     get_county,
     get_county_json,
     get_job_type,
@@ -26,30 +26,30 @@ from __utils import (
 def scraper():
     '''
     ... scrape data from wipro scraper.
-    https://careers.wipro.com/careers-home/jobs?location=Romania&woe=12&stretchUnit=KILOMETERS&stretch=25&page=1&limit=100
+    https://careers.wipro.com/search/?q=&locationsearch=Romania
     '''
-    payload = {}
-    headers = {
-        'Cookie': 'jasession=s%3AbvTw0yJbnTUE_qNcLKc1fz1hJkYuqBNC.uOayx7V2I3cUqUjNsdMPtvoJ%2B1Cmy1HWF%2BukgiMTWKc; searchSource=external'
-    }
-    json_data = GetRequestJson(
-        "https://careers.wipro.com/api/jobs?location=Romania&page=1&limit=100", custom_headers=headers)
-
     job_list = []
-    for job in json_data['jobs']:
-        city = job["data"]["city"].capitalize().replace("-wsm1", "")
-        city = "Bucuresti" if "Bucharest" in city else city
+    
+    pages = [1, 25]
+    for page in pages:
+        soup = GetStaticSoup(f"https://careers.wipro.com/search/?q=&locationsearch=Romania&startrow={page}")
 
-        # get jobs items from response
-        job_list.append(Item(
-            job_title=job["data"]["title"],
-            job_link=job["data"]["meta_data"]["canonical_url"],
-            company="wipro",
-            country="România",
-            county=get_county_json(city),
-            city=city,
-            remote=get_job_type(job["data"]["description"]),
-        ).to_dict())
+        data = soup.find_all("tr", class_="data-row")
+        if data:
+            for job in data:
+                location = job.find("span",  class_="jobLocation").text.strip().split(", R")[0]
+                city = "Bucuresti" if "Bucharest" in location else location
+                
+                # get jobs items from response
+                job_list.append(Item(
+                    job_title=job.find("a",  class_="jobTitle-link").text,
+                    job_link="https://careers.wipro.com"+job.find("a",  class_="jobTitle-link")["href"],
+                    company="wipro",
+                    country="România",
+                    county=get_county_json(city),
+                    city=city,
+                    remote="on-site",
+                ).to_dict())
 
     return job_list
 
