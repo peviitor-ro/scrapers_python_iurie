@@ -1,8 +1,8 @@
 ---
-name: Issue template
+name: Defect template
 about: 'Open bug if script not works '
-title: ''
-labels: bug
+title: "[ Defect ]"
+labels: Defect
 assignees: IurieChi
 
 ---
