@@ -27,15 +27,15 @@ def scraper():
     '''
     ... scrape data from ERM scraper.
     '''
-    payload ={
-            "appliedFacets": {
+    payload = {
+        "appliedFacets": {
             "locations": [
-            "94e33b804cf847a8a4e09b0bf8d508c6"
+                "94e33b804cf847a8a4e09b0bf8d508c6"
             ]},
         "limit": 20,
         "offset": 0,
         "searchText": ""
-        }
+    }
     headers = {
         'accept': 'application/json',
         'accept-language': 'en-US',
@@ -54,21 +54,23 @@ def scraper():
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
         'x-calypso-csrf-token': '5aadf75a-9a61-4770-a1f9-3c9cecd088b0'
     }
-    post_data = PostRequestJson("https://erm.wd3.myworkdayjobs.com/wday/cxs/erm/ERM_Careers/jobs", custom_headers=headers, data_json=payload)
-    
+    post_data = PostRequestJson(
+        "https://erm.wd3.myworkdayjobs.com/wday/cxs/erm/ERM_Careers/jobs", custom_headers=headers, data_json=payload)
+
     job_list = []
     for job in post_data["jobPostings"]:
-        location="București"if "Bucharest" in job["locationsText"] else job["locationsText"]
+        location = "București"if "Bucharest" in job["locationsText"] else job["locationsText"]
 
         # get jobs items from response
         job_list.append(Item(
             job_title=job["title"],
-            job_link="https://erm.wd3.myworkdayjobs.com/en-US/ERM_Careers"+job["externalPath"],
+            job_link="https://erm.wd3.myworkdayjobs.com/en-US/ERM_Careers" +
+            job["externalPath"],
             company='ERM',
             country="România",
             county=get_county_json(location),
-            city=location,
-            remote="remote",
+            city="București" if job["title"] == "Principal REACH Consultant (m/w/d)" else location,
+            remote="on-site" if job["title"] == "Principal REACH Consultant (m/w/d)" else "remote",
         ).to_dict())
 
     return job_list
@@ -85,10 +87,11 @@ def main():
     logo_link = "https://erm.wd3.myworkdayjobs.com/wday/cxs/erm/ERM_Careers/sidebarimage/44b6c2a958561000fe7b755b502d0000"
 
     jobs = scraper()
-    print("jobs found:",len(jobs))
+    print("jobs found:", len(jobs))
     # uncomment if your scraper done
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
+
 
 if __name__ == '__main__':
     main()
