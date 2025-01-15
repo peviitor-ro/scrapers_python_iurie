@@ -33,17 +33,17 @@ def scraper():
 
     job_list = []
     for job in json_data['jobs']:
-
-        # get jobs items from response
-        job_list.append(Item(
-            job_title=job["data"]["title"],
-            job_link=job["data"]["meta_data"]["canonical_url"],
-            company="Estee Lauder Companies",
-            country="România",
-            county="București" if "Bucuresti" in job["data"]["state"] else job["data"]["state"],
-            city="București" if "Bucharest" in job["data"]["city"] else job["data"]["city"],
-            remote="on-site",
-        ).to_dict())
+        if job["data"]["country"] == "Romania":
+            # get jobs items from response
+            job_list.append(Item(
+                job_title=job["data"]["title"],
+                job_link=job["data"]["meta_data"]["canonical_url"],
+                company="Estee Lauder Companies",
+                country="România",
+                county="București" if "Bucuresti" in job["data"]["state"] else job["data"]["state"],
+                city="București" if "Bucharest" in job["data"]["city"] else job["data"]["city"],
+                remote="on-site",
+            ).to_dict())
 
     return job_list
 
