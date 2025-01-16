@@ -33,7 +33,9 @@ def scraper():
     job_list = []
     for job in soup.find_all("a", class_="jobs__list__job"):
         city = job.find("p", class_="body-s-regular").text.strip()
-
+        if "Bucharest" in city:
+            city = "Bucuresti"
+        
         # get jobs items from response
         job_list.append(Item(
             job_title=job.find(
@@ -41,8 +43,8 @@ def scraper():
             job_link="https://career.luxoft.com"+job.get("href"),
             company="luxoft",
             country="România",
-            county="București" if "Bucharest" in city else "all",
-            city="București" if "Bucharest" in city else "all",
+            county="all" if "Remote" in city else city,
+            city="all" if "Remote" in city else city,
             remote=get_job_type(city),
         ).to_dict())
 
