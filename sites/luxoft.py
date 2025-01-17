@@ -35,11 +35,11 @@ def scraper():
         city = job.find("p", class_="body-s-regular").text.strip()
         if "Bucharest" in city:
             city = "Bucuresti"
-        
+
         # get jobs items from response
         job_list.append(Item(
             job_title=job.find(
-                "p", class_="body-m-regular text-dark-gray").text.strip(),
+                "h2", class_="subtitle-l text-rich-black").text.strip(),
             job_link="https://career.luxoft.com"+job.get("href"),
             company="luxoft",
             country="România",
