@@ -57,8 +57,8 @@ def scraper():
             job_link=job["document"]["data"]["jobBoard_link"],
             company="E.ON Energie Romania",
             country="Romania",
-            county=counties,
-            city=cities,
+            county="Bucuresti" if "Bucharest"  in counties else counties,
+            city="Bucuresti" if "Bucharest"  in cities  else cities,
             remote=job["document"]["data"]["remote"].lower(),
         ).to_dict())
 
