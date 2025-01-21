@@ -14024,9 +14024,9 @@ def get_county_json(loc):
     city = remove_diacritics(loc)
     url = f"https://api.laurentiumarian.ro/orase/?search={city}"
     responce = requests.get(url=url).json()
-    citis = responce.get("results")
+    cities = responce.get("results")
     counties = []
-    for location in citis:
+    for location in cities:
         if location.get("name").lower() == city:
             counties.append(location.get("county"))
         elif location.get("county").lower() == city:
