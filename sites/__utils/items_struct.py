@@ -1,13 +1,11 @@
-#
-#
-#
-#  Define the struct like Items in Scrapy!
-#  Good method to create new object dataclass.
-#
-#  Make cod better with Python every day!
-#
-#
-#
+""" 
+Define the struct like Items in Scrapy!
+Good method to create new object dataclass.
+
+Make cod better with Python every day!
+
+"""
+
 from dataclasses import dataclass
 from typing import Union, List
 
