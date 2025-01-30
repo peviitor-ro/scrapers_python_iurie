@@ -1,29 +1,25 @@
-#
-#
-#  Basic for scraping data from static pages
-#
-# ------ IMPORTANT! ------
-# if you need return soup object:
-# you cand import from __utils -> GetHtmlSoup
-# if you need return regex object:
-# you cand import from __utils ->
-# ---> get_data_with_regex(expression: str, object: str)
-#
-# Company ---> premierresearch
-# Link ------> https://premier-research.com/our-company/careers/?locations=Romania
-#
-#
+"""
+
+ Basic for scraping data from static pages
+
+------ IMPORTANT! ------
+if you need return soup object:
+you cand import from __utils -> GetHtmlSoup
+if you need return regex object:
+you cand import from __utils ->
+---> get_data_with_regex(expression: str, object: str)
+
+Company ---> premierresearch
+Link ------> https://premier-research.com/our-company/careers/?locations=Romania
+
+"""
 from __utils import (
     PostRequestJson,
-    get_county,
     get_county_json,
     get_job_type,
     Item,
     UpdateAPI,
 )
-import json
-
-
 def scraper():
     '''
          scrape data from premierresearce scraper.
@@ -46,7 +42,7 @@ def scraper():
     post_data = PostRequestJson(url=url,  data_json=payload)
 
     for job in post_data["jobPostings"]:
-
+   
         # get jobs items from response
         job_list.append(Item(
             job_title=job["title"],
