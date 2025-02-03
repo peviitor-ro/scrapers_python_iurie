@@ -1,18 +1,17 @@
-#
-#
-#  Basic for scraping data from static pages
-#
-# ------ IMPORTANT! ------
-# if you need return soup object:
-# you cand import from __utils -> GetHtmlSoup
-# if you need return regex object:
-# you cand import from __utils ->
-# ---> get_data_with_regex(expression: str, object: str)
-#
-# Company ---> Delgaz
-# Link ------> https://careers.eon.com/romania/search/?createNewAlert=false&q=&locationsearch=&optionsFacetsDD_country=&optionsFacetsDD_city=&optionsFacetsDD_customfield2=&optionsFacetsDD_customfield3=
-#
-#
+"""
+ Basic for scraping data from static pages
+
+------ IMPORTANT! ------
+if you need return soup object:
+you cand import from __utils -> GetHtmlSoup
+if you need return regex object:
+you cand import from __utils ->
+---> get_data_with_regex(expression: str, object: str)
+
+Company ---> Delgaz
+Link ------> https://careers.eon.com/romania/search/?createNewAlert=false&q=&locationsearch=&optionsFacetsDD_country=&optionsFacetsDD_city=&optionsFacetsDD_customfield2=&optionsFacetsDD_customfield3=
+
+"""
 from __utils import (
     PostRequestJson,
     get_county,
@@ -35,7 +34,6 @@ def scraper():
     payload = "{\"searches\":[{\"collection\":\"eon_en\",\"q\":\"*\",\"query_by\":\"data.title,data.idClient,data.jobNumber,data.company,data.recruiter,data.locations.city,content.task,content.profile,content.offer,content.contact\",\"infix\":\"always,always,always,always,off,off,off,off,off,off\",\"drop_tokens_threshold\":0,\"num_typos\":\"1,0,0,1,0,0,0,0,0,0\",\"filter_by\":\"((data.company:=[`Delgaz Grid`] && data.locations.country:=[`Romania`]) && data.company:!=Westconnect GmbH)\",\"sort_by\":\"_text_match:desc,data.postingDate_timestamp:desc\",\"page\":1,\"per_page\":40,\"facet_by\":\"data.businessUnit,data.category,data.company,data.contract,data.employmentType,data.classification,data.entryLevel,data.jobField,data.language,data.remote,data.locations.city,data.locations.cityState,data.locations.state,data.locations.country\",\"max_facet_values\":500,\"include_fields\":\"data,_geoloc\",\"split_join_tokens\":\"always\",\"typo_tokens_threshold\":2},{\"collection\":\"eon_en\",\"q\":\"*\",\"query_by\":\"data.title,data.idClient,data.jobNumber,data.company,data.recruiter,data.locations.city,content.task,content.profile,content.offer,content.contact\",\"infix\":\"always,always,always,always,off,off,off,off,off,off\",\"drop_tokens_threshold\":0,\"num_typos\":\"1,0,0,1,0,0,0,0,0,0\",\"filter_by\":\"data.locations.country:=[`Romania`]\",\"sort_by\":\"_text_match:desc,data.postingDate_timestamp:desc\",\"page\":1,\"per_page\":0,\"facet_by\":\"data.company\",\"max_facet_values\":500,\"include_fields\":\"\",\"split_join_tokens\":\"always\",\"typo_tokens_threshold\":2},{\"collection\":\"eon_en\",\"q\":\"*\",\"query_by\":\"data.title,data.idClient,data.jobNumber,data.company,data.recruiter,data.locations.city,content.task,content.profile,content.offer,content.contact\",\"infix\":\"always,always,always,always,off,off,off,off,off,off\",\"drop_tokens_threshold\":0,\"num_typos\":\"1,0,0,1,0,0,0,0,0,0\",\"filter_by\":\"data.company:=[`Delgaz Grid`]\",\"sort_by\":\"_text_match:desc,data.postingDate_timestamp:desc\",\"page\":1,\"per_page\":0,\"facet_by\":\"data.locations.cityState,data.locations.state,data.locations.country\",\"max_facet_values\":500,\"include_fields\":\"\",\"split_join_tokens\":\"always\",\"typo_tokens_threshold\":2}]}"
     headers = {
         'origin': 'https://jobs.eon.com',
-        
     }
 
     post_data = PostRequestJson(
