@@ -1,18 +1,18 @@
-#
-#
-# Config for Dynamic Get Method -> For Json format!
-#
-# Company ---> RolandBerger
-# Link ------> https://rolandberger-search-api.e-spirit.cloud/v1/prepared_search/JoinJobs/execute/?language=en&query=*
-#
-# ------ IMPORTANT! ------
-# if you need return soup object:
-# you cand import from __utils -> GetHtmlSoup
-# if you need return regex object:
-# you cand import from __utils ->
-# ---> get_data_with_regex(expression: str, object: str)
-#
-#
+"""
+
+Config for Dynamic Get Method -> For Json format!
+
+Company ---> RolandBerger
+Link ------> https://rolandberger-search-api.e-spirit.cloud/v1/prepared_search/JoinJobs/execute/?language=en&query=*
+
+------ IMPORTANT! ------
+if you need return soup object:
+you cand import from __utils -> GetHtmlSoup
+if you need return regex object:
+you cand import from __utils ->
+---> get_data_with_regex(expression: str, object: str)
+
+"""
 from __utils import (
     GetRequestJson,
     get_county,
@@ -24,7 +24,7 @@ from __utils import (
 
 def scraper():
     """_summary_
-    scrape data from RolandBerger scraper.
+    scrape data from Roland Berger scraper.
     Returns:
         Job_dict 
     """
@@ -37,8 +37,8 @@ def scraper():
             # get jobs items from response
             job_list.append(Item(
                 job_title=job["title"][0],
-                job_link=job["positionProfile___webAddress"][0],
-                company="Rolandberger",
+                job_link=job["link"],
+                company="Roland Berger",
                 country="România",
                 county="București",
                 city="București",
@@ -55,7 +55,7 @@ def main():
     ---> update_jobs() and update_logo()
     '''
 
-    company_name = "Rolandberger"
+    company_name = "Roland Berger"
     logo_link = "https://pr-journal.de/images/stories/logos/Roland_Berger_Logo.jpg"
 
     jobs = scraper()
