@@ -160,7 +160,9 @@ cython_debug/
 sites/tradeville.py
 sites/swicon.py
 sites/__utils/
+old_scraper/
+
 ../.DS_Store
 api_key.py
 enviroment.sh
-lensa.py
+
