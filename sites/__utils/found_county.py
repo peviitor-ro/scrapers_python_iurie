@@ -13120,8 +13120,7 @@ counties = [
     },
     {
         "Vaslui": [
-            "Vaslui"
-            "Barlad",
+            "Vaslui" "Barlad",
             "Husi",
             "Negresti",
             "Zorleni",
@@ -14020,18 +14019,41 @@ def get_county(location: str):
 
 
 def get_county_json(loc):
+    """get county  for city"""
+    counties = []
     loc = loc.lower()
     city = remove_diacritics(loc)
-    url = f"https://api.laurentiumarian.ro/orase/?search={city}"
-    responce = requests.get(url=url).json()
-    cities = responce.get("results")
-    counties = []
-    for location in cities:
-        if location.get("name").lower() == city:
-            counties.append(location.get("county"))
-        elif location.get("county").lower() == city:
-            counties.append(location.get("county"))
-    return list(set(counties))
+
+    try:
+        if city == "bucuresti":
+            return "Bucuresti"
+        url = f"https://api.laurentiumarian.ro/orase/?search={city}"
+        responce = requests.get(url=url).json()
+        cities = responce.get("results")
+        if not cities:
+            # Try replacing spaces with dashes and check again
+            if " " in city:
+                city = city.replace(" ", "-")
+                url = f"https://api.laurentiumarian.ro/orase/?search={city}"
+                responce = requests.get(url=url, timeout=10).json()
+                cities = responce.get("results")
+
+            # Try replacing dashes with spaces and check again
+            elif "-" in city:
+                city = city.replace("-", " ")
+                url = f"https://api.laurentiumarian.ro/orase/?search={city}"
+                responce = requests.get(url=url, timeout=10).json()
+                cities = responce.get("results")
+
+        for location in cities:
+            if location.get("name").lower() == city:
+                counties.append(location.get("county"))
+            elif location.get("county").lower() == city:
+                counties.append(location.get("county"))
+        return list(set(counties))
+    except requests.RequestException as e:
+        # Handle exceptions (e.g., network errors, invalid responses)
+        print(f"An error occurred to get county: {e}")
 
 
 def update_location_if_is_county(counties, locations):
@@ -14040,7 +14062,7 @@ def update_location_if_is_county(counties, locations):
         for location in locations:
             for county in counties:
                 if county in remove_diacritics(location):
-                    locations[i] = (f"all {county}")
+                    locations[i] = f"all {county}"
             i += 1
         # return locations
     else:
