@@ -31,13 +31,19 @@ def scraper():
     """
     # URL to fetch data from
     url = "https://join.pmicareers.com/gb/en/search-results?keywords=&p=ChIJw3aJlSb_sUARlLEEqJJP74Q&location=Romania"
+    try:
+        # Use curl to fetch the page content
+        curl_command = ["curl", "-s", "-A", "Mozilla/5.0", url]
+        html_output = subprocess.run(
+            curl_command, capture_output=True, text=True
+        ).stdout
 
-    # Use curl to fetch the page content
-    curl_command = ["curl", "-s", "-A", "Mozilla/5.0", url]
-    html_output = subprocess.run(curl_command, capture_output=True, text=True).stdout
-
-    # Use regex to extract only JSON till "jobwidgetsettings"
-    match = re.search(r'"eagerLoadRefineSearch":\s*({.*?})\}]', html_output, re.DOTALL)
+        # Use regex to extract only JSON till "jobwidgetsettings"
+        match = re.search(
+            r'"eagerLoadRefineSearch":\s*({.*?})\}]', html_output, re.DOTALL
+        )
+    except Exception as e:
+        print("something went wrong", e)
 
     if match:
         # Extract only the "jobs" array
@@ -48,8 +54,6 @@ def scraper():
 
         except json.JSONDecodeError as e:
             print(f"❌ JSON decoding error: {e}")
-    else:
-        print("❌ Jobs data not found in HTML.")
 
     job_list = []
     for job in jobs_list["data"]["jobs"]:
