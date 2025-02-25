@@ -31,18 +31,18 @@ def scraper():
 
     job_list = []
     for job in soup.find_all("tr",class_="data-row"):
-        location=job.find("span", class_="jobLocation").text.strip().split(",")[0]
-
-        # get jobs items from response
-        job_list.append(Item(
-            job_title=job.find("a").text,
-            job_link="https://careers.wizzair.com"+job.find("a")["href"],
-            company="Wizz Air",
-            country="România",
-            county=get_county_json(location),
-            city=location,
-            remote="on-site",
-        ).to_dict())
+        if "RO" in job.find("span", class_="jobLocation").text:
+            location=job.find("span", class_="jobLocation").text.strip().split(", RO")[0]
+            # get jobs items from response
+            job_list.append(Item(
+                job_title=job.find("a").text,
+                job_link="https://careers.wizzair.com"+job.find("a")["href"],
+                company="Wizz Air",
+                country="România",
+                county=get_county_json(location),
+                city=location,
+                remote="on-site",
+            ).to_dict())
 
     return job_list
 
