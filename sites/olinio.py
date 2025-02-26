@@ -34,13 +34,13 @@ def scraper():
    
     while flag:
         soup = GetStaticSoup(f"https://careers.olinio.com.cy/jobs?page={page}")
-        if len(jobs := soup.find_all('li',  attrs=li_element))> 1:
+        if len(jobs := soup.find_all('li',  class_=li_element))> 1:
             for job in jobs:
                 #extrract jobs only  from Bucharest
                 location_span = job.find('span', string='Bucharest')
                 if location_span:
-                    job_type = job.find('span', attrs='inline-flex items-center gap-x-2')
-                    title = job.find('span', attrs='text-block-base-link company-link-style').text
+                    job_type = job.find('span', class_='inline-flex items-center gap-x-2')
+                    title = job.find('span', class_='text-block-base-link company-link-style hyphens-auto').text
                     # get jobs items from response
                     job_list.append(Item(
                         job_title = title,
