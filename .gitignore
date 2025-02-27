@@ -157,9 +157,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-sites/tradeville.py
-sites/swicon.py
-sites/__utils/
+
 old_scraper/
 
 ../.DS_Store
