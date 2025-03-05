@@ -12,16 +12,20 @@
 #
 import requests
 from bs4 import BeautifulSoup
+
 #
 import cfscrape
+
 #
 from .default_headers import DEFAULT_HEADERS
+
 #
 import xml.etree.ElementTree as ET
+
 #
 import subprocess
-#
 
+#
 
 
 # Global Session -> avoid multiple requests
@@ -35,11 +39,11 @@ class GetCustumRequest:
     Returns:
         _type_: responce.text
     """
+
     def __new__(cls, url, headers, payload):
         try:
-            response = session.request(
-                "GET", url, headers=headers, data=payload)
-            return BeautifulSoup(response.text, 'lxml')
+            response = session.request("GET", url, headers=headers, data=payload)
+            return BeautifulSoup(response.text, "lxml")
         except ValueError:
             raise Exception("Request error", session)
         finally:
@@ -47,22 +51,23 @@ class GetCustumRequest:
 
 
 class GetCustumRequestJson:
-    """_summary_
+    """Get JSON with headers and payload
 
     Raises:
-        Exception: _description_
-        Exception: _description_
-        Exception: _description_
-
+        Exception: ValueError
+        Exception: Exception
     Returns:
         _type_: JSON
     """
+
     def __new__(cls, url, headers, payload):
         try:
-            response = session.request("GET", url, headers=headers, data=payload)
+            response = session.request(
+                "GET", url, headers=headers, data=payload, verify=False
+            )
             return response.json()
         except ValueError:
-            raise Exception("Request error", session)
+            raise Exception("Request error", response)
         finally:
             response.close()
 
@@ -73,12 +78,12 @@ class PostCustumRequest:
     Returns:
         _type_: responce.text
     """
+
     def __new__(cls, url, headers, payload):
 
         try:
-            response = session.request(
-                "POST", url, headers=headers, data=payload)
-            return BeautifulSoup(response.text, 'lxml')
+            response = session.request("POST", url, headers=headers, data=payload)
+            return BeautifulSoup(response.text, "lxml")
         except ValueError:
             raise Exception("Request error", session)
         finally:
@@ -86,9 +91,9 @@ class PostCustumRequest:
 
 
 class GetStaticSoup:
-    '''
+    """
     ... This class return soup object from static page!
-    '''
+    """
 
     def __new__(cls, url, custom_headers=None):
 
@@ -101,7 +106,7 @@ class GetStaticSoup:
         try:
             response = session.get(url, headers=headers)
             # return soup object from static page
-            return BeautifulSoup(response.text, 'lxml')
+            return BeautifulSoup(response.text, "lxml")
         except ValueError:
             raise Exception("soup request", response.status_code)
         finally:
@@ -109,9 +114,9 @@ class GetStaticSoup:
 
 
 class GetRequestJson:
-    '''
+    """
     ... This class return JSON object from get requests!
-    '''
+    """
 
     def __new__(cls, url, custom_headers=None):
         headers = DEFAULT_HEADERS.copy()
@@ -127,15 +132,15 @@ class GetRequestJson:
             json_response = response.json()
             return json_response
         except ValueError:
-            return BeautifulSoup(response.text, 'lxml')
+            return BeautifulSoup(response.text, "lxml")
         finally:
             response.close()
 
 
 class PostRequestJson:
-    '''
+    """
     ... This class return JSON object from post requests!
-    '''
+    """
 
     def __new__(cls, url, custom_headers=None, data_raw=None, data_json=None):
         headers = DEFAULT_HEADERS.copy()
@@ -152,26 +157,29 @@ class PostRequestJson:
         try:
             return response.json()
         except ValueError:
-            return BeautifulSoup(response.text, 'lxml')
+            return BeautifulSoup(response.text, "lxml")
         finally:
             response.close()
 
 
 class GetHtmlSoup:
-    '''
+    """
     ... method if server return html response,
     after post requests.
-    '''
+    """
 
     def __new__(cls, html_response):
-        return BeautifulSoup(html_response, 'lxml')
+        try:
+            return BeautifulSoup(html_response, "lxml")
+        except ValueError:
+            raise Exception("data can;t be convertted to soup object",html_response)
 
 
 class GetHeadersDict:
-    '''
+    """
     ... method if server return headers response,
     after session.headers
-    '''
+    """
 
     def __new__(cls, url, custom_headers=None):
         headers = DEFAULT_HEADERS.copy()
@@ -186,10 +194,10 @@ class GetHeadersDict:
 
 
 class HackCloudFlare:
-    '''
+    """
     ... this method can help you avoid CloudFlare protection.
     Is not a hack, but useful tool.
-    '''
+    """
 
     def __new__(cls, url, custom_headers=None):
         headers = DEFAULT_HEADERS.copy()
@@ -200,13 +208,13 @@ class HackCloudFlare:
 
         scraper = cfscrape.create_scraper()
 
-        return BeautifulSoup(scraper.get(url).content, 'lxml')
+        return BeautifulSoup(scraper.get(url).content, "lxml")
 
 
 class GetXMLObject:
-    '''
+    """
     ... this class will return data from XML stored in a list
-    '''
+    """
 
     def __new__(cls, url, custom_headers=None):
         headers = DEFAULT_HEADERS.copy()
@@ -224,22 +232,21 @@ class GetDataCurl:
 
     def __new__(cls, url):
         headers = {
-            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_8_8; like Mac OS X) AppleWebKit/535.14 (KHTML, like Gecko) Chrome/49.0.3028.253 Mobile Safari/603.0',
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 9_8_8; like Mac OS X) AppleWebKit/535.14 (KHTML, like Gecko) Chrome/49.0.3028.253 Mobile Safari/603.0",
         }
 
         try:
             # Construct the curl command
-            command = [
-                'curl', '-s', '-A', headers['User-Agent'], url
-            ]
+            command = ["curl", "-s", "-A", headers["User-Agent"], url]
             # Execute the curl command and capture the output
             result = subprocess.run(
-                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=False)
+                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=False
+            )
             # Check if there was an error
             if result.returncode != 0:
-                raise Exception(result.stderr.decode('utf-8'))
+                raise Exception(result.stderr.decode("utf-8"))
             # Decode the output using utf-8
-            data = result.stdout.decode('utf-8')
+            data = result.stdout.decode("utf-8")
             # convert decoded data to text
             soup = BeautifulSoup(data, "lxml")
             return soup.get_text()
