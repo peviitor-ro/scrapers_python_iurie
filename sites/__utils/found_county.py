@@ -14029,6 +14029,8 @@ def get_county_json(loc):
             return "Bucuresti"
         if city == "iasi":
             return "Iași"
+        if city == "cluj":
+            return "Cluj"
         
         url = f"https://api.laurentiumarian.ro/orase/?search={city}"
         responce = requests.get(url=url).json()
