@@ -11,26 +11,44 @@
 # ... plus sa fac aceeasi chestie ca la PostRequestJson si in GetRequestJson
 #
 import requests
+from requests_html import HTMLSession
+
 from bs4 import BeautifulSoup
-
-#
 import cfscrape
-
-#
 from .default_headers import DEFAULT_HEADERS
-
-#
 import xml.etree.ElementTree as ET
-
-#
 import subprocess
-
-#
 
 
 # Global Session -> avoid multiple requests
 # ... and all classes can use it in one script
 session = requests.Session()
+sesion = HTMLSession()
+
+
+class GetContentDynamicPage:
+    """scrape data with requests_html using HTMLSession
+
+    Returns:
+        _type_: BeautifulSoup object
+    """
+
+    def __new__(cls, url, custom_headers=None):
+
+        # headers = DEFAULT_HEADERS.copy()
+
+        # #  if user have custom headers, update the headers
+        # if custom_headers:
+        #     headers.update(custom_headers)
+        try:
+            response = sesion.get(url)
+            response.html.render(sleep=1, keep_page=True)
+            # return soup object from static page
+            return BeautifulSoup(response.html.html, "lxml")
+        except ValueError:
+            raise Exception(f"Failed to retrieve content: {response.status_code}")
+        finally:
+            response.close()
 
 
 class GetCustumRequest:
@@ -172,7 +190,7 @@ class GetHtmlSoup:
         try:
             return BeautifulSoup(html_response, "lxml")
         except ValueError:
-            raise Exception("data can;t be convertted to soup object",html_response)
+            raise Exception("data can;t be convertted to soup object", html_response)
 
 
 class GetHeadersDict:
@@ -250,6 +268,16 @@ class GetDataCurl:
             # convert decoded data to text
             soup = BeautifulSoup(data, "lxml")
             return soup.get_text()
+        except Exception as e:
+            # Handle exceptions (e.g., network errors, invalid responses)
+            print(f"An error occurred: {e}")
+            return None
+
+
+class Request:
+    def __new__(cls, url):
+        try:
+            return requests.get(url)
         except Exception as e:
             # Handle exceptions (e.g., network errors, invalid responses)
             print(f"An error occurred: {e}")
