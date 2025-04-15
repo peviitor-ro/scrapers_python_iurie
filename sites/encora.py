@@ -30,7 +30,7 @@ def scraper():
     json_data = GetRequestJson("https://boards-api.greenhouse.io/v1/boards/encora10/jobs")
     
     job_list = []
-    location=["Craiova","Bucharest"]
+    location=["Craiova","Bucharest", "Romania"]
     for job in json_data['jobs']:
         for city in location:
             if  job["location"]["name"] ==  city :
@@ -41,8 +41,8 @@ def scraper():
                     job_link=job["absolute_url"],
                     company="Encora",
                     country="România",
-                    county="Bucuresti" if city=="Bucharest" else get_county_json(city),
-                    city="Bucuresti" if city=="Bucharest" else city,
+                    county="Bucuresti" if city=="Bucharest" else "all" if city=="Romania" else get_county_json(city),
+                    city="Bucuresti" if city=="Bucharest" else "all" if city=="Romania" else city,
                     remote="hybrid",
                 ).to_dict())
 
