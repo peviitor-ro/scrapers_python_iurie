@@ -72,7 +72,7 @@ def scraper():
         title = job["title"]
         link = "https://careers.abb/global/en/job/" + \
             job["reqId"]+"/"+title.replace(' ', '-').replace('---', '-')
-
+    
         # get jobs items from response
         job_list.append(Item(
             job_title=title,
@@ -81,7 +81,7 @@ def scraper():
             country="România",
             county="Bucuresti",
             city="Bucuresti",
-            remote="on-site",
+            remote=get_job_type(job["descriptionTeaser"]),
         ).to_dict())
 
     return job_list
