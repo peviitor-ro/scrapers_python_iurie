@@ -1,10 +1,7 @@
 """
-
 Company ---> ABB
 Link ------> https://careers.abb/widgets
-
 """
-
 
 from __utils import (
     PostRequestJson,
