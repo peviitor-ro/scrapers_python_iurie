@@ -24,13 +24,14 @@ class UpdateAPI:
         }
 
         self.EMAIL = "chigaiiura@yahoo.com"
-        self.DOMAIN = "https://api.peviitor.ro/v5/"  # "http://127.0.0.1:8000/"  #
+        # "http://127.0.0.1:8000/"  #
+        self.DOMAIN = "https://api.laurentiumarian.ro"
         self.header = {
             "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
         }
 
-        self.TOKEN_ROUTE = "get_token/"  # "get_token"  #
-        self.ADD_JOBS_ROUTE = "add/"  # "jobs/add/"  #
+        self.TOKEN_ROUTE = "/get_token"  # "get_token"  #
+        self.ADD_JOBS_ROUTE = "/jobs/add/"  # "jobs/add/"  #
 
     def update_logo(self, id_company: str, logo_link: str):
         """update logo on peviitor.ro"""
