@@ -14,41 +14,42 @@
 #
 #
 from __utils import (
-    GetStaticSoup,
-    get_county,
-    get_county_json,
-    get_job_type,
+    GetDataCurl,
     Item,
     UpdateAPI,
 )
+
+import re
 
 
 def scraper():
     """
     ... scrape data from danfoss scraper.
     """
-    # link
-    # https://jobs.danfoss.com/search/?searchby=location&createNewAlert=false&q=&locationsearch=Romania&geolocation=&optionsFacetsDD_department=&optionsFacetsDD_facility=
-    soup = GetStaticSoup(
-        "https://jobs.danfoss.com/search/?searchby=location&createNewAlert=false&q=&locationsearch=Romania&geolocation=&optionsFacetsDD_department=&optionsFacetsDD_facility="
+    search_text = GetDataCurl(
+        "https://r.jina.ai/http://https://jobs.danfoss.com/search/?searchby=location&createNewAlert=false&q=&locationsearch=Romania&geolocation=&optionsFacetsDD_department=&optionsFacetsDD_facility="
     )
+    if not search_text:
+        return []
 
     job_list = []
-    for job in soup.find_all("div", class_="jobdetail-phone visible-phone"):
-        location = job.find("span", class_="jobLocation").text.strip().split(", RO")[0]
-        location = "Bucuresti" if "Bucharest" in location else location
-        job_title = job.find("a").text
-        if job_title == "Cloud Architect (Infrastructure)":
-            location = "Bucuresti"
-        # get jobs items from response
+    jobs = re.findall(r"\*\s+\[(.*?)\]\((https://jobs\.danfoss\.com/job/[^\)]+)\)\s+(.*?)\s+Job Category", search_text)
+    for job_title, job_link, location in jobs:
+        if "multiple" in location.lower():
+            city = "Bucuresti"
+            county = "Bucuresti"
+        else:
+            city = "Bucuresti" if "Bucharest" in location else location.split(", RO")[0].strip()
+            county = city
+
         job_list.append(
             Item(
                 job_title=job_title,
-                job_link="https://jobs.danfoss.com" + job.find("a")["href"],
+                job_link=job_link,
                 company="danfoss",
-                country="România",
-                county=get_county_json(location),
-                city=location,
+                country="Romania",
+                county=county,
+                city=city,
                 remote="remote",
             ).to_dict()
         )

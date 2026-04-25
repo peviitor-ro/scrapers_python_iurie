@@ -13,35 +13,48 @@
 # Link ------> https://careers.cognizant.com/global-en/jobs/?keyword=&location=Romania&lat=&lng=&cname=Romania&ccode=RO&origin=global
 #
 #
-from __utils import (
-    GetStaticSoup,
-    get_county,
-    get_county_json,
-    get_job_type,
-    Item,
-    UpdateAPI,
-)
+import re
+
+from __utils import GetDataCurl, Item, UpdateAPI, get_job_type
+
+
+LISTING_URL = "https://r.jina.ai/http://https://careers.cognizant.com/global-en/jobs/?keyword=&location=Romania&lat=&lng=&cname=Romania&ccode=RO&origin=global"
 
 
 def scraper():
     """
     ... scrape data from Cognizant scraper.
     """
-    soup = GetStaticSoup("https://careers.cognizant.com/global-en/jobs/?keyword=&location=Romania&lat=&lng=&cname=Romania&ccode=RO&origin=global")
+    listing_text = GetDataCurl(LISTING_URL)
+    if not listing_text:
+        return []
 
     job_list = []
-    for job in soup.find_all("div",class_="card-body"):
-        link = "https://careers.cognizant.com"+job.find("a",class_="stretched-link js-view-job")["href"]
-        #open job position and extarct job type from job page
-        data_job = GetStaticSoup(link)
-        job_type = data_job.find("div",class_="key-info").findAll("dd")[-1].text.strip()
+    jobs = re.findall(
+        r"## \[(.*?)\]\((https://careers\.cognizant\.com/[^\)]+)\)\s+Save Saved\s+\*\s+(.*?)\s+\*\s+(.*?)\s",
+        listing_text,
+        re.S,
+    )
+    for title, link, location, _department in jobs:
+        if "romania" not in location.lower():
+            continue
+
+        detail_text = GetDataCurl(f"https://r.jina.ai/http://{link}")
+        job_type = "on-site"
+        if detail_text:
+            if "work from office" in detail_text.lower():
+                job_type = "on-site"
+            elif "hybrid" in detail_text.lower():
+                job_type = "hybrid"
+            elif "remote" in detail_text.lower():
+                job_type = "remote"
 
         # get jobs items from response
         job_list.append(Item(
-            job_title=job.find("a",class_="stretched-link js-view-job").text,
+            job_title=title.strip(),
             job_link=link,
             company="Cognizant",
-            country="România",
+            country="Romania",
             county="Bucuresti",
             city="Bucuresti",
             remote=get_job_type(job_type),

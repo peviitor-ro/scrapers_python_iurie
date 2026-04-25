@@ -1,116 +1,132 @@
-#
-#
-#  Basic for scraping data from static pages
-#
-# ------ IMPORTANT! ------
-# if you need return soup object:
-# you cand import from __utils -> GetHtmlSoup
-# if you need return regex object:
-# you cand import from __utils ->
-# ---> get_data_with_regex(expression: str, object: str)
-#
-# Company ---> ENGIE
-# Link ------> https://jobs.engie.com/search/?q=&locationsearch=Romania
-#
-#
-import time
-from __utils import (
-    GetStaticSoup,
-    get_county,
-    get_county_json,
-    get_job_type,
-    Item,
-    UpdateAPI,
-)
+"""
+Basic for scraping data from static pages.
+
+Company ---> ENGIE
+Link ------> https://jobs.engie.com/search/?q=&locationsearch=Romania
+"""
+
+import math
+
+import requests
+
+from __utils import Item, UpdateAPI, get_county_json
+
+
+SEARCH_URL = "https://jobs.engie.com/services/recruiting/v1/jobs"
+BASE_URL = "https://jobs.engie.com/job/"
+PAGE_SIZE = 10
+
+
+def _first_county(value):
+    if isinstance(value, list):
+        return value[0] if value else "all"
+    return value or "all"
+
+
+def _normalize_city(city):
+    city = city.strip()
+    replacements = {
+        "Bucharest": "Bucuresti",
+        "BUCURESTI": "Bucuresti",
+        "Com Blejoi": "Blejoi",
+        "Com. Blejoi": "Blejoi",
+        "Ploiesti": "Ploiesti",
+        "Turnu Magurele": "Turnu Magurele",
+        "Targu Mures": "Targu Mures",
+        "Ramnicu Valcea": "Ramnicu Valcea",
+    }
+    return replacements.get(city, city)
+
+
+def _parse_locations(location_values):
+    cities = []
+    for value in location_values or []:
+        parts = [part.strip() for part in value.split(",")]
+        if len(parts) < 2 or parts[1].lower() != "romania":
+            continue
+
+        city = _normalize_city(parts[0])
+        if city and city not in cities:
+            cities.append(city)
+
+    if len(cities) != 1:
+        return "all", "all"
+
+    city = cities[0]
+    county = _first_county(get_county_json(city))
+    return city, county
+
+
+def _build_payload(page_number):
+    return {
+        "locale": "en_US",
+        "pageNumber": page_number,
+        "sortBy": "date",
+        "keywords": "",
+        "location": "Romania",
+        "facetFilters": {},
+        "brand": "",
+        "skills": [],
+        "categoryId": 0,
+        "alertId": "",
+        "rcmCandidateId": "",
+    }
 
 
 def scraper():
-    '''
+    """
     ... scrape data from ENGIE scraper.
-    '''
-    page = 0
-    flag = True
+    """
     job_list = []
+    seen_ids = set()
 
-    while flag:
-        soup = GetStaticSoup(
-            f"https://jobs.engie.com/search/?q=&locationsearch=Romania&startrow={page}")
-        # print(soup)
-        if len(jobs := soup.find_all('tr', class_=('data-row'))) > 0:
-            for job in jobs:
+    first_page = requests.post(SEARCH_URL, json=_build_payload(0), timeout=30).json()
+    total_jobs = first_page.get("totalJobs", 0)
+    total_pages = math.ceil(total_jobs / PAGE_SIZE)
 
-                # Initialize `cities` as an empty list to ensure it's always defined
-                cities = []
+    for page_number in range(total_pages):
+        response = first_page if page_number == 0 else requests.post(
+            SEARCH_URL,
+            json=_build_payload(page_number),
+            timeout=30,
+        ).json()
 
-                # Remove "Romania" from the location --- Start
-                city_location = job.find(
-                    'span', class_='jobLocation').text.strip()
+        for job in response.get("jobSearchResult", []):
+            data = job.get("response", {})
+            job_id = data.get("id")
+            if not job_id or job_id in seen_ids:
+                continue
 
-                # Handle locations with different delimiters
-                if ', Ro' in city_location or ', R' in city_location:
-                    # Split on commas
-                    cities = city_location.split(', R')[0].split(', ')
+            seen_ids.add(job_id)
+            city, county = _parse_locations(data.get("jobLocationShort", []))
 
-                if " / " in city_location:
-                    cities = city_location.split(', R')[0].split(
-                        ' / ')  # Split on slashes
-
-                # corect location
-                for city in range(len(cities)):
-
-                    if 'Com.Blejoi' in cities[city]:
-                        cities[city] = 'Blejoi'
-                    if 'Bucharest' in cities[city]:
-                        cities[city] = 'Bucuresti'
-                    if 'Ploiest' in cities[city]:
-                        cities[city] = 'Ploiesti'
-                    if 'Turnu Mag' in cities[city]:
-                        cities[city] = 'Turnu Magurele'
-                    if "Targu Mures" in cities[city]:
-                        cities[city] = "Targu-Mures"
-                    if "Pi" in cities[city]:
-                        cities[city] = "Pitesti"
-                    if "C" in cities[city]:
-                        cities[city] = "Constanța"
-
-                # check county for cities  add to a county list
-                job_county = [get_county_json(city)[0]for city in cities]
-                
-                # get jobs items from response
-                job_list.append(Item(
-                    job_title=job.find('a', class_='jobTitle-link').text,
-                    job_link='https://jobs.engie.com' + job.find('a')['href'],
-                    company='ENGIE',
-                    country='România',
-                    county=job_county,
-                    city=cities,
-                    # for location if all then location remote else On-site
+            job_list.append(
+                Item(
+                    job_title=data.get("unifiedStandardTitle"),
+                    job_link=f"{BASE_URL}{data.get('urlTitle')}/{job_id}/",
+                    company="ENGIE",
+                    country="Romania",
+                    county=county,
+                    city=city,
                     remote="on-site",
-                ).to_dict())
-
-        else:
-            flag = False
-
-        # increment page
-        page += 25
-        time.sleep(1)
+                ).to_dict()
+            )
 
     return job_list
 
 
 def main():
-    '''
+    """
     ... Main:
     ---> call scraper()
     ---> update_jobs() and update_logo()
-    '''
+    """
 
     company_name = "ENGIE"
     logo_link = "https://rmkcdn.successfactors.com/c4851ec3/1960b45a-f47f-41a6-b1c7-c.svg"
 
     jobs = scraper()
-    print("Engie jobs",len(jobs))
-    # uncomment if your scraper done
+    print("Engie jobs", len(jobs))
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
 

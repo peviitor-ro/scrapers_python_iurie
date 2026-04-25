@@ -10,12 +10,12 @@ you cand import from __utils ->
 ---> get_data_with_regex(expression: str, object: str)
 
 Company ---> breakpointit
-Link ------> https://breakpointit-1655385323.teamtailor.com/jobs
+ Link ------> https://breakpointit.eu/careers
 
 """
 
 from __utils import (
-    GetStaticSoup,
+    GetRequestJson,
     get_county,
     get_county_json,
     get_job_type,
@@ -27,31 +27,27 @@ from __utils import (
 def scraper():
     """
     ... scrape data from breakpointit scraper.
-    https://breakpointit-1655385323.teamtailor.com/jobs
+    https://breakpointit.eu/careers
     """
-    soup = GetStaticSoup("https://breakpointit-1655385323.teamtailor.com/jobs")
+    json_data = GetRequestJson("https://breakpointit.eu/api/jobs")
 
     job_list = []
-    for job in soup.find_all(
-        "a",
-        class_="flex flex-col py-6 text-center sm:px-6 hover:bg-gradient-block-base-bg focus-visible-company focus-visible:rounded",
-    ):
+    for job in json_data:
+        location = (job.get("location") or "").strip()
+        if "romania" not in location.lower():
+            continue
 
-        job_type = job.find("div", class_="mt-1 text-md").text.strip()
-        title = job.find(
-            "span",
-            class_="text-block-base-link sm:min-w-[25%] sm:truncate company-link-style hyphens-auto",
-        ).text
-        # get jobs items from response
+        remote = "remote" if "remote" in location.lower() else "on-site"
+
         job_list.append(
             Item(
-                job_title=title,
-                job_link=job.get("href"),
+                job_title=job.get("title"),
+                job_link=f"https://breakpointit.eu/career/{job.get('slug')}",
                 company="Breakpointit",
-                country="România",
+                country="Romania",
                 county=get_county_json("Cluj-Napoca"),
                 city="Cluj-Napoca",
-                remote=get_job_type(job_type),
+                remote=remote,
             ).to_dict()
         )
 
@@ -66,7 +62,7 @@ def main():
     """
 
     company_name = "breakpointit"
-    logo_link = "https://images.teamtailor-cdn.com/images/s3/teamtailor-production/logotype-v3/image_uploads/de4a3e93-31b3-4373-9d93-c193ee707218/original.png"
+    logo_link = "https://breakpointit.eu/images/logo_Breakpoint_sqare.webp"
 
     jobs = scraper()
     print("jobs found:", len(jobs))

@@ -15,7 +15,6 @@
 #
 from __utils import (
     GetStaticSoup,
-    update_location_if_is_county,
     get_county_json,
     get_job_type,
     Item,
@@ -44,6 +43,7 @@ def scraper():
                 # Extract location and job type from page
                 location = job.find(
                     "div", class_="ct-code-block").text.split(', ')
+                
                 if "România" in location:
                     location.remove("România")
                 counties = [] if len(
@@ -56,10 +56,9 @@ def scraper():
                     company='Accace',
                     country='România',
                     county=counties,
-                    city=update_location_if_is_county(counties, location),
+                    city=location[0] if len(location) > 0 else "",
                     remote=get_job_type(type),
                 ).to_dict())
-
     return job_list
 
 

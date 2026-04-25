@@ -5,37 +5,38 @@ Link ------> https://jobs.freudenberg.com/Freudenberg/?company=FPM&location=RO
 
 """
 
-from __utils import (
-    GetRequestJson,
-    get_county,
-    get_county_json,
-    get_job_type,
-    Item,
-    UpdateAPI,
-)
+import json
+
+import requests
+
+from __utils import Item, UpdateAPI
+
+
+API_URL = "https://r.jina.ai/http://https://jobs.freudenberg.com/Freudenberg/api/json/?company=FPM&location=L_00000038"
+def _load_jobs():
+    response = requests.get(API_URL, timeout=60)
+    response.raise_for_status()
+    text = response.text
+    return json.loads(text[text.find("{"):])
 
 
 def scraper():
     """
     ... scrape data from Freudenberg Performance Materials SRL scraper.
     """
-    # https://jobs.freudenberg.com/Freudenberg/?company=FPM&location=RO
-    json_data = GetRequestJson(
-        "https://jobs.freudenberg.com/Freudenberg/api/json/?company=FPM&location=L_00000038"
-    )
+    json_data = _load_jobs()
 
     job_list = []
     for job in json_data["jobs"]:
-        # get jobs items from response
         job_list.append(
             Item(
                 job_title=job["jobtitle"],
                 job_link=job["deepLink"],
                 company="Freudenberg Performance Materials SRL",
-                country="România",
-                county="Braşov",
-                city="Braşov",
-                remote="remote" if "R" in job["externalId"] else "on-site",
+                country="Romania",
+                county="Brasov",
+                city="Brasov",
+                remote="on-site",
             ).to_dict()
         )
 

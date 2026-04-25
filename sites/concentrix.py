@@ -13,61 +13,57 @@ Link ------> https://jobs.concentrix.com/job-search/?keyword=&country=Romania
 
 """
 
-from __utils import (
-    get_county_json,
-    get_job_type,
-    Item,
-    UpdateAPI,
-)
-import requests
-from requests import HTTPError
-from bs4 import BeautifulSoup
+import re
+
+from __utils import GetDataCurl, Item, UpdateAPI, get_county_json, get_job_type
+
+
+SEARCH_URL = "https://r.jina.ai/http://https://jobs.concentrix.com/job-search/?keyword=&country=Romania"
+
+
+def _extract_jobs(search_text):
+    match = re.search(r"## Search results \((\d+) jobs found\)(.*)Showing 1–10 of", search_text, re.S)
+    if not match:
+        return []
+
+    results_block = match.group(2)
+    return re.findall(
+        r"\[(.*?)\s+###\s+(.*?)\s+(?:Apply with Concentrix!\s+)?([A-Za-zĂÂÎȘȘȚȚăâîșşțţ\-]+), Romania(?:\s+([A-Za-z]+))?\]\((https://jobs\.concentrix\.com/job/\?id=[^\)]+)\)",
+        results_block,
+    )
 
 
 def scraper():
     """
     ... scrape data from Concentrix scraper.
     """
-    url = "https://jobs.concentrix.com/wp-admin/admin-ajax.php"
+    search_text = GetDataCurl(SEARCH_URL)
+    if not search_text:
+        return []
 
-    payload = "action=gd_jobs_query_pagination&country%5B%5D=Romania&keyword=&jobs_shown=0&jobs_per_page=50&wh=false"
+    job_list = []
+    for _category, title, city, language, link in _extract_jobs(search_text):
+        if any(token in title for token in ["We're Concentrix", "Experience the power", "Our Risk and Compliance", "Success Program Skills Profile", "..."]):
+            detail_text = GetDataCurl(f"https://r.jina.ai/http://{link}")
+            detail_title_match = re.search(r"Home\]\([^\)]*\) » Job Details\s+\n\s+#\s+(.*?)\n", detail_text or "", re.S)
+            if detail_title_match:
+                title = detail_title_match.group(1).strip()
 
-    headers = {
-        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
-        "Cookie": "__cf_bm=Eulwr4cnl4nSz42e4pW6pBBsuP0CpdA8Fgny9LoQyPk-1740473978-1.0.1.1-CRHhcFXSGDtPFw2PAzGTBIV4ZeJvCf9sZ2iodo2KLpp.zOrtHCRJgCz1ObRH34GxaWW2fNqJW.sX45yFkMkICw",
-    }
-    try:
-        response = requests.post(url=url, data=payload, headers=headers)
-        html = response.json().get("data").get("output")
-        soup = BeautifulSoup(html, "lxml")
+        city = "Bucuresti" if city in {"Bucharest", "Bucuresti", "București"} else city
+        county = get_county_json(city)
+        remote = get_job_type(f"{title} {language or ''}")
 
-        job_list = []
-        for job in soup.find_all("div", class_="job"):
-            title = job.find("h3").text
-            clean_title = title.split(" –")[0].split(" - ")[0]
-            location = job.find("div", attrs="job-location").text.split(", R")[0]
-            # change Bucharest to București
-            if location == "Bucharest":
-                location = "București"
-            if location == "Targu":
-                location = "Cluj"
-            # get county for location
-            county = get_county_json(location)
-            # get jobs items from response
-            job_list.append(
-                Item(
-                    job_title=clean_title,
-                    job_link=job.find("a")["href"],
-                    company="Concentrix",
-                    country="România",
-                    county=county,
-                    city=location,
-                    remote=get_job_type(title),
-                ).to_dict()
-            )
-    except (HTTPError, ValueError) as e:
-        print("Somethink went wrong", e)
+        job_list.append(
+            Item(
+                job_title=title.strip(),
+                job_link=link,
+                company="Concentrix",
+                country="Romania",
+                county=county,
+                city=city,
+                remote=remote,
+            ).to_dict()
+        )
 
     return job_list
 
@@ -80,11 +76,10 @@ def main():
     """
 
     company_name = "Concentrix"
-    logo_link = "https://jobs.concentrix.com/wp-content/themes/jobswh/img/logo-concentrix-color.svg"
+    logo_link = "https://jobs.concentrix.com/wp-content/uploads/2026/01/concentrix-logo-full-color.webp"
 
     jobs = scraper()
     print("jobs found:", len(jobs))
-    # uncomment if your scraper done
     UpdateAPI().publish(jobs)
     UpdateAPI().update_logo(company_name, logo_link)
 

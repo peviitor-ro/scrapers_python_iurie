@@ -16,7 +16,6 @@
 from __utils import (
     GetStaticSoup,
     get_county,
-    get_job_type,
     Item,
     UpdateAPI,
 )
@@ -27,36 +26,29 @@ def scraper():
     ... scrape data from Hennlich scraper.
     """
     soup = GetStaticSoup("https://www.hennlich.ro/cariera/toate-locurile-de-munca.html")
-
-     
     job_list = []
-  
-    for job in soup.find_all("li",attrs="list_item list-group-item"):
-        title=job.find('a').text
-        link = "https://www.hennlich.ro/"+job.find('a')['href']
-        
-        if "Brașov" in title:
-            location=["Brașov"]
-        if "Turda" in title:
-            location.append("Turda")
-        else:
-            location="Arad"
-        # check if location is county
-        county_finish=[city for city in location if True in get_county(city)]
-        if county_finish:
-            location="Turda"
-       
-    
-        # get jobs items from response
-        job_list.append(Item(
-            job_title=title,
-            job_link=link,
-            company="Hennlich",
-            country="România",
-            county=county_finish if county_finish else get_county(location)[0] if True in get_county(location) else None,
-            city="all" if "Arad" in location else location,
-            remote = get_job_type(""),
-        ).to_dict())
+
+    for job in soup.select("div.tx-jobapplications div.card"):
+        title_tag = job.select_one("div.card-title a")
+        if not title_tag:
+            continue
+
+        title = title_tag.get_text(strip=True)
+        link = title_tag.get("href", "")
+        location_tag = job.find(string=lambda text: text and text.strip() == "Arad")
+        location = location_tag.strip() if location_tag else "Arad"
+
+        job_list.append(
+            Item(
+                job_title=title,
+                job_link="https://www.hennlich.ro" + link,
+                company="Hennlich",
+                country="România",
+                county=get_county(location)[0] if True in get_county(location) else None,
+                city=location,
+                remote="on-site",
+            ).to_dict()
+        )
 
     return job_list
 

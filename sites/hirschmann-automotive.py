@@ -14,13 +14,11 @@
 #
 #
 from __utils import (
-    PostCustumRequest,
-    get_county,
     get_county_json,
-    get_job_type,
     Item,
     UpdateAPI,
 )
+import requests
 from bs4 import BeautifulSoup
 
 
@@ -29,31 +27,32 @@ def scraper():
     ... scrape data from hirschmann-automotive scraper.
     https://career.hirschmann-automotive.com/en/all-jobs
     """
-    url = "https://career.hirschmann-automotive.com/en/all-jobs?tx_site_jobapi%5Bcontroller%5D=Job&type=1598607815"
-
-    payload = {'tx_site_jobapi[__trustedProperties]': '{"demand":{"jobType":1,"location":1,"limit":1,"offset":1},"detailPage":1,"cid":1}0130b1fbf738e4ecd2c007cb2b8264e40a735521',
-               'tx_site_jobapi[demand][location]': '37',
-               'tx_site_jobapi[detailPage]': '2560',
-               'tx_site_jobapi[cid]': '2119'}
-
-    headers = {
-        'referer': 'https://career.hirschmann-automotive.com/en/all-jobs'
-    }
-    data = PostCustumRequest(url=url, payload=payload, headers=headers)
+    url = "https://career.hirschmann-automotive.com/en/all-jobs"
+    response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=30)
+    data = BeautifulSoup(response.text, "html.parser")
 
     job_list = []
-    for job in data.find_all("li"):
-        city = job.find_all(
-            'p')[-1].get_text().split("-")[0].strip().replace(" ", "-")
+    for job in data.select("ul.jobs-list > li"):
+        link_tag = job.find("a", href=True)
+        title_tag = job.find("h3")
+        if not link_tag or not title_tag:
+            continue
+
+        location_text = job.get_text(" ", strip=True)
+        if "Romania" not in location_text:
+            continue
+
+        city = "Targu Mures"
 
         # get jobs items from response
+        county = get_county_json(city)
         job_list.append(Item(
-            job_title=job.find("h3").text,
+            job_title=title_tag.get_text(strip=True),
             job_link="https://career.hirschmann-automotive.com" +
-            job.find("a").get("href"),
+            link_tag.get("href"),
             company="hirschmann automotive",
             country="România",
-            county=get_county_json(city),
+            county=county[0] if isinstance(county, list) else county,
             city=city,
             remote="on-site",
         ).to_dict())

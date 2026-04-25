@@ -1,50 +1,49 @@
-#
-#
-#  Basic for scraping data from static pages
-#
-# ------ IMPORTANT! ------
-# if you need return soup object:
-# you cand import from __utils -> GetHtmlSoup
-# if you need return regex object:
-# you cand import from __utils ->
-# ---> get_data_with_regex(expression: str, object: str)
-#
-# Company ---> Gameloft
-# Link ------> https://careers.smartrecruiters.com/Gameloft/api/groups?page=0
-#
-#
-from __utils import (
-    GetStaticSoup,
-    get_county,
-    get_job_type,
-    Item,
-    UpdateAPI,
-)
+"""
+Basic for scraping data from static pages.
+
+Company ---> Gameloft
+Link ------> https://api.smartrecruiters.com/v1/companies/Gameloft/postings?limit=100&offset=0
+"""
+
+import requests
+
+from __utils import Item, UpdateAPI
+
+
+API_URL = "https://api.smartrecruiters.com/v1/companies/Gameloft/postings?limit=100&offset=0"
 
 
 def scraper():
     """
     ... scrape data from Gameloft scraper.
     """
-    soup = GetStaticSoup("https://careers.smartrecruiters.com/Gameloft/api/groups?page=0")
+    json_data = requests.get(API_URL, timeout=30).json()
 
     job_list = []
-    for job in soup.find_all("section",attrs="openings-section opening opening--grouped js-group"):
-        if 'Bucharest' in job.find('h3', class_='opening-title title display--inline-block text--default').text:
-            for j in job.find_all("li", attrs="opening-job job column wide-7of16 medium-1of2"):
-                link = j.find('a', class_='link--block details')['href']
-                title = j.find('h4', class_='details-title job-title link--block-target').text
+    seen_refs = set()
+    for job in json_data.get("content", []):
+        location = job.get("location", {})
+        if location.get("country") != "ro":
+            continue
 
-                # get jobs items from response
-                job_list.append(Item(
-                    job_title=title, 
-                    job_link=link,
-                    company="Gameloft",
-                    country="România",
-                    county="București",
-                    city="București",
-                    remote="hybrid",
-                ).to_dict())
+        ref_number = job.get("refNumber")
+        if ref_number in seen_refs:
+            continue
+        seen_refs.add(ref_number)
+
+        remote = "hybrid" if location.get("hybrid") else "remote" if location.get("remote") else "on-site"
+
+        job_list.append(
+            Item(
+                job_title=job.get("name", "").strip(),
+                job_link=f"https://jobs.smartrecruiters.com/Gameloft/{job.get('id')}",
+                company="Gameloft",
+                country="Romania",
+                county="Bucuresti",
+                city="Bucuresti",
+                remote=remote,
+            ).to_dict()
+        )
 
     return job_list
 

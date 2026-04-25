@@ -71,7 +71,7 @@ def scraper():
             job_list.append(
                 Item(
                     job_title=job["title"],
-                    job_link=f"https://careers.alight.com/us/en/job/{job["jobId"]}",
+                    job_link=f"https://careers.alight.com/us/en/job/{job.get('jobId', '')}",
                     company="Alight",
                     country="România",
                     county=county,

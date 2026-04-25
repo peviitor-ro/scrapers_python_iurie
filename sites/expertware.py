@@ -64,8 +64,8 @@ def scraper():
                 # get jobs items from response
                 job_list.append(
                     Item(
-                        job_title=job["title"],
-                        job_link=f"https://www.expertware.net{job["link"]}",
+                        job_title=job.get("title", ""),
+                        job_link=f"https://www.expertware.net{job.get('link', '')}",
                         company="expertware",
                         country="România",
                         county=get_county_json("Suceava"),

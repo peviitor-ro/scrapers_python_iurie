@@ -37,14 +37,18 @@ def scraper():
     job_list = []
     for job in json_data["result"]:
         if job["atsLocation"]["country"] == "Romania":
-            city = (
-                "all"
-                if "all" in job["atsLocation"]["city"].lower()
-                else job["location"]["city"]
-            )
-            state = (
-                "all" if job["location"]["state"] == None else job["location"]["state"]
-            )
+            try:
+                city = (
+                    "all"
+                    if "all" in job["atsLocation"]["city"].lower()
+                    else job["location"]["city"]
+                )
+                state = (
+                    "all" if job["location"]["state"] == None else job["location"]["state"]
+                )
+            except:
+                city = "all"
+                state = "all"
             job_type = ""
             # extract job type from dict
             for key, value in job_types.items():
@@ -55,7 +59,7 @@ def scraper():
             job_list.append(
                 Item(
                     job_title=job["jobOpeningName"],
-                    job_link=f"{base_url}{job["id"]}",
+                    job_link=f"{base_url}{job.get('id')}",
                     company="Heimdal",
                     country="România",
                     county=state,

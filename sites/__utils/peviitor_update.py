@@ -77,6 +77,8 @@ class UpdateAPI:
 
         if responce.status_code != 200:
             print(f"something wrong {responce.status_code}")
+        else:
+            print(f"Add successfully {len(data)} items")
 
 
 # print(UpdateAPI().get_token())

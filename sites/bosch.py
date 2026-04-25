@@ -39,18 +39,20 @@ def scraper():
     while len(json_data["_embedded"]["rh:result"][0]["data"]) > 0:
         results = json_data["_embedded"]["rh:result"][0]["data"]
         for job in results:
-
-            location = job["location"]["city"].split(",")[-1].strip()
-        # get jobs items from response
-            job_list.append(Item(
-                job_title=job["name"],
-                job_link="https://jobs.bosch.com/en/job/"+job["jobUrl"],
-                company="Bosch",
-                country="România",
-                county=get_county_json(location),
-                city=location,
-                remote="remote" if job["location"]["remote"] else "hybrid",
-            ).to_dict())
+            try:
+                location = job["location"]["city"].split(",")[-1].strip()
+            # get jobs items from response
+                job_list.append(Item(
+                    job_title=job["name"],
+                    job_link="https://jobs.bosch.com/en/job/"+job["jobUrl"],
+                    company="Bosch",
+                    country="România",
+                    county=get_county_json(location),
+                    city=location,
+                    remote="remote" if job["location"]["remote"] else "hybrid",
+                ).to_dict())
+            except Exception as e:
+                print(job)
         # replace page to request new data from api
         url = url.replace(f"page={page}", f"page={page+1}")
         page += 1

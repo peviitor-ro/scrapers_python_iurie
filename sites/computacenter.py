@@ -14,7 +14,7 @@
 #
 #
 from __utils import (
-    GetStaticSoup,
+    GetDataCurl,
     get_county,
     get_county_json,
     get_job_type,
@@ -22,35 +22,51 @@ from __utils import (
     UpdateAPI,
 )
 
+import re
+
+
+SEARCH_URL = "https://r.jina.ai/http://https://careers.computacenter.com/ro/search?utm_source=computacenter-ro&utm_medium=organic&utm_campaign=computacenter-ro"
+
 
 def scraper():
     """
     ... scrape data from Computacenter scraper.
     """
     job_list = []
-    #extract job categories links
-    soup = GetStaticSoup("https://careers.computacenter.com/ro")
-    job_categories = soup.find_all("a", class_="item")
-    for link in job_categories:
-        category=link.get("href")
-        #check if jobs are available per category
-        job_category=GetStaticSoup(category)
-        if  job_category.find_all("div",class_="moduleItems-items"):
-            # extract job info 
-            for job in job_category.find_all("a",class_="shont item"):
+    search_text = GetDataCurl(SEARCH_URL)
+    if not search_text:
+        return job_list
 
-                # get jobs items from response
-                job_list.append(Item(
-                    job_title=job.find("div",class_="h3").text,
-                    job_link=job.get("href"),
-                    company="Computacenter",
-                    country="România",
-                    county="Cluj",
-                    city="Cluj",
-                    remote="remote",
-                ).to_dict())
-        else:
+    jobs = re.findall(
+        r"### \[(.*?)\]\((https://careers\.computacenter\.com/ro/offer-redirect/[^\)]+)\)",
+        search_text,
+    )
+    for title_with_meta, link in jobs:
+        match = re.match(r"^(.*?)\s+(Cluj-Napoca|nationwide)\s+\*\s+.*$", title_with_meta.strip())
+        if not match:
             continue
+
+        title = match.group(1).strip()
+        location = match.group(2).strip()
+
+        if location.lower() == "nationwide":
+            city = "all"
+            county = "all"
+            remote = "remote"
+        else:
+            city = location.split(", ")[-1]
+            county = get_county_json(city)
+            remote = "on-site"
+
+        job_list.append(Item(
+            job_title=title,
+            job_link=link,
+            company="Computacenter",
+            country="Romania",
+            county=county,
+            city=city,
+            remote=remote,
+        ).to_dict())
 
     return job_list
 
@@ -63,7 +79,7 @@ def main():
     """
 
     company_name = "Computacenter"
-    logo_link = "https://careers.computacenter.com/ro/uploads/26b6f45b-d5aa-478d-9b59-c89355d9b7a3/settings/companies/computacenter-rou-eftl3-96-658061442d250.png"
+    logo_link = "https://cdn.job-shop.com/uploads/computacenter-6d1b97/WGGaZkTEQVYNIVaZfbTnaNLo.png?format=webp"
 
     jobs = scraper()
     print("jobs found:",len(jobs))

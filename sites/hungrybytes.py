@@ -14,10 +14,6 @@
 #
 #
 from __utils import (
-    GetStaticSoup,
-    get_county,
-    get_county_json,
-    get_job_type,
     Item,
     UpdateAPI,
 )
@@ -28,34 +24,31 @@ def scraper():
     """
     scrape data from HungryBytes scraper.
     """
-    # Step 1: Fetch the content from the URL
-    url = "https://jobs.hungrybytes.co/_next/static/chunks/pages/index-7ecb9fbdde12123c.js"
-    response = requests.get(url)
-    content = response.text
-    # Define regex patterns to extract titles and link and location
-    title_pattern = re.compile(r'title:"(.*?)"')
-    slug_pattern = re.compile(r'slug:"(.*?)"')
-    location_pattern = re.compile(r'category:"(.*?)"')
-    # Find all matches for titles and slugs
-    titles=title_pattern.findall(content)[::2][:-1]
-    slugs=slug_pattern.findall(content)
-    # Filter and clean the locations list
-    locations=location_pattern.findall(content)
-    cleaned_locations = [location.replace(", Romania", "").strip() for location in locations if "ListJobs_category__NeNg1" not in location]
-   
+    page = requests.get("https://jobs.hungrybytes.co", timeout=30)
+    chunk_path = re.search(r'/_next/static/chunks/pages/index-[^.]+\.js', page.text).group(0)
+    content = requests.get("https://jobs.hungrybytes.co" + chunk_path, timeout=30).text
+
+    pattern = re.compile(
+        r'title:"(?P<title>[^"]+)",slug:"(?P<slug>[^"]+)",category:"(?P<category>[^"]+)"'
+    )
+
     job_list = []
-    for title,link, city in zip(titles, slugs, cleaned_locations):
-       
-        # get jobs items from response
-        job_list.append(Item(
-            job_title=title,
-            job_link="https://jobs.hungrybytes.co/careers/"+link+"/",
-            company="Hungrybytes",
-            country="România",
-            county="Iasi",
-            city=city,
-            remote=get_job_type(content),
-        ).to_dict())
+    for match in pattern.finditer(content):
+        title = match.group("title")
+        slug = match.group("slug")
+        city = match.group("category").replace(", Romania", "").strip()
+
+        job_list.append(
+            Item(
+                job_title=title,
+                job_link="https://jobs.hungrybytes.co/careers/" + slug + "/",
+                company="Hungrybytes",
+                country="România",
+                county="Iasi",
+                city=city,
+                remote="remote",
+            ).to_dict()
+        )
 
     return job_list
 

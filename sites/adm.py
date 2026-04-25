@@ -13,21 +13,50 @@
 # ---> get_data_with_regex(expression: str, object: str)
 #
 #
-from __utils import (
-    PostRequestJson,
-    get_county,
-    get_county_json,
-    get_job_type,
-    Item,
-    UpdateAPI,
-)
+import html
+import re
+
+import requests
+
+from __utils import Item, UpdateAPI, get_county_json
+
+
+SEARCH_URL = "https://sjobs.brassring.com/TGnewUI/Search/home/HomeWithPreLoad?partnerid=25416&siteid=5429&PageType=searchResults&SearchType=linkquery&LinkID=4393911#keyWordSearch=&Location%20Country=Romania"
+MATCHED_JOBS_URL = "https://sjobs.brassring.com/TgNewUI/Search/Ajax/MatchedJobs"
+
+
+def _get_question_value(job, question_name):
+    for question in job.get("Questions", []):
+        if question.get("QuestionName") == question_name:
+            return question.get("Value")
+    return None
+
+
+def _build_session_data(page_text):
+    rft_match = re.search(r'name="__RequestVerificationToken"[^>]*value="([^"]+)"', page_text)
+    encrypted_match = re.search(r'EncryptedSessionValue\\&quot;:\\&quot;([^\"]+?)\\&quot;', page_text)
+
+    if not rft_match or not encrypted_match:
+        return None, None
+
+    return rft_match.group(1), html.unescape(encrypted_match.group(1))
 
 def scraper():
     '''
     ... scrape data from adm scraper.
     '''
-    # https://sjobs.brassring.com/TGnewUI/Search/home/HomeWithPreLoad?partnerid=25416&siteid=5429&PageType=searchResults&SearchType=linkquery&LinkID=4393911#keyWordSearch=&Location%20Country=Romania
-    url="https://sjobs.brassring.com/TgNewUI/Search/Ajax/MatchedJobs"
+    job_list = []
+    session = requests.Session()
+    response = session.get(SEARCH_URL, timeout=30)
+    if response.status_code != 200:
+        response.close()
+        return job_list
+
+    rft, encrypted_session_value = _build_session_data(response.text)
+    response.close()
+    if not rft or not encrypted_session_value:
+        return job_list
+
     payload = {
         "PartnerId": "25416",
         "SiteId": "5429",
@@ -37,90 +66,68 @@ def scraper():
         "LocationCustomSolrFields": "",
         "TurnOffHttps": False,
         "LinkID": "4393911",
-        "EncryptedSessionValue": "^Wkx2c/3r4IeWLxJ7mJvxjZITgO6Sdyvz0/wOgWCIozYUhxDkJ4BI8HYl3TvFfFhtemtRrNpHTOUiZU3przMpaP2ibwiv/vPhPdlLtC_slp_rhc_jiH0=",
+        "EncryptedSessionValue": encrypted_session_value,
         "FacetFilterFields": {
             "Facet": [
-            {
-                "Name": "formtext10",
-                "Options": [
                 {
-                    "OptionName": "Romania",
-                    "OptionValue": "Romania",
-                    "Selected": True
+                    "Name": "formtext10",
+                    "Options": [
+                        {
+                            "OptionName": "Romania",
+                            "OptionValue": "Romania",
+                            "Selected": True,
+                        }
+                    ],
+                    "AriaLabel_FilterResultsByFacet": "Filter search results by Location Country",
+                    "SelectedCount": 1,
                 }
-                ],
-                "AriaLabel_FilterResultsByFacet": "Filter search results by Location Country",
-                "SelectedCount": 1
-            }
             ]
         },
         "PowerSearchOptions": {
             "PowerSearchOption": [
-            {
-                "VerityZone": "JobTitle",
-                "Type": "text",
-                "Value": None
-            },
-            {
-                "VerityZone": "FORMTEXT10",
-                "Type": "single-select",
-                "OptionCodes": []
-            },
-            {
-                "VerityZone": "FORMTEXT9",
-                "Type": "single-select",
-                "OptionCodes": []
-            },
-            {
-                "VerityZone": "FORMTEXT8",
-                "Type": "single-select",
-                "OptionCodes": []
-            },
-            {
-                "VerityZone": "Department",
-                "Type": "select",
-                "OptionCodes": []
-            },
-            {
-                "VerityZone": "AutoReq",
-                "Type": "text",
-                "Value": None
-            },
-            {
-                "VerityZone": "LastUpdated",
-                "Type": "date",
-                "Value": None
-            },
-            {
-                "VerityZone": "languagelist",
-                "Type": "multi-select",
-                "OptionCodes": []
-            }
+                {"VerityZone": "JobTitle", "Type": "text", "Value": None},
+                {"VerityZone": "FORMTEXT10", "Type": "single-select", "OptionCodes": []},
+                {"VerityZone": "FORMTEXT9", "Type": "single-select", "OptionCodes": []},
+                {"VerityZone": "FORMTEXT8", "Type": "single-select", "OptionCodes": []},
+                {"VerityZone": "Department", "Type": "select", "OptionCodes": []},
+                {"VerityZone": "AutoReq", "Type": "text", "Value": None},
+                {"VerityZone": "LastUpdated", "Type": "date", "Value": None},
+                {"VerityZone": "languagelist", "Type": "multi-select", "OptionCodes": []},
             ]
         },
-        "SortType": "LastUpdated"
-        }
-    headers = {
-    'Cookie': 'tg_session_25416_5429=^Wkx2c/3r4IeWLxJ7mJvxjZITgO6Sdyvz0/wOgWCIozYUhxDkJ4BI8HYl3TvFfFhtemtRrNpHTOUiZU3przMpaP2ibwiv/vPhPdlLtC_slp_rhc_jiH0=; tg_session=^Wkx2c/3r4IeWLxJ7mJvxjZITgO6Sdyvz0/wOgWCIozYUhxDkJ4BI8HYl3TvFfFhtemtRrNpHTOUiZU3przMpaP2ibwiv/vPhPdlLtC_slp_rhc_jiH0=; tg_rft=^KToplylAOAZwMsrLw0jJS7ut2pUA8AIUH60qzs/k6Of4sos+02Bekwv3q2sBzmSgnWCmUeptgicDzZbH6hWe5kztwNuQffQ8S37GgMkVYmg=; tg_rft_mvc=erQf2SkRgXiOYfKKUw_9rNWz1R3U1ZEzdtdiqNRTtCwnW1wQdcZ3wRXtX0J6X0HryisDuzRRnOL7K9_tHuVqrdsC8GorRI7vTsrXv9WJS0hPxfi3gd_7IaGmWDb-FVM1cMsRUQ2; TS014452f4=01c9c50cd316285eab958379e0e51d704455416de2ab8dd423eb718112cbeafd545ad28779f445e973860d6fa28f952be4ccc6b23a7aed3a1611a67e73e64db2e7995e063feabe9b13d86e6b9d5b7d191bfccac2ba53a9f513c2d35e8289eda45c697ef96c5a5039563173bab93cae831ea5919299; TS014452f4=01c9c50cd36bca5209a2705e0a3d331b1474996a9ae51e29b961969ac10cadc3c8d969a2d968578c615c2c1c88f8b8100a403b9321f6e70f8e1387421f1422d945073597d362c255d05ff04909fa21f08eaaf37ae8e5398a12cb5323f7833b8639bf9c748f03c9d7533e1292cde6ffa0461623ebc2',
-    'RFT': 'T-3nJRzxuNs5F9cBKDBG2A675lB27vVCAJ-CzsPo4LJwdU8zGnPUeWoSkhHsyfaSW75lVWkWUAzvXFwrDNnh30ceKMf_pSsXqkDyY54Unl4TiPrJGuV0OAdXGo4QJ4rjp0nPuA2',
-    'Content-Type': 'application/json'
+        "SortType": "LastUpdated",
     }
+    headers = {
+        "Content-Type": "application/json",
+        "RFT": rft,
+        "X-Requested-With": "XMLHttpRequest",
+        "Origin": "https://sjobs.brassring.com",
+        "Referer": SEARCH_URL,
+    }
+    jobs_response = session.post(MATCHED_JOBS_URL, json=payload, headers=headers, timeout=30)
+    if jobs_response.status_code != 200:
+        jobs_response.close()
+        return job_list
 
-    
-    json_data = PostRequestJson(url=url, custom_headers=headers, data_json=payload )
+    json_data = jobs_response.json()
+    jobs_response.close()
 
-    job_list = []
-    for job in json_data['Jobs']["Job"]:
-        location = "Bucuresti" if"Bucharest" in job["Questions"][-2]["Value"] else job["Questions"][-2]["Value"]
-        
-        # get jobs items from response
+    for job in (json_data.get("Jobs") or {}).get("Job", []):
+        country = (_get_question_value(job, "formtext10") or "").strip()
+        if country.lower() != "romania":
+            continue
+
+        location = (_get_question_value(job, "formtext8") or "").strip()
+        location = "Bucuresti" if location == "Bucharest" else location
+        county = "all" if not location else get_county_json(location)
+
         job_list.append(Item(
-            job_title=job["Questions"][-5]["Value"],
-            job_link=job["Link"],
+            job_title=_get_question_value(job, "jobtitle"),
+            job_link=job.get("Link"),
             company="Adm",
             country="Romania",
-            county=get_county_json(location),
-            city=location,
+            county=county,
+            city=location or "all",
             remote="on-site",
         ).to_dict())
 

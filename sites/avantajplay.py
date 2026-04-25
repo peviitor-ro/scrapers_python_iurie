@@ -29,18 +29,24 @@ def scraper():
     soup = GetStaticSoup("https://www.avantajplay.ro/vacancies/")
 
     job_list = []
-    for job in soup.find_all('div', class_=('n-vacancies-cards')):
-        title = job.find('div', class_="n-vacancies-cc-title").find("h3").text
-        # get jobs items from response
-        job_list.append(Item(
-            job_title=title,
-            job_link=job.find('a', class_="n-vacancies-card")['href'],
-            company='Avantajplay',
-            country='România',
-            county="Brașov",
-            city="Brașov",
-            remote='on-site',
-        ).to_dict())
+
+    for job in soup.find_all('div', class_=('n-vacancies-cards')) or []:
+
+        try:
+            job_title = job.find('div', class_="n-vacancies-cc-title").find("h3").text
+            title = job.find('div', class_="n-vacancies-cc-title").find("h3").text
+            # get jobs items from response
+            job_list.append(Item(
+                job_title=title,
+                job_link=job.find('a', class_="n-vacancies-card")['href'],
+                company='Avantajplay',
+                country='România',
+                county="Brașov",
+                city="Brașov",
+                remote='on-site',
+            ).to_dict())
+        except Exception as e:
+            print(f"Error processing job: {e}")
 
     return job_list
 
