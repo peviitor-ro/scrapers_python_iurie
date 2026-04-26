@@ -32,14 +32,9 @@ def scraper():
 
     job_list = []
     for job in soup.find_all("li", class_="w-full"):
-        title = job.find(
-            "span",
-            class_="text-block-base-link sm:min-w-[25%] sm:truncate company-link-style hyphens-auto",
-        ).text
-        # get jobs items from response
         job_list.append(
             Item(
-                job_title=title,
+                job_title=job.find("a").text.strip(),
                 job_link=job.find("a")["href"],
                 company="Napa",
                 country="România",

@@ -14,9 +14,7 @@ Link ------> https://careers.nshift.com/jobs?country=Romania&split_view=true&que
 
 from __utils import (
     GetStaticSoup,
-    get_county,
     get_county_json,
-    get_job_type,
     Item,
     UpdateAPI,
 )
@@ -31,31 +29,22 @@ def scraper():
     )
 
     job_list = []
-    for job in soup.find_all(
-        "a",
-        class_="block h-full w-full hover:bg-company-primary-text hover:bg-opacity-3 overflow-hidden group",
-    ):
-        title = job.find(
-            "span",
-            class_="text-block-base-link company-link-style hyphens-auto",
-        ).text
-        job_type = job.find(
-            "span", class_="inline-flex items-center gap-x-2"
-        ).text.strip()
+    for job in soup.select('a[href*="/jobs/"]'):
+        data = [span.get_text(" ", strip=True) for span in job.find_all("span")]
+        if len(data) < 6:
+            continue
 
-        # Extract the location from div
-        data = job.find_all("span")
-        if len(data) > 3:
-            if "Multiple locations" in data[3]:
-                location = ["Brașov", "București", "Cluj-Napoca"]
-            else:
-                location = "București" if "Bucharest" in data[3].text else None
-        # get county for city
-        county = (
-            "București"
-            if location == "București"
-            else [get_county_json(county)[0] for county in location]
-        )
+        title = data[0]
+        location_text = data[3]
+        job_type = data[5].strip().lower()
+
+        if "," in location_text:
+            city = "all"
+            county = "all"
+        else:
+            city = "Bucuresti" if location_text == "Bucharest" else location_text
+            county = get_county_json(city)
+            county = county[0] if isinstance(county, list) and county else county
 
         # get jobs items from response
         job_list.append(
@@ -65,8 +54,8 @@ def scraper():
                 company="nShift",
                 country="România",
                 county=county,
-                city=location,
-                remote=get_job_type(job_type),
+                city=city,
+                remote=job_type,
             ).to_dict()
         )
 

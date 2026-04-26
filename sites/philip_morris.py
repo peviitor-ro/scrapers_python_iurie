@@ -63,7 +63,7 @@ def scraper():
         job_list.append(
             Item(
                 job_title=job["title"],
-                job_link=f"https://join.pmicareers.com/gb/en/job/{job["jobId"]}",
+                job_link=f"https://join.pmicareers.com/gb/en/job/{job.get('jobId')}",
                 company="philip morris",
                 country="România",
                 county=get_county_json(location),

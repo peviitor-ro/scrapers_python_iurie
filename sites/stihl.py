@@ -14,34 +14,40 @@
 #
 #
 from __utils import (
-    GetStaticSoup,
-    get_county,
-    get_county_json,
-    get_job_type,
     Item,
     UpdateAPI,
 )
+import requests
 
 
 def scraper():
     """
     ... scrape data from stihl scraper.
     """
-    soup = GetStaticSoup("https://www.stihl.ro/ro/informatii-utile/despre-noi/cariere-stihl-ro")
+    response = requests.get(
+        "https://corporate.stihl.ro/content/corporate/ro/ro/career/job-offers.corporatejoblisting.json",
+        params={"limit": 30, "offset": 0},
+        headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"},
+        timeout=30,
+    )
+    data = response.json()
 
     job_list = []
-    for job in soup.find_all("div",class_="richtexteditor text"):
+    for job in data.get("results", []):
 
         # get jobs items from response
-        job_list.append(Item(
-            job_title=job.find("h2").text.title(),
-            job_link="https://www.stihl.ro"+job.find("a")["href"],
-            company="stihl",
-            country="România",
-            county="Ilfov",
-            city="Otopeni",
-            remote="on-site",
-        ).to_dict())
+        job_list.append(
+            Item(
+                job_title=job["jobTitle"],
+                job_link="https://corporate.stihl.ro/ro/cariera/locuri-de-munca/detalii-job/"
+                + str(job["jobId"]),
+                company="stihl",
+                country="România",
+                county="Bihor",
+                city="Oradea",
+                remote="on-site",
+            ).to_dict()
+        )
 
     return job_list
 

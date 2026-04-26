@@ -47,15 +47,15 @@ def scraper():
     for job in post_data["jobPostings"]:
         location = (
             "Bucuresti"
-            if "Bucharest" == job["bulletFields"][1]
-            else job["bulletFields"][1]
+            if "Bucharest" == job.get("bulletFields", [None, None])[1]
+            else job.get("bulletFields", [None, None])[1]
         )
 
         # get jobs items from response
         job_list.append(
             Item(
                 job_title=job["title"],
-                job_link=f"{base_url}{job["externalPath"]}",
+                job_link=f"{base_url}{job.get('externalPath')}",
                 company="pluxee",
                 country="România",
                 county=get_county_json(location),
