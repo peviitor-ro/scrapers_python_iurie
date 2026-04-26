@@ -15,9 +15,7 @@
 #
 from __utils import (
     GetRequestJson,
-    get_county,
     get_county_json,
-    get_job_type,
     Item,
     UpdateAPI,
 )
@@ -28,12 +26,17 @@ def scraper():
     ... scrape data from AD scraper.
     '''
     job_list = []
-    links=["https://www.ad01.com/api/vacancy/?sort=created&sortDir=DESC",
-           "https://www.ad01.com/api/vacancy/?pageNumber=2&sort=created&sortDir=DESC"]
-    for link in links:
-        json_data = GetRequestJson(link)
-    
-        for job in json_data['vacancies']:
+    headers = {"X-Requested-With": "XMLHttpRequest"}
+    base_url = "https://www.ad01.com/api/vacancy/?sort=created&sortDir=DESC"
+    json_data = GetRequestJson(base_url, custom_headers=headers)
+
+    total_pages = json_data.get("meta", {}).get("totalPageCount", 1)
+
+    for page_number in range(1, total_pages + 1):
+        link = f"{base_url}&pageNumber={page_number}"
+        json_data = GetRequestJson(link, custom_headers=headers)
+
+        for job in json_data["vacancies"]:
             location="București" if "Bucharest" in job["city"] else job["city"]
             link="https://www.ad01.com/vacature/"+str(job['id'])+"/"+job['slug']
 

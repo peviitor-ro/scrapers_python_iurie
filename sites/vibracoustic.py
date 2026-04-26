@@ -13,21 +13,28 @@
 # ---> get_data_with_regex(expression: str, object: str)
 #
 #
-from __utils import (
-    GetRequestJson,
-    get_county,
-    get_county_json,
-    get_job_type,
-    Item,
-    UpdateAPI,
-)
+import json
+
+import requests
+
+from __utils import Item, UpdateAPI
+
+
+API_URL = "https://r.jina.ai/http://https://jobs.freudenberg.com/Freudenberg/api/json/?company=VC&location=L_00000250"
+
+
+def _load_jobs():
+    response = requests.get(API_URL, timeout=60)
+    response.raise_for_status()
+    text = response.text
+    return json.loads(text[text.find("{"):])
 
 def scraper():
     '''
     ... scrape data from Vibracoustic scraper.
     '''
     # https://jobs.freudenberg.com/Freudenberg/?company=VC&location=RO
-    json_data = GetRequestJson("https://jobs.freudenberg.com/Freudenberg/api/json/?company=VC&location=L_00000250")
+    json_data = _load_jobs()
 
     job_list = []
     for job in json_data['jobs']:
