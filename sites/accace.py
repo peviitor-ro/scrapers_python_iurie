@@ -32,8 +32,10 @@ def scraper():
     for type in jobs_type:
         soup = GetStaticSoup(
             f"https://accace.ro/jobs/?_sfm_job_features_acc-jobs_work-mode={type}")
-        data = soup.find(
-            "div", class_="oxy-dynamic-list acc-jobs-archive-repeater").find_all('a', class_="ct-link")
+        container = soup.find("div", class_="oxy-dynamic-list acc-jobs-archive-repeater")
+        if container is None:
+            continue
+        data = container.find_all('a', class_="ct-link")
 
         for job in data:
             if len(job.contents) > 0:
