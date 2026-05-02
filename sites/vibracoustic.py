@@ -20,7 +20,7 @@ import requests
 from __utils import Item, UpdateAPI
 
 
-API_URL = "https://r.jina.ai/http://https://jobs.freudenberg.com/Freudenberg/api/json/?company=VC&location=L_00000250"
+API_URL = "https://r.jina.ai/https://jobs.freudenberg.com/Freudenberg/api/json/?company=VC&location=L_00000250"
 
 
 def _load_jobs():
