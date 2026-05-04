@@ -12,7 +12,7 @@ import requests
 from __utils import Item, UpdateAPI
 
 
-API_URL = "https://r.jina.ai/http://https://jobs.freudenberg.com/Freudenberg/api/json/?company=FPM&location=L_00000038"
+API_URL = "https://r.jina.ai/https://jobs.freudenberg.com/Freudenberg/api/json/?company=FPM&location=L_00000038"
 def _load_jobs():
     response = requests.get(API_URL, timeout=60)
     response.raise_for_status()
