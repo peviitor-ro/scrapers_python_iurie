@@ -17,7 +17,7 @@ def _load_jobs():
     response = requests.get(API_URL, timeout=60)
     response.raise_for_status()
     text = response.text
-    return json.loads(text[text.find("{"):])
+    return json.loads(text[text.find("{"):text.rfind("}") + 1])
 
 
 def scraper():
