@@ -14,10 +14,15 @@ from __utils import Item, UpdateAPI
 
 API_URL = "https://r.jina.ai/https://jobs.freudenberg.com/Freudenberg/api/json/?company=FPM&location=RO"
 def _load_jobs():
-    response = requests.get(API_URL, timeout=60)
-    response.raise_for_status()
-    text = response.text
-    return json.loads(text[text.find("{"):text.rfind("}") + 1])
+    for attempt in range(3):
+        response = requests.get(API_URL, timeout=60)
+        response.raise_for_status()
+        text = response.text
+        start = text.find("{")
+        end = text.rfind("}")
+        if start != -1 and end != -1 and end > start:
+            return json.loads(text[start:end + 1])
+    return {"jobs": []}
 
 
 def scraper():
