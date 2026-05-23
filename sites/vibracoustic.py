@@ -14,8 +14,7 @@
 #
 #
 import json
-
-import requests
+import subprocess
 
 from __utils import Item, UpdateAPI
 
@@ -25,13 +24,24 @@ API_URL = "https://r.jina.ai/https://jobs.freudenberg.com/Freudenberg/api/json/?
 
 def _load_jobs():
     for attempt in range(3):
-        response = requests.get(API_URL, timeout=60)
-        response.raise_for_status()
-        text = response.text
-        start = text.find("{")
-        end = text.rfind("}")
-        if start != -1 and end != -1 and end > start:
-            return json.loads(text[start:end + 1])
+        try:
+            result = subprocess.run(
+                [
+                    "curl", "-s", "--max-time", "30",
+                    "-A", "Mozilla/5.0 (iPhone; CPU iPhone OS 9_8_8 like Mac OS X) AppleWebKit/535.14 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.14",
+                    "-H", "X-Return-Format: markdown",
+                    API_URL,
+                ],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=False,
+            )
+            if result.returncode == 0:
+                text = result.stdout.decode("utf-8")
+                start = text.find("{")
+                end = text.rfind("}")
+                if start != -1 and end != -1 and end > start:
+                    return json.loads(text[start:end + 1])
+        except Exception:
+            pass
     return {"jobs": []}
 
 def scraper():
