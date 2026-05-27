@@ -10,6 +10,7 @@ from __utils import (
 )
 import requests
 import urllib3
+from requests.exceptions import ConnectTimeout, RequestException
 
 
 SEARCH_URL = "https://jobs.webasto.com/services/recruiting/v1/jobs"
@@ -48,15 +49,18 @@ def scraper():
         "pageNumber": 0,
         "sortBy": "recent",
     }
-    response = requests.post(
-        SEARCH_URL,
-        headers={"Content-Type": "application/json"},
-        json=payload,
-        verify=False,
-        timeout=30,
-    )
-    response.raise_for_status()
-    response = response.json()
+    try:
+        response = requests.post(
+            SEARCH_URL,
+            headers={"Content-Type": "application/json"},
+            json=payload,
+            verify=False,
+            timeout=30,
+        )
+        response.raise_for_status()
+        response = response.json()
+    except (ConnectTimeout, RequestException):
+        return []
 
     job_list = []
 
