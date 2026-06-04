@@ -63,6 +63,9 @@ def scraper():
 
     jobs = PostRequestJson(url=url, custom_headers=headers, data_json=payload)
 
+    if not isinstance(jobs, dict):
+        return job_list
+
     for job in jobs["refineSearch"]["data"]["jobs"]:
         if job["country"] == "Romania":
             location = "all" if "Virtual" == job["city"] else job["city"]

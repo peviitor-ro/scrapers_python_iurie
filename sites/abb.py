@@ -55,6 +55,9 @@ def scraper():
     )
 
     job_list = []
+    if not isinstance(post_data, dict):
+        return job_list
+
     for job in post_data["refineSearch"]["data"]["jobs"]:
         title = job["title"]
         link = (

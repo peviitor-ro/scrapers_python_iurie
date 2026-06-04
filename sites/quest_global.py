@@ -15,14 +15,11 @@
 #
 from __utils import (
     PostRequestJson,
-    get_county,
     get_county_json,
     get_job_type,
     Item,
     UpdateAPI,
 )
-import requests
-import json
 
 
 
@@ -31,12 +28,10 @@ def scraper():
     ... scrape data from Quest global scraper.
     https://careers.quest-global.com/global/en/search-results?qcountry=Romania
     '''
-    # post_data = PostRequestJson("https://careers.quest-global.com/widgets", custom_headers=headers, data_raw=data_raw)
-
     job_list = []
     url = "https://careers.quest-global.com/widgets"
 
-    payload = json.dumps({
+    payload = {
     "sortBy": "",
     "subsearch": "",
     "from": 0,
@@ -76,14 +71,16 @@ def scraper():
     "country": "global",
     "refNum": "QGRQGAGLOBAL",
     "ddoKey": "eagerLoadRefineSearch"
-    })
+    }
     headers = {
     'Content-Type': 'application/json',
     'Cookie': 'PHPPPE_ACT=8a7059ff-a448-4aab-9680-047a39777b6a; PLAY_SESSION=eyJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7IkpTRVNTSU9OSUQiOiI4YTcwNTlmZi1hNDQ4LTRhYWItOTY4MC0wNDdhMzk3NzdiNmEifSwibmJmIjoxNzIxNjMwMDM1LCJpYXQiOjE3MjE2MzAwMzV9.ECK461YpO3bkwJPgI3_FhLffMaDKeh9NCGZIrByIPnM; VISITED_COUNTRY=global; VISITED_LANG=en'
     }
 
-    response = requests.request("POST", url, headers=headers, data=payload)
-    data=response.json()["eagerLoadRefineSearch"]["data"]["jobs"]
+    post_data = PostRequestJson(url, custom_headers=headers, data_json=payload)
+    if not isinstance(post_data, dict):
+        return job_list
+    data = post_data["eagerLoadRefineSearch"]["data"]["jobs"]
     
     for job in data:
         title=job["title"].replace(" ","-")
