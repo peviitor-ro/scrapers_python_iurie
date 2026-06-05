@@ -52,8 +52,8 @@ def scraper():
             )
 
         return job_list
-    except requests.exceptions.ConnectionError:
-        print("Warning: jobs.hungrybytes.co is unreachable. Returning empty job list.")
+    except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+        print("Warning: jobs.hungrybytes.co is unreachable or timed out. Returning empty job list.")
         return []
 
 
