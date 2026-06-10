@@ -27,7 +27,8 @@ def scraper():
     ... scrape data from Foundever scraper.
     """
     soup = GetStaticSoup(
-        "https://jobs.foundever.com/search/?createNewAlert=false&q=&locationsearch=Romania&optionsFacetsDD_title=&optionsFacetsDD_country=&optionsFacetsDD_department="
+        "https://jobs.foundever.com/search/?createNewAlert=false&q=&locationsearch=Romania&optionsFacetsDD_title=&optionsFacetsDD_country=&optionsFacetsDD_department=",
+        verify=False,
         )
 
     job_list = []
