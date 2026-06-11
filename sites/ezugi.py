@@ -28,33 +28,35 @@ def scraper():
     '''
     ... scrape data from Ezugi scraper.
     '''
-    soup = GetStaticSoup("https://careers.ezugi.com/jobs?split_view=true&query=")
+    soup = GetStaticSoup("https://careers.ezugi.com/jobs?split_view=true&query=", verify=False)
     job_list = []
     
-    for job in soup.find_all('li', attrs=('w-full')):
+    for job in soup.find_all('li', class_='w-full'):
         
-        # job title
-        title = job.find('span', attrs =('text-block-base-link sm:min-w-[25%] sm:truncate company-link-style')).text
-       
-        # find city
-        data = job.find('div', attrs =('mt-1 text-md')).text.strip().lower()
-        
-        # replace bucharest with Bucuresti in loc list 
-        if 'bucharest' in data:
-            location="București"       
-        # call func get_county to return tuple
-        finish_location = get_county(location)  
-        #check job type from title and data 
-        job_type = get_job_type(title + data)
-        # get jobs items from response
+        a = job.find('a', class_='@sm:line-clamp-2')
+        if a is None:
+            continue
+        title = a.get_text(strip=True)
+
+        data = job.find('div', class_='mt-1 text-md')
+        data_text = data.get_text(strip=True).lower() if data else ''
+
+        if 'bucharest' in data_text:
+            location = 'București'
+        else:
+            location = data_text
+
+        finish_location = get_county(location)
+        job_type = get_job_type(title + data_text)
+
         job_list.append(Item(
-            job_title = title,
-            job_link = job.find('a')['href'],
+            job_title=title,
+            job_link=a['href'],
             company='Ezugi',
             country='România',
-            county=finish_location[0] if True in finish_location else  None, 
-            city='all' if True in finish_location and finish_location[0] != 'Bucuresti' else location,
-            remote = job_type ,
+            county=finish_location[0] if True in finish_location else None,
+            city='all' if True in finish_location and finish_location[0] != 'București' else location,
+            remote=job_type,
         ).to_dict())
 
     return job_list
