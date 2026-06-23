@@ -31,7 +31,8 @@ def scraper():
 
     job_list = []
     for job in json_data['jobs']:
-        location=job["location"].strip().split(" / ")
+        import re
+        location=re.split(r', | / ', job["location"].strip())
         cities=['Cluj-Napoca', 'Iasi']  if "Remote" in location else location
         county=["Iasi" if city=="Iasi" else get_county_json(city)[0] for city in cities]
 
