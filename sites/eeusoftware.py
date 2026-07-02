@@ -37,7 +37,7 @@ def scraper():
             for job in jobs:
                 # get jobs items from response
                 job_list.append(Item(
-                    job_title = job.find('h4', attrs="details-title job-title link--block-target").text,
+                    job_title = job.find('h4', class_=["details-title", "job-title", "link--block-target"]).text,
                     job_link = job.find('a')['href'],
                     company='Eeusoftware',
                     country='România',

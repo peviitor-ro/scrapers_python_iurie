@@ -29,19 +29,19 @@ def scraper():
     soup = GetStaticSoup("https://careers.smartrecruiters.com/SelfPay")
 
     job_list = []
-    for job in soup.find_all("div",attrs="js-openings-load"):
-        location=job.find("h3",attrs="opening-title title display--inline-block text--default").text.split(', R')[0]
-        county=get_county(location)
-        # get jobs items from response
-        job_list.append(Item(
-            job_title=job.find("h4",attrs="details-title job-title link--block-target").text,
-            job_link=job.find("a")["href"],
-            company="SelfPay",
-            country="România",
-            county = county[0] if True in county else None,
-            city = 'all' if True in county and county[0] != 'Bucuresti' else county[0],
-            remote='remote' if job.find('i') else 'on-site',
-        ).to_dict())
+    for section in soup.find("div", class_="js-openings-load").find_all("section", class_="openings-section"):
+        location = section.find("h3", class_="opening-title").text.split(', R')[0]
+        county = get_county(location)
+        for job in section.find_all("li", class_="opening-job"):
+            job_list.append(Item(
+                job_title=job.find("h4", class_="details-title").text,
+                job_link=job.find("a", class_="link--block")["href"],
+                company="SelfPay",
+                country="România",
+                county=county[0] if True in county else None,
+                city='all' if True in county and county[0] != 'Bucuresti' else county[0],
+                remote='remote' if job.find('i') else 'on-site',
+            ).to_dict())
 
     return job_list
 
