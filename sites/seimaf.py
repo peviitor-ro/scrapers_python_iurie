@@ -11,37 +11,65 @@
 #
 # Company ---> Seimaf
 # Link ------> https://www.seimaf.com/ro/ofertele-de-locuri-de-munca/?fwp_job_location=bucuresti-romania
+#
+# Jobs are loaded dynamically, so we use the public WP REST API
+# filtered by the "bucuresti-romania" location term.
 
 #
 #
+import html
+
+import requests
+import urllib3
+
 from __utils import (
-    GetStaticSoup,
-    get_county,
-    get_job_type,
     Item,
     UpdateAPI,
 )
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+API_URL = "https://www.seimaf.com/wp-json/wp/v2/jobs"
+LOCATION_ID = 646  # bucuresti-romania
+
+
+def _fetch_jobs():
+    params = {
+        "job-locations": LOCATION_ID,
+        "per_page": 100,
+    }
+    for _ in range(3):
+        try:
+            response = requests.get(
+                API_URL,
+                params=params,
+                verify=False,
+                timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException:
+            continue
+    return []
 
 
 def scraper():
     """
     ... scrape data from Seimaf scraper.
     """
-    soup = GetStaticSoup("https://www.seimaf.com/ro/ofertele-de-locuri-de-munca/?fwp_job_location=bucuresti-romania")
-
     job_list = []
-    
-    for job in soup.find_all("article",class_="card-job"):
-        
+
+    for job in _fetch_jobs():
+
         # get jobs items from response
         job_list.append(Item(
-            job_title=job.find("h1", class_="card-job__title").text.strip(),
-            job_link=job.find("a")["href"],
+            job_title=html.unescape(job["title"]["rendered"]).strip(),
+            job_link=job["link"],
             company="Seimaf",
             country="România",
             county="Bucuresti",
             city="Bucuresti",
-            remote = "on-site",
+            remote="on-site",
         ).to_dict())
 
     return job_list

@@ -27,7 +27,7 @@ def scraper():
     """
     ... scrape data from Wizz Air scraper.
     """
-    soup = GetStaticSoup("https://careers.wizzair.com/search/?locationsearch=Romania")
+    soup = GetStaticSoup("https://careers.wizzair.com/search/?locationsearch=Romania", verify=False)
 
     job_list = []
     for job in soup.find_all("tr",class_="data-row"):
