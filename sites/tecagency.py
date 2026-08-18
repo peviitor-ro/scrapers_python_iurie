@@ -31,7 +31,7 @@ def scraper():
 
     job_list = []
     for job in json_data['result']:
-        location  =  job['location']['city']
+        location  =  job['location'].get('city') or ''
         check_county=get_county(location)[0]if True in get_county(location) else  None
       
         # get jobs items from response
