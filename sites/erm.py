@@ -59,7 +59,9 @@ def scraper():
 
     job_list = []
     for job in post_data["jobPostings"]:
-        location = "București"if "Bucharest" in job["locationsText"] else job["locationsText"]
+        if "title" not in job:
+            continue
+        location = "București" if "Bucharest" in job.get("locationsText", "") else job.get("locationsText", "")
 
         # get jobs items from response
         job_list.append(Item(
