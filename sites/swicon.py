@@ -16,52 +16,39 @@
 from __utils import (
     Item,
     UpdateAPI,
+    GetStaticSoup,
 )
-from html import unescape
-import json
-import re
-import subprocess
 
 
-def get_jobs_feed():
-    payload = subprocess.check_output(
-        [
-            "curl",
-            "-L",
-            "-s",
-            "https://swicon-jobs.com/wp-json/wp/v2/swiconjobad?categories=8&per_page=100",
-        ],
-        text=True,
-    )
-    return json.loads(payload)
+def get_jobs_page():
+    return GetStaticSoup("https://swicon.com/jobs")
 
 
 def scraper():
     """
     ... scrape data from Swicon scraper.
     """
-    jobs = get_jobs_feed()
+    soup = get_jobs_page()
+    cards = soup.find_all("div", class_="job-card")
 
     job_list = []
-    for job in jobs:
-        content = job.get("content", {}).get("rendered", "")
-        lowered_content = content.lower()
-        if "no longer available" in lowered_content or "not yet available" in lowered_content:
+    for card in cards:
+        city = (card.get("data-city") or "").lower()
+        if city != "bucharest":
             continue
 
-        match = re.search(r"<p>\s*([^|<]+?)\s*\|\s*([^<]+?)\s*</p>", content, re.I)
-        if not match:
+        title_tag = card.find("a", class_="job-card-title")
+        if not title_tag:
             continue
 
-        city = match.group(1).strip()
-        remote = match.group(2).strip().lower()
-        if city != "Bucharest":
-            continue
+        job_title = title_tag.get_text(strip=True)
+        job_link = title_tag.get("href", "")
+        remote = (card.get("data-worktype") or "").capitalize()
 
         job_list.append(
             Item(
-                job_title=unescape(job["title"]["rendered"]),
-                job_link=job["link"],
+                job_title=job_title,
+                job_link=job_link,
                 company="Swicon",
                 country="România",
                 county="Bucuresti",

@@ -27,7 +27,7 @@ def scraper():
     ... scrape data from Simavi scraper.
     """
     
-    soup = GetStaticSoup("https://simavi.ro/job-openings/")
+    soup = GetStaticSoup("https://simavi.ro/job-openings/", verify=False)
 
     job_list = []
     print(len(soup.find_all("div",attrs="views-row col-md-4")))
