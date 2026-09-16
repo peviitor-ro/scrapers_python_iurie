@@ -44,12 +44,11 @@ def scraper():
                 job_type = "on-site"
 
             # Find location
-            location_span = job.find("div", class_="mt-1 text-md").find_all('span')
-            if len(location_span) == 1 or len(location_span) == 3:
-                location = location_span[0].text
-
-            elif len(location_span) == 5:
-                location = location_span[2].text
+            location_div = job.find("div", class_="mt-4 text-md")
+            if not location_div:
+                continue
+            location_span = location_div.find_all('span')
+            location = location_span[-1].text.strip()
 
             if location == "Online Dealer":
                 location = "Bucuresti"
@@ -63,7 +62,7 @@ def scraper():
             # print(update_location_if_is_county(counties=county, locations=location))
             # get jobs items from response
             job_list.append(Item(
-                job_title=job.find("a").find("span").text,
+                job_title=job.find("a").get_text(strip=True),
                 job_link=job.find("a").get("href"),
                 company="partnerd",
                 country="România",

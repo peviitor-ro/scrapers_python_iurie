@@ -13,6 +13,7 @@
 # Link ------> https://mediagalaxy.ro/cariere/
 #
 #
+import requests
 from bs4 import BeautifulSoup
 from __utils import (
     GetCustumRequest,
@@ -34,8 +35,12 @@ def scraper():
         'sec-ch-ua': '"Not)A;Brand";v="99", "Brave";v="127", "Chromium";v="127"',
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36'
     }
-    response = GetCustumRequest(url, headers, payload)
-   
+    try:
+        response = GetCustumRequest(url, headers, payload)
+    except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+        print("Warning: mediagalaxy.ro is unreachable or timed out. Returning empty job list.")
+        return []
+
     job_list = []
     for job in response.find_all("div", class_="border rounded px-8"):
 
