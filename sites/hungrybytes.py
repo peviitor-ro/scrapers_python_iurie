@@ -71,10 +71,16 @@ def main():
     print("jobs found:",len(jobs))
     # uncomment if your scraper done
     if jobs:
-        UpdateAPI().publish(jobs)
+        try:
+            UpdateAPI().publish(jobs)
+        except requests.exceptions.RequestException as ex:
+            print(f"Warning: job publishing failed: {ex}")
     else:
         print("No jobs to publish")
-    UpdateAPI().update_logo(company_name, logo_link)
+    try:
+        UpdateAPI().update_logo(company_name, logo_link)
+    except requests.exceptions.RequestException as ex:
+        print(f"Warning: logo update failed: {ex}")
 
 
 if __name__ == '__main__':

@@ -34,7 +34,17 @@ def scraper():
         import re
         location=re.split(r', | / ', job["location"].strip())
         cities=['Cluj-Napoca', 'Iasi']  if "Remote" in location else location
-        county=["Iasi" if city=="Iasi" else get_county_json(city)[0] for city in cities]
+
+        county = []
+        for city in cities:
+            if city == "Iasi":
+                county.append("Iasi")
+                continue
+            result = get_county_json(city)
+            if result:
+                county.append(result if isinstance(result, str) else result[0])
+            else:
+                county.append(get_county(city)[0])
 
        
         # get jobs items from response

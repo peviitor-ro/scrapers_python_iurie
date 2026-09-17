@@ -13,6 +13,7 @@
 # ---> get_data_with_regex(expression: str, object: str)
 #
 #
+import time
 from __utils import (
     GetRequestJson,
     get_county,
@@ -23,15 +24,33 @@ from __utils import (
 )
 
 
+def run_with_retry(action, attempts=4):
+    """
+    Run the action, retrying on transient connection errors.
+    """
+    for attempt in range(attempts):
+        try:
+            return action()
+        except Exception:
+            if attempt == attempts - 1:
+                print("Warning: request failed after retries.")
+                return None
+            time.sleep(2)
+
+
 def scraper():
     '''
     ... scrape data from Encora scraper.
     '''
-    json_data = GetRequestJson("https://boards-api.greenhouse.io/v1/boards/encora10/jobs")
-    
+    json_data = run_with_retry(
+        lambda: GetRequestJson("https://boards-api.greenhouse.io/v1/boards/encora10/jobs")
+    )
+    if not json_data:
+        return []
+
     job_list = []
     location=["Craiova","Bucharest", "Romania"]
-    for job in json_data['jobs']:
+    for job in json_data.get('jobs', []):
         for city in location:
             if  job["location"]["name"] ==  city :
 
@@ -61,9 +80,13 @@ def main():
 
     jobs = scraper()
     print("jobs found:",len(jobs))
-    # uncomment if your scraper done
-    UpdateAPI().publish(jobs)
-    UpdateAPI().update_logo(company_name, logo_link)
+
+    update_api = UpdateAPI()
+    if jobs:
+        run_with_retry(lambda: update_api.publish(jobs))
+    else:
+        print("No jobs to publish")
+    run_with_retry(lambda: update_api.update_logo(company_name, logo_link))
 
 
 if __name__ == '__main__':

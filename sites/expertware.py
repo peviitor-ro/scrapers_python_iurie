@@ -8,6 +8,7 @@ Link ------> https://www.expertware.net/Careers
 
 import re
 import json
+import time
 from __utils import (
     GetDataCurl,
     Request,
@@ -26,12 +27,26 @@ def handle_backtick_strings(m):
     return f'"{text}"'
 
 
+def run_with_retry(action, attempts=4):
+    """
+    Run the action, retrying on transient connection errors.
+    """
+    for attempt in range(attempts):
+        try:
+            return action()
+        except Exception:
+            if attempt == attempts - 1:
+                print("Warning: request failed after retries.")
+                return None
+            time.sleep(2)
+
+
 def scraper():
     """
     ... scrape data from expertware scraper.
     """
     job_list = []
-    data = Request("https://www.expertware.net/Careers")
+    data = run_with_retry(lambda: Request("https://www.expertware.net/Careers"))
 
     # Extract the block containing the jobsList
     match = re.search(r"jobsList:\s*\[(.*?)\](?=\s*[,}])", data.text, re.DOTALL)
@@ -89,11 +104,15 @@ def main():
     company_name = "expertware"
     logo_link = "https://www.expertware.net/nowuiassets/img/logo_xblue_mobile.webp"
 
-    jobs = scraper()
+    jobs = run_with_retry(scraper) or []
     print("jobs found:", len(jobs))
-    # uncomment if your scraper done
-    UpdateAPI().publish(jobs)
-    UpdateAPI().update_logo(company_name, logo_link)
+
+    update_api = UpdateAPI()
+    if jobs:
+        run_with_retry(lambda: update_api.publish(jobs))
+    else:
+        print("No jobs to publish")
+    run_with_retry(lambda: update_api.update_logo(company_name, logo_link))
 
 
 if __name__ == "__main__":

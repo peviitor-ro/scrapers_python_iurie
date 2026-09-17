@@ -13,6 +13,7 @@
 # Link ------> https://www.brinel.ro/cariere#job-30
 #
 #
+import requests
 from __utils import (
     GetStaticSoup,
     get_county,
@@ -78,7 +79,10 @@ def main():
     print(len(jobs))
     # uncomment if your scraper done
     UpdateAPI().publish(jobs)
-    UpdateAPI().update_logo(company_name, logo_link)
+    try:
+        UpdateAPI().update_logo(company_name, logo_link)
+    except requests.exceptions.RequestException as e:
+        print(f"Warning: failed to update logo: {e}")
 
 
 if __name__ == '__main__':

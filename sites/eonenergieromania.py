@@ -13,6 +13,8 @@
 # Link ------> https://careers.eon.com/romania/search/?createNewAlert=false&q=&locationsearch=&optionsFacetsDD_country=&optionsFacetsDD_city=&optionsFacetsDD_customfield2=&optionsFacetsDD_customfield3=
 #
 #
+import time
+
 from __utils import (
     PostRequestJson,
     get_county,
@@ -21,6 +23,20 @@ from __utils import (
     Item,
     UpdateAPI,
 )
+
+
+def run_with_retry(action, attempts=4):
+    """
+    Run the action, retrying on transient connection errors.
+    """
+    for attempt in range(attempts):
+        try:
+            return action()
+        except Exception:
+            if attempt == attempts - 1:
+                print("Warning: request failed after retries.")
+                return None
+            time.sleep(2)
 
 
 def scraper():
@@ -75,11 +91,15 @@ def main():
     company_name = "E.ON Energie Romania"
     logo_link = "https://www.eon-romania.ro/content/dam/eon/eon-romania-ro/logo/header_M.png"
 
-    jobs = scraper()
+    jobs = run_with_retry(scraper) or []
     print("jobs found:", len(jobs))
     # uncomment if your scraper done
-    UpdateAPI().publish(jobs)
-    UpdateAPI().update_logo(company_name, logo_link)
+    update_api = UpdateAPI()
+    if jobs:
+        run_with_retry(lambda: update_api.publish(jobs))
+    else:
+        print("No jobs to publish")
+    run_with_retry(lambda: update_api.update_logo(company_name, logo_link))
 
 
 if __name__ == '__main__':

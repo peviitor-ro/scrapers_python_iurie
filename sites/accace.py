@@ -31,7 +31,7 @@ def scraper():
     jobs_type = ["Remote", "Hibrid", "On-site"]
     for type in jobs_type:
         soup = GetStaticSoup(
-            f"https://accace.ro/jobs/?_sfm_job_features_acc-jobs_work-mode={type}")
+            f"https://accace.ro/jobs/?_sfm_job_features_acc-jobs_work-mode={type}", verify=False)
         container = soup.find("div", class_="oxy-dynamic-list acc-jobs-archive-repeater")
         if container is None:
             continue

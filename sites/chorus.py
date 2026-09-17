@@ -37,9 +37,9 @@ def scraper():
             location=location.replace(" (Se recruteaza si din:", ",").replace("(", "").replace(")", "").strip()
         locations=location.strip().split(", ")
 
-        #extract county for locations 
-        check_county=[get_county_json(county) for county in locations ]
-        clean_county=[item for sublist in check_county for item in sublist]
+        #extract county for locations
+        check_county=[county for county in (get_county_json(county) for county in locations) if county]
+        clean_county=[item for sublist in check_county for item in ([sublist] if isinstance(sublist, str) else sublist)]
         unic_county=list(set(clean_county))
         
     

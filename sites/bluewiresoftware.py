@@ -10,44 +10,56 @@
 # ---> get_data_with_regex(expression: str, object: str)
 #
 # Company ---> Bluewiresoftware
-# Link ------> https://careers.smartrecruiters.com/BlueWireSoftware
+# Link ------> https://bluewiresoftware.careers-page.com/
 #
 #
+import time
+
 from __utils import (
     GetStaticSoup,
-    get_county,
-    get_job_type,
-    get_county_json,
     Item,
     UpdateAPI,
 )
+
+URL = "https://bluewiresoftware.careers-page.com/"
+
+
+def run_with_retry(action, attempts=4):
+    """
+    Run the action, retrying on transient connection errors.
+    """
+    for attempt in range(attempts):
+        try:
+            return action()
+        except Exception:
+            if attempt == attempts - 1:
+                print("Warning: request failed after retries.")
+                return None
+            time.sleep(2)
 
 
 def scraper():
     """
     scrape data from Bluewiresoftware scraper.
     """
+    soup = GetStaticSoup(URL)
+
     job_list = []
-    loocation = ['Cluj-Napoca', 'București', 'Târgu Mureș']
-    
-    for city_locattion in loocation:
-        
-        soup = GetStaticSoup(f"https://careers.smartrecruiters.com/BlueWireSoftware?search={city_locattion}")
-        #check if city_location is a county
-        check_county = get_county_json(city_locattion if city_locattion != 'Târgu Mureș' else 'Targu-Mures' )
-        
-        for job in soup.find_all('li', attrs=('opening-job job column wide-7of16 medium-1of2')):
-            title = job.find('h4', class_='details-title job-title link--block-target').text
-            # get jobs items from response
-            job_list.append(Item(
-                job_title = title,
-                job_link = job.find('a', class_='link--block details')['href'],
-                company = 'Bluewiresoftware',
-                country = 'România',
-                county = check_county,
-                city = city_locattion,
-                remote = 'remote' if job.find('i') else get_job_type("hibrid") if title == "Infrastructure Engineer" else 'on-site',
-            ).to_dict())
+    for job in soup.find_all("article", class_="job-card"):
+        title = job.find("h6", class_="job-title")
+        link = job.find("a", class_="job-title-link")
+        if not title or not link:
+            continue
+
+        job_list.append(Item(
+            job_title=title.get_text(strip=True),
+            job_link=URL.rstrip("/") + link["href"],
+            company="Bluewiresoftware",
+            country="România",
+            county="Cluj",
+            city="Cluj-Napoca",
+            remote="remote",
+        ).to_dict())
 
     return job_list
 
@@ -60,13 +72,17 @@ def main():
     '''
 
     company_name = "Bluewiresoftware"
-    logo_link = "https://c.smartrecruiters.com/sr-careersite-image-prod-dc5/5b7a6bb2e4b01c87868aa28a/6f824858-3319-4736-aa6a-e86f48f15345?r=s3-eu-central-1"
+    logo_link = "https://d3neddlj774jsy.cloudfront.net/themes/media/clients/572262/9602280b-9497-4142-81c8-e86df159c55d/fd_branding_logo/2271a2a9-0cc4-42e7-a9d4-ed9744e431cdfd_branding_logo_header_1765973602814.png"
 
-    jobs = scraper()
+    jobs = run_with_retry(scraper) or []
     print(len(jobs))
-    # uncomment if your scraper done
-    UpdateAPI().publish(jobs)
-    UpdateAPI().update_logo(company_name, logo_link)
+
+    update_api = UpdateAPI()
+    if jobs:
+        run_with_retry(lambda: update_api.publish(jobs))
+    else:
+        print("No jobs to publish")
+    run_with_retry(lambda: update_api.update_logo(company_name, logo_link))
 
 
 if __name__ == '__main__':
