@@ -3,7 +3,7 @@
 # Config for Dynamic Get Method -> For Json format!
 #
 # Company ---> jolera
-# Link ------> https://jolera.freshteam.com/hire/widgets/jobs.json
+# Link ------> https://apply.workable.com/api/v1/widget/accounts/jolera
 #
 # ------ IMPORTANT! ------
 # if you need return soup object:
@@ -29,14 +29,13 @@ def scraper():
     https://www.jolera.com/careers/
     '''
     json_data = GetRequestJson(
-        "https://jolera.freshteam.com/hire/widgets/jobs.json")
+        "https://apply.workable.com/api/v1/widget/accounts/jolera")
 
     job_list = []
 
     for job in json_data['jobs']:
 
-        if job["branch_id"] == 4000038337:  # "id": 4000038337, for Bucharest, Romania"
-            
+        if job.get("country") == "Romania":
 
             # get jobs items from response
             job_list.append(Item(
@@ -46,7 +45,7 @@ def scraper():
                 country="România",
                 county="Bucuresti",
                 city="Bucuresti",
-                remote="on-site",
+                remote="remote" if job.get("telecommuting") else "on-site",
             ).to_dict())
 
     return job_list
