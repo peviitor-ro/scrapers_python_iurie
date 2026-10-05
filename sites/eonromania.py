@@ -41,25 +41,32 @@ def scraper():
         url=url, custom_headers=headers, data_raw=payload)
 
     for job in post_data["results"][0]["hits"]:
-        if len(job["document"]["data"]["locations"]) > 1:
+        data = job["document"]["data"]
+
+        # the feed no longer exposes "jobBoard_link" for these records,
+        # so fall back to the application link it provides instead
+        job_link = data.get("jobBoard_link") or data.get("applicationUrl") or ""
+        remote = str(data.get("remote") or "").lower()
+
+        if len(data["locations"]) > 1:
 
             cities = [location['city']
-                      for location in job["document"]["data"]["locations"]]
+                      for location in data["locations"]]
             counties = [county["state"]
-                        for county in job["document"]["data"]["locations"]]
+                        for county in data["locations"]]
         else:
-            cities = job["document"]["data"]["locations"][0]["city"]
-            counties = job["document"]["data"]["locations"][0]["state"]
+            cities = data["locations"][0]["city"]
+            counties = data["locations"][0]["state"]
 
         # get jobs items from response
         job_list.append(Item(
-            job_title=job["document"]["data"]["title"],
-            job_link=job["document"]["data"]["jobBoard_link"],
+            job_title=data["title"],
+            job_link=job_link,
             company="EONRomania",
             country="România",
             county=counties,
             city=cities,
-            remote=job["document"]["data"]["remote"].lower(),
+            remote=remote,
         ).to_dict())
 
     return job_list
