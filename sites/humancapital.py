@@ -82,13 +82,12 @@ def scraper():
                     remote=get_job_type(title),
                 ).to_dict()
             )
-        if page <= num_of_page:
-            page += 1
-            payload = f"lang=ro&search_keywords=&search_location=&search_categories%5B%5D=&filter_job_type%5B%5D=freelance&filter_job_type%5B%5D=full-time&filter_job_type%5B%5D=internship&filter_job_type%5B%5D=part-time&filter_job_type%5B%5D=temporary&filter_job_type%5B%5D=&per_page=100&orderby=featured&featured_first=false&order=DESC&page={page}&remote_position=&show_pagination=false&form_data=search_keywords%3D%26search_region%3D0%26search_categories%255B%255D%3D%26filter_job_type%255B%255D%3Dfreelance%26filter_job_type%255B%255D%3Dfull-time%26filter_job_type%255B%255D%3Dinternship%26filter_job_type%255B%255D%3Dpart-time%26filter_job_type%255B%255D%3Dtemporary%26filter_job_type%255B%255D%3D"
-        else:
+        if num_of_page is None or page >= num_of_page:
             break
+        page += 1
+        payload = f"lang=ro&search_keywords=&search_location=&search_categories%5B%5D=&filter_job_type%5B%5D=freelance&filter_job_type%5B%5D=full-time&filter_job_type%5B%5D=internship&filter_job_type%5B%5D=part-time&filter_job_type%5B%5D=temporary&filter_job_type%5B%5D=&per_page=100&orderby=featured&featured_first=false&order=DESC&page={page}&remote_position=&show_pagination=false&form_data=search_keywords%3D%26search_region%3D0%26search_categories%255B%255D%3D%26filter_job_type%255B%255D%3Dfreelance%26filter_job_type%255B%255D%3Dfull-time%26filter_job_type%255B%255D%3Dinternship%26filter_job_type%255B%255D%3Dpart-time%26filter_job_type%255B%255D%3Dtemporary%26filter_job_type%255B%255D%3D"
 
-        return job_list
+    return job_list
 
 
 def main():
