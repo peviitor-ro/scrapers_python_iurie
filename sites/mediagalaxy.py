@@ -49,8 +49,21 @@ def scraper():
         link = title.replace(" ", "-")
         location = job.find(
             'div', class_="w-full mb-2 md:mb-0").text.split(':')[1].strip().split(', ')
-        county_finish = ["Cluj"if city == "Cluj" else get_county_json(city)[
-            0] for city in location]
+        county_finish = []
+        for city in location:
+            if city.strip().lower() == "cluj":
+                county_finish.append("Cluj")
+                continue
+            try:
+                county = get_county_json(city)
+                if isinstance(county, list) and county:
+                    county_finish.append(county[0])
+                elif isinstance(county, str) and county:
+                    county_finish.append(county)
+                else:
+                    county_finish.append(city.strip())
+            except Exception:
+                county_finish.append(city.strip())
 
         # get jobs items from response
         job_list.append(Item(
