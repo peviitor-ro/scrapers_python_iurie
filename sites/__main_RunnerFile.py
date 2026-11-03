@@ -17,6 +17,9 @@ REPO_ROOT = SITES_DIR.parent
 SCRAPER_TIMEOUT_SECONDS = int(os.getenv("SCRAPER_TIMEOUT_SECONDS", "60"))
 REPAIR_TIMEOUT_SECONDS = int(os.getenv("OPENCODE_REPAIR_TIMEOUT", "900"))
 MAX_LOG_LENGTH = 4000
+CACHE_DIR = REPO_ROOT / ".cache"
+EMPTY_JOBS_CACHE = CACHE_DIR / "empty_jobs.txt"
+EMPTY_JOBS_REPAIR_DISABLED = os.getenv("OPENCODE_EMPTY_JOBS_REPAIR_DISABLED", "0") == "1"
 
 
 def snapshot_sibling_files(script_path):
@@ -49,6 +52,64 @@ def truncate_output(content, limit=MAX_LOG_LENGTH):
         return content
 
     return content[:limit] + "\n...[truncated]"
+
+
+def ensure_cache_dir():
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def log_scraper_empty_result(script_path):
+    ensure_cache_dir()
+    name = script_path.name
+    existing = set()
+    if EMPTY_JOBS_CACHE.exists():
+        existing = {
+            line.strip()
+            for line in EMPTY_JOBS_CACHE.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        }
+    existing.add(name)
+    EMPTY_JOBS_CACHE.write_text(
+        "\n".join(sorted(existing)) + "\n", encoding="utf-8"
+    )
+
+
+def clear_empty_jobs_repair_state(script_path):
+    if not EMPTY_JOBS_CACHE.exists():
+        return
+    name = script_path.name
+    existing = {
+        line.strip()
+        for line in EMPTY_JOBS_CACHE.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    }
+    existing.discard(name)
+    if existing:
+        EMPTY_JOBS_CACHE.write_text(
+            "\n".join(sorted(existing)) + "\n", encoding="utf-8"
+        )
+    else:
+        EMPTY_JOBS_CACHE.unlink(missing_ok=True)
+
+
+def get_empty_jobs_backlog():
+    if not EMPTY_JOBS_CACHE.exists():
+        return []
+    return [
+        line.strip()
+        for line in EMPTY_JOBS_CACHE.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+
+
+def parse_job_count(output):
+    import re
+
+    for line in output.splitlines():
+        match = re.search(r"jobs found:\s*(\d+)", line, re.IGNORECASE)
+        if match:
+            return int(match.group(1))
+    return None
 
 
 def run_scraper(script_path):
@@ -172,8 +233,15 @@ def test_scraper_repair(scraper_name):
 
     cleanup_created_sibling_files(script_path, existing_files)
 
+    job_count = parse_job_count(action.stdout + action.stderr)
+
     if action.returncode == 0:
-        print(f"Scraper {script_path.name} already works.")
+        if job_count is not None and job_count == 0:
+            log_scraper_empty_result(script_path)
+            print(f"Scraper {script_path.name} already works but produces 0 jobs (queued for repair).")
+        else:
+            print(f"Scraper {script_path.name} already works.")
+            clear_empty_jobs_repair_state(script_path)
         return True
 
     print(f"Error scraping {script_path.name}")
@@ -201,7 +269,65 @@ def test_scraper_repair(scraper_name):
     return False
 
 
-def main():
+def run_repair_backlog():
+    backlog = get_empty_jobs_backlog()
+    if not backlog:
+        print("No empty-job scrapers in backlog.")
+        return
+
+    print(f"Repairing {len(backlog)} empty-job scrapers from backlog...")
+    for scraper_name in backlog:
+        try:
+            script_path = get_script_path(scraper_name)
+        except (FileNotFoundError, ValueError) as error:
+            print(error)
+            continue
+
+        existing_files = snapshot_sibling_files(script_path)
+        try:
+            action = run_scraper(script_path)
+        except subprocess.TimeoutExpired:
+            cleanup_created_sibling_files(script_path, existing_files)
+            print(f"Timeout scraping {scraper_name}")
+            continue
+
+        cleanup_created_sibling_files(script_path, existing_files)
+
+        job_count = parse_job_count(action.stdout + action.stderr)
+        if job_count is not None and job_count > 0:
+            print(f"Scraper {scraper_name} now produces {job_count} jobs.")
+            clear_empty_jobs_repair_state(script_path)
+            continue
+
+        print(f"Scraper {scraper_name} still has 0 jobs (exit={action.returncode}).")
+        print(truncate_output(action.stderr))
+
+        if not repair_scraper_with_opencode(script_path, action):
+            continue
+
+        existing_files = snapshot_sibling_files(script_path)
+        try:
+            repaired_action = run_scraper(script_path)
+        except subprocess.TimeoutExpired:
+            cleanup_created_sibling_files(script_path, existing_files)
+            print(f"Timeout scraping after auto-repair {scraper_name}")
+            continue
+
+        cleanup_created_sibling_files(script_path, existing_files)
+
+        job_count = parse_job_count(repaired_action.stdout + repaired_action.stderr)
+        if job_count is not None and job_count > 0:
+            print(f"Success scraping after auto-repair {scraper_name} ({job_count} jobs).")
+            clear_empty_jobs_repair_state(script_path)
+        else:
+            print(f"Auto-repair did not fix empty jobs for {scraper_name}")
+
+
+def main(repair_backlog=False):
+    if repair_backlog:
+        run_repair_backlog()
+        return
+
     for site in sorted(os.listdir(SITES_DIR)):
         if not site.endswith(".py") or site in EXCLUDE:
             continue
@@ -217,8 +343,15 @@ def main():
 
         cleanup_created_sibling_files(script_path, existing_files)
 
+        job_count = parse_job_count(action.stdout + action.stderr)
+
         if action.returncode == 0:
+            if job_count is not None and job_count == 0:
+                log_scraper_empty_result(script_path)
+                print(f"Success scraping {site} (0 jobs - queued for repair).")
+                continue
             print("Success scraping " + site)
+            clear_empty_jobs_repair_state(script_path)
             continue
 
         print("Error scraping " + site)
@@ -232,15 +365,15 @@ def main():
             repaired_action = run_scraper(script_path)
         except subprocess.TimeoutExpired:
             cleanup_created_sibling_files(script_path, existing_files)
-            print("Timeout scraping after auto-repair " + site)
+            print(f"Timeout scraping after auto-repair {site}")
             continue
 
         cleanup_created_sibling_files(script_path, existing_files)
 
         if repaired_action.returncode == 0:
-            print("Success scraping after auto-repair " + site)
+            print(f"Success scraping after auto-repair {site}")
         else:
-            print("Auto-repair did not fix " + site)
+            print(f"Auto-repair did not fix {site}")
             print(truncate_output(repaired_action.stderr))
 
 
@@ -274,6 +407,9 @@ class Scraper:
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        test_scraper_repair(sys.argv[1])
+        if sys.argv[1] == "--repair-backlog":
+            main(repair_backlog=True)
+        else:
+            test_scraper_repair(sys.argv[1])
     else:
         main()

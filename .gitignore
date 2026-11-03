@@ -165,3 +165,7 @@ sites/__utils/check_company_validator.py
 api_key.py
 enviroment.sh
 
+# Kilo / Kilocode
+.kilo/
+.kilocode/
+

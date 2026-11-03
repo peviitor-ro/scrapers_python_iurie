@@ -36,6 +36,8 @@ jobs:
           opencode --version
 
       - name: All scrapers runs
+        env:
+          OPENCODE_EMPTY_JOBS_REPAIR_DISABLED: '1'
         run: |
           python sites/__main_RunnerFile.py
 
