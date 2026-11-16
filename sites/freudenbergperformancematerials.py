@@ -7,21 +7,30 @@ Link ------> https://jobs.freudenberg.com/Freudenberg/?company=FPM&location=RO
 
 import json
 
-import requests
-
 from __utils import Item, UpdateAPI
 
 
-API_URL = "https://r.jina.ai/https://jobs.freudenberg.com/Freudenberg/api/json/?company=FPM&location=RO"
+API_URL = "https://jobs.freudenberg.com/Freudenberg/api/json/?company=FPM&location=RO"
+
+
 def _load_jobs():
-    for attempt in range(3):
-        response = requests.get(API_URL, timeout=60)
-        response.raise_for_status()
-        text = response.text
-        start = text.find("{")
-        end = text.rfind("}")
-        if start != -1 and end != -1 and end > start:
-            return json.loads(text[start:end + 1])
+    try:
+        from playwright.sync_api import sync_playwright
+    except Exception:
+        return {"jobs": []}
+
+    for _ in range(3):
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True, args=["--no-sandbox"])
+                context = browser.new_context()
+                response = context.request.get(API_URL, timeout=60000)
+                text = response.text()
+                browser.close()
+            if text:
+                return json.loads(text)
+        except Exception:
+            continue
     return {"jobs": []}
 
 

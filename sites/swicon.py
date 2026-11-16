@@ -71,10 +71,13 @@ def main():
     logo_link = "https://www.ejobs.ro/img/userCoverPhoto/f/5/f5e56fe04b0618594c10407feb11ecd4.jpg"
 
     jobs = scraper()
-    print("jobs found:",len(jobs))
+    print("jobs found:", len(jobs))
     # uncomment if your scraper done
-    UpdateAPI().publish(jobs)
-    UpdateAPI().update_logo(company_name, logo_link)
+    try:
+        UpdateAPI().publish(jobs)
+        UpdateAPI().update_logo(company_name, logo_link)
+    except Exception as e:
+        print(f"API update failed: {e}")
 
 
 if __name__ == '__main__':
